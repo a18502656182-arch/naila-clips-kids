@@ -19,11 +19,11 @@ const nextConfig = {
       // 清空 NEXT_PUBLIC_API_BASE 环境变量后生效
       {
         source: "/api/:path*",
-        destination: "https://railway.nailaobao.top/api/:path*",
+        destination: "https://naila-api-meiju-production.up.railway.app/api/:path*",
       },
       {
         source: "/rsc-api/:path*",
-        destination: "https://railway.nailaobao.top/rsc-api/:path*",
+        destination: "https://naila-api-meiju-production.up.railway.app/rsc-api/:path*",
       },
     ];
   },
