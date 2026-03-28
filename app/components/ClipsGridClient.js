@@ -578,13 +578,22 @@ export default function ClipsGridClient({ allItems, filters }) {
     if (f.difficulty?.length) {
       result = result.filter(r => f.difficulty.includes(r.difficulty));
     }
-    // topic 筛选（overlaps：视频的topics数组和筛选项有交集）
-    if (f.topic?.length) {
-      result = result.filter(r => (r.topics || []).some(t => f.topic.includes(t)));
+    // genre 筛选（存在 topic_slugs 里）
+    if (f.genre) {
+      result = result.filter(r => (r.topics || []).includes(f.genre));
     }
-    // channel 筛选
-    if (f.channel?.length) {
-      result = result.filter(r => (r.channels || []).some(c => f.channel.includes(c)));
+    // duration 筛选（存在 topic_slugs 里）
+    if (f.duration) {
+      result = result.filter(r => (r.topics || []).includes(f.duration));
+    }
+    // show 筛选（存在 channel_slugs 里）
+    if (f.show?.length) {
+      result = result.filter(r => (r.channels || []).some(c => f.show.includes(c)));
+    }
+    // 剧名搜索框（模糊匹配 channel_slugs）
+    if (f.showSearch?.trim()) {
+      const q = f.showSearch.trim().toLowerCase();
+      result = result.filter(r => (r.channels || []).some(c => c.toLowerCase().includes(q)));
     }
     // sort
     if (f.sort === "oldest") {
