@@ -59,13 +59,13 @@ export async function POST(req) {
     if (taxErr) return NextResponse.json({ error: taxErr.message }, { status: 500 });
     if (type === "difficulty") {
       await db.from("clips").update({ difficulty_slug: s }).eq("difficulty_slug", old_slug);
-    } else if (type === "topic") {
+    } else if (type === "topic" || type === "genre" || type === "duration") {
       const { data: affectedClips } = await db.from("clips").select("id, topic_slugs").contains("topic_slugs", [old_slug]);
       for (const clip of affectedClips || []) {
         const updated = (clip.topic_slugs || []).map((t) => t === old_slug ? s : t);
         await db.from("clips").update({ topic_slugs: updated }).eq("id", clip.id);
       }
-    } else if (type === "channel") {
+    } else if (type === "channel" || type === "show") {
       const { data: affectedClips } = await db.from("clips").select("id, channel_slugs").contains("channel_slugs", [old_slug]);
       for (const clip of affectedClips || []) {
         const updated = (clip.channel_slugs || []).map((c) => c === old_slug ? s : c);
@@ -86,12 +86,12 @@ export async function POST(req) {
     await db.from("taxonomies").delete().eq("type", type).eq("slug", slug);
     if (type === "difficulty") {
       await db.from("clips").update({ difficulty_slug: null }).eq("difficulty_slug", slug);
-    } else if (type === "topic") {
+    } else if (type === "topic" || type === "genre" || type === "duration") {
       const { data: affectedClips } = await db.from("clips").select("id, topic_slugs").contains("topic_slugs", [slug]);
       for (const clip of affectedClips || []) {
         await db.from("clips").update({ topic_slugs: (clip.topic_slugs || []).filter((t) => t !== slug) }).eq("id", clip.id);
       }
-    } else if (type === "channel") {
+    } else if (type === "channel" || type === "show") {
       const { data: affectedClips } = await db.from("clips").select("id, channel_slugs").contains("channel_slugs", [slug]);
       for (const clip of affectedClips || []) {
         await db.from("clips").update({ channel_slugs: (clip.channel_slugs || []).filter((c) => c !== slug) }).eq("id", clip.id);
