@@ -77,9 +77,7 @@ function SingleSelectDropdown({ label, options, selected, onSelect, renderLabel 
               }}
               onMouseEnter={(e) => e.currentTarget.style.background = "rgba(11,18,32,0.04)"}
               onMouseLeave={(e) => e.currentTarget.style.background = selected === o.slug ? "rgba(79,70,229,0.06)" : "transparent"}
-            >
-              {renderLabel ? renderLabel(o.slug) : o.slug}
-            </div>
+            >{renderLabel ? renderLabel(o.slug) : o.slug}</div>
           ))}
         </div>
       )}
@@ -87,125 +85,64 @@ function SingleSelectDropdown({ label, options, selected, onSelect, renderLabel 
   );
 }
 
-// ── 剧集全目录抽屉 ──────────────────────────────────────
-// shows 每项：{ slug, source? }  source = "movie"|"us"|"uk"|"anime"
-const SOURCE_LABELS = { movie: "🎬 电影", us: "🇺🇸 美剧", uk: "🇬🇧 英剧", anime: "🎌 动画" };
-const SOURCE_ORDER = ["movie", "us", "uk", "anime"];
-const ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ#".split("");
+// ── 剧集目录抽屉（纯展示）────────────────────────────────
+function ShowDrawer({ shows, sources, onClose }) {
+  // sources: [{ slug }]  e.g. [{ slug:"美剧" }, { slug:"电影" }]
+  // shows:   [{ slug, source }]
 
-function getAlphaKey(slug) {
-  if (!slug) return "#";
-  const ch = slug.trim()[0].toUpperCase();
-  return /[A-Z]/.test(ch) ? ch : "#";
-}
+  // 默认选第一个来源 tab
+  const [activeSource, setActiveSource] = useState(sources[0]?.slug || null);
 
-function ShowDrawer({ shows, selectedShows, onToggleShow, onClose }) {
-  const [tab, setTab] = useState("alpha");
-  const [search, setSearch] = useState("");
-  const sectionRefs = useRef({});
-  const scrollRef = useRef(null);
+  // 当前 tab 下的剧集
+  const displayShows = useMemo(() => {
+    if (!activeSource) return shows;
+    return shows.filter((s) => s.source === activeSource);
+  }, [shows, activeSource, sources]);
 
-  const filtered = useMemo(() => {
-    if (!search.trim()) return shows;
-    return shows.filter((s) => s.slug.toLowerCase().includes(search.toLowerCase()));
-  }, [shows, search]);
-
-  const alphaGroups = useMemo(() => {
-    const map = {};
-    filtered.forEach((s) => {
-      const k = getAlphaKey(s.slug);
-      if (!map[k]) map[k] = [];
-      map[k].push(s);
-    });
-    return map;
-  }, [filtered]);
-
-  const alphaKeys = useMemo(() => ALPHA.filter((k) => alphaGroups[k]?.length > 0), [alphaGroups]);
-
-  const sourceGroups = useMemo(() => {
-    const map = {};
-    filtered.forEach((s) => {
-      const k = s.source || "us";
-      if (!map[k]) map[k] = [];
-      map[k].push(s);
-    });
-    return map;
-  }, [filtered]);
-
-  const sourceKeys = useMemo(() => SOURCE_ORDER.filter((k) => sourceGroups[k]?.length > 0), [sourceGroups]);
-
-  function scrollToSection(key) {
-    const el = sectionRefs.current[key];
-    if (el && scrollRef.current) {
-      scrollRef.current.scrollTo({ top: el.offsetTop - 8, behavior: "smooth" });
-    }
-  }
-
+  // Esc 关闭 + body 锁定
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
-
-  const groups = tab === "alpha" ? alphaGroups : sourceGroups;
-  const keys = tab === "alpha" ? alphaKeys : sourceKeys;
-
-  function renderTag(s) {
-    const isSelected = selectedShows.includes(s.slug);
-    return (
-      <span
-        key={s.slug}
-        onClick={() => onToggleShow(s.slug)}
-        style={{
-          display: "inline-block", padding: "5px 13px", borderRadius: 999,
-          fontSize: 13, cursor: "pointer", userSelect: "none", transition: "all 0.12s",
-          border: `1px solid ${isSelected ? THEME.colors.accent : THEME.colors.border2}`,
-          background: isSelected ? "rgba(79,70,229,0.10)" : "#f8f9fc",
-          color: isSelected ? THEME.colors.accent : THEME.colors.ink,
-          fontWeight: isSelected ? 700 : 400,
-          margin: "3px 4px 3px 0",
-        }}
-      >
-        {s.slug}{isSelected && <span style={{ marginLeft: 5, fontSize: 11, opacity: 0.7 }}>✓</span>}
-      </span>
-    );
-  }
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
 
   return (
     <>
-      <div onClick={onClose} style={{
-        position: "fixed", inset: 0, zIndex: 200,
-        background: "rgba(11,18,32,0.35)", backdropFilter: "blur(2px)",
-      }} />
+      {/* 遮罩 */}
+      <div
+        onClick={onClose}
+        style={{
+          position: "fixed", inset: 0, zIndex: 200,
+          background: "rgba(11,18,32,0.35)", backdropFilter: "blur(2px)",
+        }}
+      />
+
+      {/* 抽屉 */}
       <div style={{
         position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 201,
-        width: "min(480px, 96vw)", background: "#fff",
+        width: "min(420px, 96vw)", background: "#fff",
         boxShadow: "-16px 0 60px rgba(11,18,32,0.14)",
         display: "flex", flexDirection: "column",
         animation: "drawerSlideIn 0.22s ease",
       }}>
         <style>{`
           @keyframes drawerSlideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-          .drawerScroll::-webkit-scrollbar { width: 4px; }
-          .drawerScroll::-webkit-scrollbar-thumb { background: rgba(11,18,32,0.12); border-radius: 4px; }
-          .alphaBar { display:flex; gap:2px; padding:8px 20px; overflow-x:auto; border-bottom:1px solid ${THEME.colors.border}; flex-shrink:0; scrollbar-width:none; }
-          .alphaBar::-webkit-scrollbar { display:none; }
+          .drawerBody::-webkit-scrollbar { width: 4px; }
+          .drawerBody::-webkit-scrollbar-thumb { background: rgba(11,18,32,0.12); border-radius: 4px; }
         `}</style>
 
         {/* 头部 */}
-        <div style={{ padding: "18px 20px 14px", borderBottom: `1px solid ${THEME.colors.border}`, flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <div>
-              <div style={{ fontSize: 17, fontWeight: 900, color: THEME.colors.ink }}>🎬 全部剧集目录</div>
-              <div style={{ fontSize: 12, color: THEME.colors.faint, marginTop: 3 }}>
-                共 {shows.length} 部 · 已选 {selectedShows.length} 部
-              </div>
-            </div>
+        <div style={{
+          padding: "18px 20px 14px",
+          borderBottom: `1px solid ${THEME.colors.border}`,
+          flexShrink: 0,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+            <div style={{ fontSize: 17, fontWeight: 900, color: THEME.colors.ink }}>🎬 全部剧集目录</div>
             <button onClick={onClose} style={{
               width: 32, height: 32, borderRadius: "50%", border: `1px solid ${THEME.colors.border}`,
               background: "#f4f6fb", cursor: "pointer", fontSize: 16,
@@ -213,70 +150,46 @@ function ShowDrawer({ shows, selectedShows, onToggleShow, onClose }) {
             }}>✕</button>
           </div>
 
-          <input
-            type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="搜索剧名…" autoFocus
-            style={{
-              width: "100%", boxSizing: "border-box", padding: "8px 12px",
-              borderRadius: 10, border: `1px solid ${THEME.colors.border2}`,
-              background: "#f8f9fc", color: THEME.colors.ink, fontSize: 13, outline: "none",
-            }}
-          />
-
-          <div style={{ display: "flex", gap: 6, marginTop: 12 }}>
-            {[["alpha", "A–Z 索引"], ["source", "按来源分类"]].map(([v, label]) => (
-              <button key={v} onClick={() => setTab(v)} style={{
-                padding: "5px 14px", borderRadius: 999, fontSize: 12, fontWeight: 700,
-                cursor: "pointer", border: "none", transition: "all 0.15s",
-                background: tab === v ? THEME.colors.accent : "#f0f1f8",
-                color: tab === v ? "#fff" : THEME.colors.muted,
-              }}>{label}</button>
-            ))}
-            {selectedShows.length > 0 && (
-              <button
-                onClick={() => { [...selectedShows].forEach((s) => onToggleShow(s)); }}
-                style={{
-                  marginLeft: "auto", padding: "5px 12px", borderRadius: 999, fontSize: 12,
-                  fontWeight: 700, cursor: "pointer", border: "none",
-                  background: "rgba(239,68,68,0.08)", color: "#dc2626",
-                }}
-              >清空已选</button>
-            )}
+          {/* 来源 Tab */}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {sources.map((src) => {
+              const isActive = activeSource === src.slug;
+              return (
+                <button
+                  key={src.slug}
+                  onClick={() => setActiveSource(src.slug)}
+                  style={{
+                    padding: "6px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700,
+                    cursor: "pointer", border: "none", transition: "all 0.15s",
+                    background: isActive ? THEME.colors.accent : "#f0f1f8",
+                    color: isActive ? "#fff" : THEME.colors.muted,
+                  }}
+                >{src.slug}</button>
+              );
+            })}
           </div>
         </div>
 
-        {/* A-Z 快速跳转条 */}
-        {tab === "alpha" && !search && (
-          <div className="alphaBar">
-            {alphaKeys.map((k) => (
-              <button key={k} onClick={() => scrollToSection(k)} style={{
-                minWidth: 24, height: 24, borderRadius: 6, border: "none",
-                background: "transparent", cursor: "pointer", fontSize: 11,
-                fontWeight: 700, color: THEME.colors.accent, flexShrink: 0,
-              }}>{k}</button>
-            ))}
-          </div>
-        )}
-
-        {/* 内容列表 */}
-        <div ref={scrollRef} className="drawerScroll" style={{ flex: 1, overflowY: "auto", padding: "12px 20px 24px" }}>
-          {keys.length === 0 && (
+        {/* 剧集标签列表 */}
+        <div className="drawerBody" style={{ flex: 1, overflowY: "auto", padding: "16px 20px 24px" }}>
+          {displayShows.length === 0 ? (
             <div style={{ textAlign: "center", padding: 40, color: THEME.colors.faint, fontSize: 13 }}>
-              没有找到匹配的剧集
+              暂无剧集
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+              {displayShows.map((s) => (
+                <span key={s.slug} style={{
+                  display: "inline-block", padding: "6px 14px", borderRadius: 999,
+                  fontSize: 13, background: "#f4f6fb",
+                  border: `1px solid ${THEME.colors.border2}`,
+                  color: THEME.colors.ink, fontWeight: 500,
+                }}>
+                  {s.slug}
+                </span>
+              ))}
             </div>
           )}
-          {keys.map((k) => (
-            <div key={k} ref={(el) => { sectionRefs.current[k] = el; }} style={{ marginBottom: 20 }}>
-              <div style={{
-                fontSize: 12, fontWeight: 900, color: THEME.colors.muted,
-                letterSpacing: "0.08em", marginBottom: 8, paddingBottom: 5,
-                borderBottom: `1px solid ${THEME.colors.border}`,
-              }}>
-                {tab === "alpha" ? k : (SOURCE_LABELS[k] || k)}
-              </div>
-              <div>{(groups[k] || []).map(renderTag)}</div>
-            </div>
-          ))}
         </div>
       </div>
     </>
@@ -286,7 +199,7 @@ function ShowDrawer({ shows, selectedShows, onToggleShow, onClose }) {
 // ── 剧名行：热门标签 + 全目录按钮 ────────────────────────
 const HOT_COUNT = 5;
 
-function ShowFilter({ shows, selectedShows, showSearch, onToggleShow, onSearchChange, onClearShows }) {
+function ShowFilter({ shows, sources, selectedShows, showSearch, onToggleShow, onSearchChange, onClearShows }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const filteredShows = useMemo(() => {
@@ -294,7 +207,7 @@ function ShowFilter({ shows, selectedShows, showSearch, onToggleShow, onSearchCh
     return shows.filter((s) => s.slug.toLowerCase().includes(showSearch.toLowerCase()));
   }, [shows, showSearch]);
 
-  // 热门：已选的优先展示，再补满 HOT_COUNT 个
+  // 已选的优先展示，再补满 HOT_COUNT 个
   const hotShows = useMemo(() => {
     const selected = shows.filter((s) => selectedShows.includes(s.slug));
     const rest = shows.filter((s) => !selectedShows.includes(s.slug));
@@ -365,8 +278,7 @@ function ShowFilter({ shows, selectedShows, showSearch, onToggleShow, onSearchCh
       {drawerOpen && (
         <ShowDrawer
           shows={shows}
-          selectedShows={selectedShows}
-          onToggleShow={onToggleShow}
+          sources={sources}
           onClose={() => setDrawerOpen(false)}
         />
       )}
@@ -374,7 +286,7 @@ function ShowFilter({ shows, selectedShows, showSearch, onToggleShow, onSearchCh
   );
 }
 
-// 难度标签映射
+// 标签映射
 const GENRE_LABELS = {
   sitcom: "情景喜剧", drama: "剧情", thriller: "悬疑犯罪", reality: "真人秀", movie: "电影",
 };
@@ -389,7 +301,7 @@ export default function FiltersClient({ filters, onFiltersChange, initialTaxonom
     const out = [];
     if (filters.difficulty?.length) filters.difficulty.forEach((v) => out.push({ kind: "difficulty", v, label: v }));
     if (filters.genre) out.push({ kind: "genre", v: filters.genre, label: GENRE_LABELS[filters.genre] || filters.genre });
-    if (filters.duration) out.push({ kind: "duration", v: filters.duration, label: DURATION_LABELS[filters.duration] || filters.duration });
+    if (filters.duration) out.push({ kind: "duration", v: filters.duration, label: filters.duration });
     (filters.access || []).forEach((v) => out.push({ kind: "access", v, label: v === "free" ? "免费" : v === "vip" ? "会员" : v }));
     return out;
   }, [filters]);
@@ -449,7 +361,7 @@ export default function FiltersClient({ filters, onFiltersChange, initialTaxonom
           <SingleSelectDropdown label="视频难度" options={tax.difficulties} selected={filters.difficulty?.[0] || ""} onSelect={(slug) => update({ difficulty: slug ? [slug] : [] })} />
           <SingleSelectDropdown label="访问权限" options={accessOptions} selected={filters.access?.[0] || ""} onSelect={(slug) => update({ access: slug ? [slug] : [] })} renderLabel={(slug) => slug === "free" ? "免费" : slug === "vip" ? "会员" : slug} />
           <SingleSelectDropdown label="内容类型" options={tax.genres} selected={filters.genre || ""} onSelect={(slug) => update({ genre: slug })} renderLabel={(slug) => GENRE_LABELS[slug] || slug} />
-          <SingleSelectDropdown label="片段时长" options={tax.durations} selected={filters.duration || ""} onSelect={(slug) => update({ duration: slug })} renderLabel={(slug) => DURATION_LABELS[slug] || slug} />
+          <SingleSelectDropdown label="来源" options={tax.durations} selected={filters.duration || ""} onSelect={(slug) => update({ duration: slug })} />
           {hasAnyFilter && (
             <div style={{ display: "flex", alignItems: "flex-end" }}>
               <button onClick={clearAll} className="clearBtn">清空筛选</button>
@@ -459,6 +371,7 @@ export default function FiltersClient({ filters, onFiltersChange, initialTaxonom
 
         <ShowFilter
           shows={tax.shows || []}
+          sources={tax.durations || []}
           selectedShows={filters.show || []}
           showSearch={filters.showSearch || ""}
           onToggleShow={(slug) => update({ show: toggleInArray(filters.show, slug) })}
