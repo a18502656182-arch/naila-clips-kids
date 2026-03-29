@@ -107,7 +107,7 @@ export async function POST(req) {
     const {
       title, description, video_url, cover_url, duration_sec,
       access_tier, difficulty_slug, topic_slugs, channel_slugs,
-      details_json, upload_time, youtube_url,
+      details_json, upload_time, youtube_url, taxonomy_hints,
     } = body;
 
     const { data: clip, error: clipErr } = await db
@@ -138,7 +138,7 @@ export async function POST(req) {
       if (detErr) return NextResponse.json({ error: detErr.message }, { status: 500 });
     }
 
-    await syncTaxonomies(db, clip.id, difficulty_slug, topic_slugs, channel_slugs);
+    await syncTaxonomies(db, clip.id, difficulty_slug, topic_slugs, channel_slugs, taxonomy_hints || {});
     await db.rpc("refresh_clips_view");
     revalidateTag("clips_view:all");
     revalidateTag("clips_view:featured");
@@ -151,7 +151,7 @@ export async function POST(req) {
     const {
       id, title, description, video_url, cover_url, duration_sec,
       access_tier, difficulty_slug, topic_slugs, channel_slugs,
-      details_json, youtube_url, upload_time,
+      details_json, youtube_url, upload_time, taxonomy_hints,
     } = body;
 
     const updatePayload = {};
@@ -199,7 +199,7 @@ export async function POST(req) {
       const finalTopics = hasTopics ? topic_slugs : currentTopics;
       const finalChannels = hasChannels ? channel_slugs : currentChannels;
 
-      await syncTaxonomies(db, id, finalDifficulty, finalTopics, finalChannels);
+      await syncTaxonomies(db, id, finalDifficulty, finalTopics, finalChannels, taxonomy_hints || {});
     }
 
     await db.rpc("refresh_clips_view");
@@ -462,11 +462,34 @@ export async function GET(req) {
 }
 
 // ── 工具函数：同步 taxonomies ──
-async function syncTaxonomies(db, clip_id, difficulty_slug, topic_slugs, channel_slugs) {
+// taxonomy_hints: { [slug]: type } — 前端传来的 slug→type 映射，优先使用
+async function syncTaxonomies(db, clip_id, difficulty_slug, topic_slugs, channel_slugs, taxonomy_hints = {}) {
+  // 查出所有相关 slug 在数据库中已有的 type
+  const allSlugs = [...(topic_slugs || []), ...(channel_slugs || [])];
+  let dbTypeMap = {};
+  if (allSlugs.length > 0) {
+    const { data: existing } = await db
+      .from("taxonomies")
+      .select("type, slug")
+      .in("slug", allSlugs);
+    (existing || []).forEach((r) => { dbTypeMap[r.slug] = r.type; });
+  }
+
+  const resolveType = (slug, fallback) => {
+    // 优先用前端传来的 hints，其次用数据库已有的，最后用 fallback
+    if (taxonomy_hints[slug]) return taxonomy_hints[slug];
+    if (dbTypeMap[slug]) return dbTypeMap[slug];
+    return fallback;
+  };
+
   const toUpsert = [];
   if (difficulty_slug) toUpsert.push({ type: "difficulty", slug: difficulty_slug });
-  (topic_slugs || []).forEach((s) => toUpsert.push({ type: "topic", slug: s }));
-  (channel_slugs || []).forEach((s) => toUpsert.push({ type: "channel", slug: s }));
+  (topic_slugs || []).forEach((s) => {
+    toUpsert.push({ type: resolveType(s, "genre"), slug: s });
+  });
+  (channel_slugs || []).forEach((s) => {
+    toUpsert.push({ type: resolveType(s, "show"), slug: s });
+  });
   if (toUpsert.length > 0) {
     await db.from("taxonomies").upsert(toUpsert, { onConflict: "type,slug", ignoreDuplicates: true });
   }
