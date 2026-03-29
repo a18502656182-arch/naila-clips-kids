@@ -52,18 +52,45 @@ async function fetchAllClips() {
 
 async function fetchTaxonomies() {
   const supabase = getSupabaseAdmin();
-  const { data: taxRows, error } = await supabase
-    .from("taxonomies")
-    .select("type, slug")
-    .order("type", { ascending: true })
-    .order("slug", { ascending: true });
+  const [{ data: taxRows, error }, { data: clipRows }] = await Promise.all([
+    supabase.from("taxonomies").select("type, slug").order("type").order("slug"),
+    supabase.from("clips_view").select("topic_slugs, channel_slugs"),
+  ]);
   if (error) return { difficulties: [], genres: [], durations: [], shows: [] };
   const rows = taxRows || [];
+
+  // 来源 slug 集合（type=duration，改名来源后依然是这个 type）
+  const sourceSlugs = new Set(rows.filter((t) => t.type === "duration").map((t) => t.slug));
+
+  // 投票：统计每个剧集在所有视频里搭配了哪些来源标签，取出现最多的
+  const showSourceVotes = {};
+  (clipRows || []).forEach((clip) => {
+    const shows = Array.isArray(clip.channel_slugs) ? clip.channel_slugs : [];
+    const sources = Array.isArray(clip.topic_slugs)
+      ? clip.topic_slugs.filter((s) => sourceSlugs.has(s))
+      : [];
+    if (sources.length === 0) return;
+    shows.forEach((show) => {
+      if (!showSourceVotes[show]) showSourceVotes[show] = {};
+      sources.forEach((src) => {
+        showSourceVotes[show][src] = (showSourceVotes[show][src] || 0) + 1;
+      });
+    });
+  });
+
+  // 每个 show 取得票最多的来源
+  const showSourceMap = {};
+  Object.entries(showSourceVotes).forEach(([show, votes]) => {
+    showSourceMap[show] = Object.entries(votes).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+  });
+
   return {
     difficulties: rows.filter((t) => t.type === "difficulty").map((t) => ({ slug: t.slug })),
     genres: rows.filter((t) => t.type === "genre" || t.type === "topic").map((t) => ({ slug: t.slug })),
     durations: rows.filter((t) => t.type === "duration").map((t) => ({ slug: t.slug })),
-    shows: rows.filter((t) => t.type === "show" || t.type === "channel").map((t) => ({ slug: t.slug })),
+    shows: rows
+      .filter((t) => t.type === "show" || t.type === "channel")
+      .map((t) => ({ slug: t.slug, source: showSourceMap[t.slug] || null })),
   };
 }
 
