@@ -210,28 +210,28 @@ export default function HowItWorks() {
       <div className="howGrid">
         <div className="howHeader">
           <div className="howBadge">💡 怎么学最有效？</div>
-          <h2 className="howTitle">一条短片的<br className="desktop-br"/>完整学习闭环</h2>
-          <div className="howSub">看懂不是目的，能张口说出来才是。</div>
+          <h2 className="howTitle">一段剧情的<br className="desktop-br"/>完整学习闭环</h2>
+          <div className="howSub">听懂剧情只是开始，能开口说才是目标。</div>
         </div>
 
         <div className="stepsGrid">
           <StepCard
             index="01"
             icon="🎧"
-            title="原声视频找语感"
-            desc="看油管真实短片，先挑战一下不看字幕，在真实场景里感受老外怎么说话。"
+            title="原声影视找语感"
+            desc="看英美剧真实片段，先挑战不看字幕，在原声场景里感受母语者的表达节奏。"
           />
           <StepCard
             index="02"
             icon="✨"
-            title="精读查漏存单词"
-            desc="听不懂打开双语字幕。遇到好用的生词和表达，一键收藏到专属词汇本。"
+            title="精读查漏存词汇"
+            desc="听不懂打开双语字幕。遇到地道的生词和表达，一键收藏到专属词汇卡片库。"
           />
           <StepCard
             index="03"
             icon="🎮"
             title="玩闯关记手帐"
-            desc="光看不练假把式。去大厅把生词玩成通关游戏，最后在手帐打卡今日战绩。"
+            desc="光看不练假把式。用收藏的词汇玩通关游戏，最后在学习手帐打卡今日战绩。"
           />
         </div>
       </div>
