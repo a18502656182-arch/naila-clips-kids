@@ -175,7 +175,7 @@ export default async function Page() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                剧场英语
+                影视英语场景库
               </div>
               <div
                 style={{
