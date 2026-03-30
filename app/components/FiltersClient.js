@@ -203,7 +203,9 @@ function ShowDrawer({ shows, sources, onClose }) {
 }
 
 // ── 剧名行：热门标签 + 全目录按钮 ────────────────────────
+// 电脑显示10个，手机/pad显示5个（通过 CSS class 控制）
 const HOT_COUNT = 10;
+const HOT_COUNT_MOBILE = 5;
 
 // 云标签循环配色（未选中状态）
 const TAG_COLORS = [
@@ -225,22 +227,33 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onToggleShow, o
     return shows.filter((s) => s.slug.toLowerCase().includes(showSearch.toLowerCase()));
   }, [shows, showSearch]);
 
-  // 已选的优先展示，再补满 HOT_COUNT 个
-  const hotShows = useMemo(() => {
-    const selected = shows.filter((s) => selectedShows.includes(s.slug));
-    const rest = shows.filter((s) => !selectedShows.includes(s.slug));
-    return [...selected, ...rest].slice(0, HOT_COUNT);
-  }, [shows, selectedShows]);
+  // 固定取前 HOT_COUNT 个，顺序不变；手机端通过 className 隐藏第6-10个
+  const hotShows = useMemo(() => shows.slice(0, HOT_COUNT), [shows]);
 
   const displayShows = showSearch.trim() ? filteredShows : hotShows;
 
+  // 单选：点已选的取消，点其他的切换到新的
+  function handleSelectShow(slug) {
+    if (selectedShows.includes(slug)) {
+      onToggleShow(slug); // 取消
+    } else {
+      // 先清除已有选中，再选新的
+      selectedShows.forEach((s) => onToggleShow(s));
+      onToggleShow(slug);
+    }
+  }
+
   return (
     <div style={{ marginTop: 12 }}>
+      <style>{`
+        .showTagMobileHide { display: inline-block; }
+        @media (max-width: 960px) { .showTagMobileHide { display: none !important; } }
+      `}</style>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
         <span style={{ fontSize: 12, color: THEME.colors.faint }}>剧集筛选</span>
         {selectedShows.length > 0 && (
           <span onClick={onClearShows} style={{ fontSize: 11, color: THEME.colors.accent, cursor: "pointer" }}>
-            清空已选 ({selectedShows.length})
+            清空已选
           </span>
         )}
       </div>
@@ -262,18 +275,23 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onToggleShow, o
         {displayShows.map((s, i) => {
           const isSelected = selectedShows.includes(s.slug);
           const palette = TAG_COLORS[i % TAG_COLORS.length];
+          // 第6-10个（index 5-9）在手机端隐藏，搜索结果不受限制
+          const hiddenOnMobile = !showSearch.trim() && i >= HOT_COUNT_MOBILE;
           return (
             <span
               key={s.slug}
-              onClick={() => onToggleShow(s.slug)}
+              onClick={() => handleSelectShow(s.slug)}
+              className={hiddenOnMobile ? "showTagMobileHide" : undefined}
               style={{
-                padding: "5px 13px", borderRadius: 999, fontSize: 12, cursor: "pointer",
-                userSelect: "none", transition: "all 0.15s", whiteSpace: "nowrap",
+                padding: isSelected ? "6px 15px" : "5px 13px",
+                borderRadius: 999, fontSize: isSelected ? 13 : 12, cursor: "pointer",
+                userSelect: "none", transition: "all 0.18s", whiteSpace: "nowrap",
                 fontWeight: 700,
-                border: `1px solid ${isSelected ? THEME.colors.accent : palette.border}`,
-                background: isSelected ? "rgba(79,70,229,0.15)" : palette.bg,
-                color: isSelected ? THEME.colors.accent : palette.color,
-                boxShadow: isSelected ? "0 0 0 2px rgba(99,102,241,0.18)" : "none",
+                border: `1.5px solid ${isSelected ? THEME.colors.accent : palette.border}`,
+                background: isSelected ? THEME.colors.accent : palette.bg,
+                color: isSelected ? "#fff" : palette.color,
+                boxShadow: isSelected ? "0 2px 10px rgba(99,102,241,0.35)" : "none",
+                transform: isSelected ? "scale(1.06)" : "scale(1)",
               }}
             >{s.slug}</span>
           );
