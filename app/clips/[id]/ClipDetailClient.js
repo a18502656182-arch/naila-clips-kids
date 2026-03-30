@@ -812,7 +812,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
           const gotItem = d?.item || null;
           setItem(gotItem); setMe(d?.me || null);
           if (!gotItem) { setNotFound(true); return; }
-          if (gotItem?.title) document.title = `${gotItem.title} - 剧场英语`;
+          if (gotItem?.title) document.title = `${gotItem.title} - 影视英语场景库`;
           let dj = d?.details_json ?? null;
           if (typeof dj === "string") { try { dj = JSON.parse(dj); } catch { dj = null; } }
           if (mounted) setDetails(dj ?? null);
@@ -844,7 +844,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
       }
     }
     run();
-    return () => { mounted = false; document.title = "剧场英语"; };
+    return () => { mounted = false; document.title = "影视英语场景库"; };
   }, [clipId]);
 
   // 加载云端已保存的录音
