@@ -219,7 +219,7 @@ const TAG_COLORS = [
   { bg: "rgba(52,211,153,0.10)", color: "#065f46", border: "rgba(52,211,153,0.25)" },
 ];
 
-function ShowFilter({ shows, sources, selectedShows, showSearch, onToggleShow, onSearchChange, onClearShows }) {
+function ShowFilter({ shows, sources, selectedShows, showSearch, onSelectShow, onSearchChange, onClearShows }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const filteredShows = useMemo(() => {
@@ -232,14 +232,12 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onToggleShow, o
 
   const displayShows = showSearch.trim() ? filteredShows : hotShows;
 
-  // 单选：点已选的取消，点其他的切换到新的
+  // 单选：点已选的取消，点其他的直接切换
   function handleSelectShow(slug) {
     if (selectedShows.includes(slug)) {
-      onToggleShow(slug); // 取消
+      onSelectShow(""); // 取消选中
     } else {
-      // 先清除已有选中，再选新的
-      selectedShows.forEach((s) => onToggleShow(s));
-      onToggleShow(slug);
+      onSelectShow(slug); // 切换到新的，自动清除旧的
     }
   }
 
@@ -412,7 +410,7 @@ export default function FiltersClient({ filters, onFiltersChange, initialTaxonom
           sources={tax.durations || []}
           selectedShows={filters.show || []}
           showSearch={filters.showSearch || ""}
-          onToggleShow={(slug) => update({ show: toggleInArray(filters.show, slug) })}
+          onSelectShow={(slug) => update({ show: slug ? [slug] : [] })}
           onSearchChange={(val) => update({ showSearch: val })}
           onClearShows={() => update({ show: [], showSearch: "" })}
         />
