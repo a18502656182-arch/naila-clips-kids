@@ -8,75 +8,54 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    background: #0f1117;
-    color: #e2e8f0;
-    min-height: 100vh;
-    padding: 32px 20px;
+    background: #0f1117; color: #e2e8f0;
+    min-height: 100vh; padding: 32px 20px;
   }
   .wrap { max-width: 900px; margin: 0 auto; }
   h1 { font-size: 22px; font-weight: 800; color: #f8fafc; margin-bottom: 6px; }
   .sub { font-size: 13px; color: #64748b; margin-bottom: 28px; }
-
   .card {
-    background: #1a1d27;
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 16px;
-    padding: 22px;
-    margin-bottom: 16px;
+    background: #1a1d27; border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 22px; margin-bottom: 16px;
   }
   label { font-size: 12px; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 7px; }
-  input {
+  input, select {
     width: 100%; padding: 10px 14px;
     background: #22263a; border: 1px solid rgba(255,255,255,0.10);
     border-radius: 10px; color: #f1f5f9; font-size: 13px;
-    font-family: monospace; outline: none;
-    transition: border-color .15s;
+    font-family: monospace; outline: none; transition: border-color .15s;
   }
-  input:focus { border-color: #6366f1; }
+  input:focus, select:focus { border-color: #6366f1; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-top: 14px; }
   .warn {
-    background: rgba(239,68,68,0.10);
-    border: 1px solid rgba(239,68,68,0.25);
+    background: rgba(239,68,68,0.10); border: 1px solid rgba(239,68,68,0.25);
     border-radius: 10px; padding: 10px 14px;
     font-size: 12px; color: #fca5a5; margin-top: 14px;
   }
-
   .btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 11px 24px; border-radius: 999px; border: none;
-    font-size: 14px; font-weight: 800; cursor: pointer;
-    transition: opacity .15s;
+    font-size: 14px; font-weight: 800; cursor: pointer; transition: opacity .15s;
   }
   .btn:disabled { opacity: 0.45; cursor: not-allowed; }
   .btn-primary { background: #6366f1; color: #fff; }
   .btn-ghost { background: #22263a; color: #94a3b8; border: 1px solid rgba(255,255,255,0.10); }
   .btn-green { background: #10b981; color: #fff; }
   .btns { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
-
   .status { font-size: 13px; color: #64748b; margin-top: 12px; min-height: 20px; }
   .status.ok { color: #34d399; }
   .status.err { color: #f87171; }
-
-  table {
-    width: 100%; border-collapse: collapse; font-size: 12px;
-    margin-top: 16px;
-  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
   th {
     text-align: left; padding: 10px 12px;
-    background: #22263a; color: #64748b; font-weight: 700;
-    font-size: 11px; letter-spacing: .4px;
+    background: #22263a; color: #64748b; font-weight: 700; font-size: 11px; letter-spacing: .4px;
   }
   th:first-child { border-radius: 8px 0 0 8px; }
   th:last-child { border-radius: 0 8px 8px 0; }
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    vertical-align: middle;
-  }
+  td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: rgba(255,255,255,0.02); }
-
   .filename { font-family: monospace; color: #a5b4fc; font-size: 11px; word-break: break-all; }
   .hls { font-family: monospace; color: #67e8f9; font-size: 11px; word-break: break-all; }
   .copy-btn {
@@ -86,30 +65,17 @@
   }
   .copy-btn:hover { background: #2d3150; color: #e2e8f0; }
   .copy-btn.copied { background: #065f46; color: #34d399; border-color: #065f46; }
-
   .summary {
     display: flex; gap: 16px; flex-wrap: wrap;
     padding: 14px 16px; background: #22263a;
-    border-radius: 12px; margin-bottom: 14px;
-    font-size: 13px;
+    border-radius: 12px; margin-bottom: 14px; font-size: 13px;
   }
   .summary span { color: #64748b; }
   .summary b { color: #f1f5f9; }
-
   .filter-row {
-    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-    margin-bottom: 12px;
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px;
   }
-  .filter-row input {
-    width: auto; flex: 1; min-width: 200px;
-    padding: 8px 12px; font-family: inherit;
-  }
-  .badge {
-    display: inline-block; padding: 2px 8px; border-radius: 999px;
-    font-size: 10px; font-weight: 800;
-    background: rgba(99,102,241,0.15); color: #818cf8;
-    border: 1px solid rgba(99,102,241,0.25);
-  }
+  .filter-row input { width: auto; flex: 1; min-width: 200px; padding: 8px 12px; font-family: inherit; }
 </style>
 </head>
 <body>
@@ -128,11 +94,30 @@
         <input id="apiToken" type="password" placeholder="cfat_..." />
       </div>
     </div>
+
+    <div class="row3">
+      <div>
+        <label>最多拉取页数（每页100条）</label>
+        <select id="maxPages">
+          <option value="1">1 页（最多100条）</option>
+          <option value="2">2 页（最多200条）</option>
+          <option value="5">5 页（最多500条）</option>
+          <option value="10" selected>10 页（最多1000条）</option>
+          <option value="20">20 页（最多2000条）</option>
+          <option value="50">50 页（最多5000条）</option>
+        </select>
+      </div>
+      <div>
+        <label>文件名关键词过滤（可选）</label>
+        <input id="prefixFilter" placeholder="例如：老友记、Twilight" style="font-family:inherit" />
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="fetchAll()">🚀 开始导出</button>
+      </div>
+    </div>
+
     <div class="warn">
       ⚠️ 用完后请去 Cloudflare → 管理账户 → 账户 API 令牌 删除此 Token，避免泄露风险
-    </div>
-    <div class="btns">
-      <button class="btn btn-primary" onclick="fetchAll()">🚀 开始导出</button>
     </div>
     <div class="status" id="status"></div>
   </div>
@@ -140,13 +125,11 @@
   <div id="resultArea" style="display:none">
     <div class="card">
       <div class="summary" id="summary"></div>
-
       <div class="filter-row">
         <input id="filterInput" placeholder="搜索文件名…" oninput="renderTable()" />
         <button class="btn btn-green" onclick="exportCSV()">⬇️ 导出 CSV</button>
-        <button class="btn btn-ghost" onclick="copyAll()">📋 复制全部 HLS 链接</button>
+        <button class="btn btn-ghost" onclick="copyAll()">📋 复制全部</button>
       </div>
-
       <table>
         <thead>
           <tr>
@@ -182,22 +165,23 @@ function fmtDuration(sec) {
 async function fetchAll() {
   const accountId = document.getElementById('accountId').value.trim();
   const token = document.getElementById('apiToken').value.trim();
+  const maxPages = parseInt(document.getElementById('maxPages').value);
+  const prefix = document.getElementById('prefixFilter').value.trim().toLowerCase();
+
   if (!accountId || !token) { setStatus('请填写 Account ID 和 API Token', 'err'); return; }
 
   document.querySelector('.btn-primary').disabled = true;
   document.getElementById('resultArea').style.display = 'none';
   allVideos = [];
 
-  let page = 1;
-  let total = 0;
-
   try {
-    while (true) {
-      setStatus(`正在拉取第 ${page} 页数据…`);
+    for (let page = 1; page <= maxPages; page++) {
+      setStatus(`正在拉取第 ${page} / ${maxPages} 页…`);
+
       const res = await fetch(
-  `/api/cf-stream?account_id=${accountId}&page=${page}`,
-  { headers: { 'x-cf-token': token } }
-);
+        `/api/cf-stream?account_id=${accountId}&page=${page}`,
+        { headers: { 'x-cf-token': token } }
+      );
       const data = await res.json();
 
       if (!data.success) {
@@ -206,29 +190,42 @@ async function fetchAll() {
       }
 
       const videos = data.result || [];
-      if (videos.length === 0) break;
+
+      // 这页没数据了，提前结束
+      if (videos.length === 0) {
+        setStatus(`第 ${page} 页无数据，已全部拉取完毕`, 'ok');
+        break;
+      }
 
       videos.forEach(v => {
+        const filename = v.meta?.name || v.uid;
+        // 如果填了关键词过滤，只保留匹配的
+        if (prefix && !filename.toLowerCase().includes(prefix)) return;
         allVideos.push({
           uid: v.uid,
-          filename: v.meta?.name || v.uid,
+          filename,
           duration: v.duration,
           hls: v.playback?.hls || '',
-          created: v.created,
         });
       });
 
-      total = data.result_info?.total_count || allVideos.length;
-      setStatus(`已拉取 ${allVideos.length} / ${total} 个视频…`);
+      setStatus(`已拉取 ${page} 页，共找到 ${allVideos.length} 个视频…`);
 
-      if (videos.length < 100) break;
-      page++;
+      // 这页不足100条，说明已经是最后一页
+      if (videos.length < 100) {
+        setStatus(`✓ 全部拉取完成，共 ${allVideos.length} 个视频`, 'ok');
+        break;
+      }
+
+      // 拉完最后一页
+      if (page === maxPages) {
+        setStatus(`✓ 已拉取 ${maxPages} 页，共 ${allVideos.length} 个视频（可增加页数继续拉取）`, 'ok');
+      }
     }
 
     if (allVideos.length === 0) {
-      setStatus('没有找到任何视频', 'err');
+      setStatus('没有找到任何视频，请检查 Token 或关键词过滤', 'err');
     } else {
-      setStatus(`✓ 导出完成，共 ${allVideos.length} 个视频`, 'ok');
       allVideos.sort((a, b) => a.filename.localeCompare(b.filename));
       showResult();
     }
@@ -247,8 +244,7 @@ function getFiltered() {
 
 function renderTable() {
   const filtered = getFiltered();
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = filtered.map((v, i) => `
+  document.getElementById('tableBody').innerHTML = filtered.map((v, i) => `
     <tr>
       <td style="color:#475569">${i + 1}</td>
       <td><span class="filename">${escHtml(v.filename)}</span></td>
@@ -257,7 +253,6 @@ function renderTable() {
       <td><button class="copy-btn" onclick="copyHls(this, '${escAttr(v.hls)}')">复制</button></td>
     </tr>
   `).join('');
-
   document.getElementById('summary').innerHTML = `
     <span>总计 <b>${allVideos.length}</b> 个视频</span>
     <span>当前筛选 <b>${filtered.length}</b> 个</span>
@@ -271,8 +266,7 @@ function showResult() {
 
 function copyHls(btn, url) {
   navigator.clipboard.writeText(url).then(() => {
-    btn.textContent = '已复制';
-    btn.classList.add('copied');
+    btn.textContent = '已复制'; btn.classList.add('copied');
     setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 1500);
   });
 }
