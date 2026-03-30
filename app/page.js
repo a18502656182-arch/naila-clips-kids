@@ -62,26 +62,15 @@ async function fetchTaxonomies() {
   // 来源 slug 集合（type=duration，改名来源后依然是这个 type）
   const sourceSlugs = new Set(rows.filter((t) => t.type === "duration").map((t) => t.slug));
 
-  // 投票：统计每个剧集在所有视频里搭配了哪些来源标签，取出现最多的
-  const showSourceVotes = {};
+  // 每个视频只打一个来源标签，直接取第一次遇到的即可
+  const showSourceMap = {};
   (clipRows || []).forEach((clip) => {
     const shows = Array.isArray(clip.channel_slugs) ? clip.channel_slugs : [];
-    const sources = Array.isArray(clip.topic_slugs)
-      ? clip.topic_slugs.filter((s) => sourceSlugs.has(s))
-      : [];
-    if (sources.length === 0) return;
+    const source = (Array.isArray(clip.topic_slugs) ? clip.topic_slugs : []).find((s) => sourceSlugs.has(s)) || null;
+    if (!source) return;
     shows.forEach((show) => {
-      if (!showSourceVotes[show]) showSourceVotes[show] = {};
-      sources.forEach((src) => {
-        showSourceVotes[show][src] = (showSourceVotes[show][src] || 0) + 1;
-      });
+      if (!showSourceMap[show]) showSourceMap[show] = source;
     });
-  });
-
-  // 每个 show 取得票最多的来源
-  const showSourceMap = {};
-  Object.entries(showSourceVotes).forEach(([show, votes]) => {
-    showSourceMap[show] = Object.entries(votes).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
   });
 
   return {
@@ -186,7 +175,7 @@ export default async function Page() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                美剧英语场景库
+                剧场英语
               </div>
               <div
                 style={{
@@ -195,7 +184,7 @@ export default async function Page() {
                   color: THEME.colors.faint,
                 }}
               >
-                Real scenes · bilingual subtitles · vocabulary cards
+                Real dramas · bilingual subtitles · vocabulary cards
               </div>
             </div>
           </div>
