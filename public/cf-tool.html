@@ -195,9 +195,9 @@ async function fetchAll() {
     while (true) {
       setStatus(`正在拉取第 ${page} 页数据…`);
       const res = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream?per_page=100&page=${page}`,
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      );
+  `/api/cf-stream?account_id=${accountId}&page=${page}`,
+  { headers: { 'x-cf-token': token } }
+);
       const data = await res.json();
 
       if (!data.success) {
