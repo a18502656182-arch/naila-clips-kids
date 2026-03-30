@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloudflare Stream 批量导出 HLS</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: #0f1117;
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 32px 20px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 800; color: #f8fafc; margin-bottom: 6px; }
+  .sub { font-size: 13px; color: #64748b; margin-bottom: 28px; }
+
+  .card {
+    background: #1a1d27;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 16px;
+  }
+  label { font-size: 12px; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 7px; }
+  input {
+    width: 100%; padding: 10px 14px;
+    background: #22263a; border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 10px; color: #f1f5f9; font-size: 13px;
+    font-family: monospace; outline: none;
+    transition: border-color .15s;
+  }
+  input:focus { border-color: #6366f1; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  .warn {
+    background: rgba(239,68,68,0.10);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 12px; color: #fca5a5; margin-top: 14px;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 24px; border-radius: 999px; border: none;
+    font-size: 14px; font-weight: 800; cursor: pointer;
+    transition: opacity .15s;
+  }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-primary { background: #6366f1; color: #fff; }
+  .btn-ghost { background: #22263a; color: #94a3b8; border: 1px solid rgba(255,255,255,0.10); }
+  .btn-green { background: #10b981; color: #fff; }
+  .btns { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+
+  .status { font-size: 13px; color: #64748b; margin-top: 12px; min-height: 20px; }
+  .status.ok { color: #34d399; }
+  .status.err { color: #f87171; }
+
+  table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+    margin-top: 16px;
+  }
+  th {
+    text-align: left; padding: 10px 12px;
+    background: #22263a; color: #64748b; font-weight: 700;
+    font-size: 11px; letter-spacing: .4px;
+  }
+  th:first-child { border-radius: 8px 0 0 8px; }
+  th:last-child { border-radius: 0 8px 8px 0; }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .filename { font-family: monospace; color: #a5b4fc; font-size: 11px; word-break: break-all; }
+  .hls { font-family: monospace; color: #67e8f9; font-size: 11px; word-break: break-all; }
+  .copy-btn {
+    padding: 4px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.10);
+    background: #22263a; color: #94a3b8; font-size: 11px; cursor: pointer;
+    white-space: nowrap; transition: all .1s;
+  }
+  .copy-btn:hover { background: #2d3150; color: #e2e8f0; }
+  .copy-btn.copied { background: #065f46; color: #34d399; border-color: #065f46; }
+
+  .summary {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    padding: 14px 16px; background: #22263a;
+    border-radius: 12px; margin-bottom: 14px;
+    font-size: 13px;
+  }
+  .summary span { color: #64748b; }
+  .summary b { color: #f1f5f9; }
+
+  .filter-row {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .filter-row input {
+    width: auto; flex: 1; min-width: 200px;
+    padding: 8px 12px; font-family: inherit;
+  }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 800;
+    background: rgba(99,102,241,0.15); color: #818cf8;
+    border: 1px solid rgba(99,102,241,0.25);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>☁️ Cloudflare Stream 批量导出 HLS</h1>
+  <p class="sub">在本地浏览器运行，Token 不会上传到任何服务器</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Account ID</label>
+        <input id="accountId" placeholder="12dadb2c02f94c891..." value="12dadb2c02f94c891d7ed84f2e525145" />
+      </div>
+      <div>
+        <label>API Token（Stream 读取权限）</label>
+        <input id="apiToken" type="password" placeholder="cfat_..." />
+      </div>
+    </div>
+    <div class="warn">
+      ⚠️ 用完后请去 Cloudflare → 管理账户 → 账户 API 令牌 删除此 Token，避免泄露风险
+    </div>
+    <div class="btns">
+      <button class="btn btn-primary" onclick="fetchAll()">🚀 开始导出</button>
+    </div>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div id="resultArea" style="display:none">
+    <div class="card">
+      <div class="summary" id="summary"></div>
+
+      <div class="filter-row">
+        <input id="filterInput" placeholder="搜索文件名…" oninput="renderTable()" />
+        <button class="btn btn-green" onclick="exportCSV()">⬇️ 导出 CSV</button>
+        <button class="btn btn-ghost" onclick="copyAll()">📋 复制全部 HLS 链接</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th>文件名</th>
+            <th>时长</th>
+            <th>HLS 链接</th>
+            <th style="width:60px"></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let allVideos = [];
+
+function setStatus(msg, type = '') {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + type;
+}
+
+function fmtDuration(sec) {
+  if (!sec) return '—';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+async function fetchAll() {
+  const accountId = document.getElementById('accountId').value.trim();
+  const token = document.getElementById('apiToken').value.trim();
+  if (!accountId || !token) { setStatus('请填写 Account ID 和 API Token', 'err'); return; }
+
+  document.querySelector('.btn-primary').disabled = true;
+  document.getElementById('resultArea').style.display = 'none';
+  allVideos = [];
+
+  let page = 1;
+  let total = 0;
+
+  try {
+    while (true) {
+      setStatus(`正在拉取第 ${page} 页数据…`);
+      const res = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream?per_page=100&page=${page}`,
+        { headers: { 'Authorization': `Bearer ${token}` } }
+      );
+      const data = await res.json();
+
+      if (!data.success) {
+        setStatus('API 请求失败：' + (data.errors?.[0]?.message || JSON.stringify(data.errors)), 'err');
+        break;
+      }
+
+      const videos = data.result || [];
+      if (videos.length === 0) break;
+
+      videos.forEach(v => {
+        allVideos.push({
+          uid: v.uid,
+          filename: v.meta?.name || v.uid,
+          duration: v.duration,
+          hls: v.playback?.hls || '',
+          created: v.created,
+        });
+      });
+
+      total = data.result_info?.total_count || allVideos.length;
+      setStatus(`已拉取 ${allVideos.length} / ${total} 个视频…`);
+
+      if (videos.length < 100) break;
+      page++;
+    }
+
+    if (allVideos.length === 0) {
+      setStatus('没有找到任何视频', 'err');
+    } else {
+      setStatus(`✓ 导出完成，共 ${allVideos.length} 个视频`, 'ok');
+      allVideos.sort((a, b) => a.filename.localeCompare(b.filename));
+      showResult();
+    }
+  } catch (e) {
+    setStatus('请求出错：' + e.message, 'err');
+  }
+
+  document.querySelector('.btn-primary').disabled = false;
+}
+
+function getFiltered() {
+  const q = document.getElementById('filterInput').value.trim().toLowerCase();
+  if (!q) return allVideos;
+  return allVideos.filter(v => v.filename.toLowerCase().includes(q));
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = filtered.map((v, i) => `
+    <tr>
+      <td style="color:#475569">${i + 1}</td>
+      <td><span class="filename">${escHtml(v.filename)}</span></td>
+      <td style="color:#94a3b8;white-space:nowrap">${fmtDuration(v.duration)}</td>
+      <td><span class="hls">${escHtml(v.hls)}</span></td>
+      <td><button class="copy-btn" onclick="copyHls(this, '${escAttr(v.hls)}')">复制</button></td>
+    </tr>
+  `).join('');
+
+  document.getElementById('summary').innerHTML = `
+    <span>总计 <b>${allVideos.length}</b> 个视频</span>
+    <span>当前筛选 <b>${filtered.length}</b> 个</span>
+  `;
+}
+
+function showResult() {
+  document.getElementById('resultArea').style.display = 'block';
+  renderTable();
+}
+
+function copyHls(btn, url) {
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = '已复制';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+function copyAll() {
+  const filtered = getFiltered();
+  const text = filtered.map(v => `${v.filename}\t${v.hls}`).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    alert(`已复制 ${filtered.length} 条（文件名 + HLS 链接，Tab 分隔）`);
+  });
+}
+
+function exportCSV() {
+  const filtered = getFiltered();
+  const rows = [['文件名', '时长(秒)', 'HLS链接', 'Video UID']];
+  filtered.forEach(v => rows.push([v.filename, v.duration || '', v.hls, v.uid]));
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `stream_hls_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return String(s).replace(/'/g, "\\'"); }
+</script>
+</body>
+</html>
