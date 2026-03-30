@@ -1,12 +1,12 @@
 import PenguinWrapper from "./components/PenguinWrapper";
 
 export const metadata = {
-  title: "油管英语场景库 — 精选场景短片·双语字幕·词汇卡片",
-  description: "精选 YouTube 场景短片，配合双语字幕与词汇卡片。用更低成本、更高频率的方式，持续把输入变成输出，把口语练到敢开口。",
-  keywords: "英语学习, YouTube场景, 双语字幕, 词汇卡片, 口语练习, 英语听力",
+  title: "剧场英语 — 精选英美剧片段·双语字幕·词汇卡片",
+  description: "精选英美剧、电影、动画真实片段，配合双语字幕与词汇卡片。用地道的影视语料，持续把听力输入变成口语输出，把英语练到真正敢开口。",
+  keywords: "英语学习, 英美剧, 双语字幕, 词汇卡片, 口语练习, 英语听力, 美剧英语",
   openGraph: {
-    title: "油管英语场景库",
-    description: "精选 YouTube 场景短片，配合双语字幕与词汇卡片",
+    title: "剧场英语",
+    description: "精选英美剧、电影、动画真实片段，配合双语字幕与词汇卡片",
     type: "website",
   },
 };
