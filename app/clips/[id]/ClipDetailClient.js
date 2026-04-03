@@ -229,11 +229,11 @@ function Card({ children, style }) {
 function IconBtn({ title, onClick, active, children }) {
   return (
     <button type="button" title={title} onClick={onClick} style={{
-      width: 30, height: 30, borderRadius: THEME.radii.pill,
+      width: 34, height: 34, borderRadius: THEME.radii.pill,
       border: `1px solid ${active ? "#bfe3ff" : THEME.colors.border}`,
       background: active ? "#f3fbff" : THEME.colors.surface,
-      cursor: "pointer", display: "grid", placeItems: "center", fontSize: 15,
-      flexShrink: 0,
+      cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+      fontSize: 16, lineHeight: 1, flexShrink: 0,
     }}>{children}</button>
   );
 }
@@ -407,7 +407,7 @@ function VocabCard({ v, kind, showZh, segments, onLocate, favSet, onToggleFav })
           <div style={{ fontSize: 17, fontWeight: 900, wordBreak: "break-word" }}>{term || "-"}</div>
           {v.ipa && <div style={{ marginTop: 4, fontSize: 12, color: THEME.colors.faint }}>/ {v.ipa} /</div>}
         </div>
-        <div style={{ display: "flex", gap: 4, flexShrink: 0, flexWrap: "nowrap", alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "nowrap", alignItems: "center" }}>
           <IconBtn title="听发音" onClick={() => v.audio_url ? new Audio(v.audio_url).play() : speakEn(term)}>🔊</IconBtn>
           <IconBtn title="收藏" active={isFav} onClick={() => onToggleFav(term, kind, v)}>{isFav ? "❤️" : "🤍"}</IconBtn>
           <IconBtn title="定位到字幕" onClick={() => {
