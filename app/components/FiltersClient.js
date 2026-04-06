@@ -85,21 +85,15 @@ function SingleSelectDropdown({ label, options, selected, onSelect, renderLabel 
   );
 }
 
-// ── 剧集目录抽屉（纯展示）────────────────────────────────
-function ShowDrawer({ shows, sources, onClose }) {
-  // sources: [{ slug }]  e.g. [{ slug:"美剧" }, { slug:"电影" }]
-  // shows:   [{ slug, source }]
-
-  // 默认选第一个来源 tab
+// ── 剧集目录抽屉（点击筛选）────────────────────────────────
+function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
   const [activeSource, setActiveSource] = useState(sources[0]?.slug || null);
 
-  // 当前 tab 下的剧集
   const displayShows = useMemo(() => {
     if (!activeSource) return shows;
     return shows.filter((s) => s.source === activeSource);
   }, [shows, activeSource, sources]);
 
-  // Esc 关闭 + body 锁定
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", onKey);
@@ -110,9 +104,18 @@ function ShowDrawer({ shows, sources, onClose }) {
     };
   }, [onClose]);
 
+  function handleSelectShow(slug) {
+    // 点已选中的再点一次取消筛选，否则切换到新剧集
+    if (selectedShows?.includes(slug)) {
+      onSelectShow("");
+    } else {
+      onSelectShow(slug);
+    }
+    onClose();
+  }
+
   return (
     <>
-      {/* 遮罩 */}
       <div
         onClick={onClose}
         style={{
@@ -120,8 +123,6 @@ function ShowDrawer({ shows, sources, onClose }) {
           background: "rgba(11,18,32,0.35)", backdropFilter: "blur(2px)",
         }}
       />
-
-      {/* 抽屉 */}
       <div style={{
         position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 201,
         width: "min(420px, 96vw)", background: "#fff",
@@ -133,24 +134,23 @@ function ShowDrawer({ shows, sources, onClose }) {
           @keyframes drawerSlideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
           .drawerBody::-webkit-scrollbar { width: 4px; }
           .drawerBody::-webkit-scrollbar-thumb { background: rgba(11,18,32,0.12); border-radius: 4px; }
+          .drawerItem { display: flex; align-items: center; gap: 14px; padding: 11px 20px; border-bottom: 1px solid rgba(15,23,42,0.06); cursor: pointer; transition: background 0.12s; }
+          .drawerItem:hover { background: rgba(99,102,241,0.06) !important; }
         `}</style>
 
-        {/* 头部 */}
         <div style={{
           padding: "18px 20px 14px",
-          borderBottom: `1px solid ${THEME.colors.border}`,
+          borderBottom: `1px solid rgba(15,23,42,0.08)`,
           flexShrink: 0,
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-            <div style={{ fontSize: 17, fontWeight: 900, color: THEME.colors.ink }}>🎬 全部剧集目录</div>
+            <div style={{ fontSize: 17, fontWeight: 900, color: "#0b1220" }}>🎬 全部剧集目录</div>
             <button onClick={onClose} style={{
-              width: 32, height: 32, borderRadius: "50%", border: `1px solid ${THEME.colors.border}`,
+              width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(15,23,42,0.08)",
               background: "#f4f6fb", cursor: "pointer", fontSize: 16,
-              display: "grid", placeItems: "center", color: THEME.colors.muted,
+              display: "flex", alignItems: "center", justifyContent: "center", color: "#94a3b8",
             }}>✕</button>
           </div>
-
-          {/* 来源 Tab */}
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             {sources.map((src) => {
               const isActive = activeSource === src.slug;
@@ -161,39 +161,48 @@ function ShowDrawer({ shows, sources, onClose }) {
                   style={{
                     padding: "6px 16px", borderRadius: 999, fontSize: 13, fontWeight: 700,
                     cursor: "pointer", border: "none", transition: "all 0.15s",
-                    background: isActive ? THEME.colors.accent : "#f0f1f8",
-                    color: isActive ? "#fff" : THEME.colors.muted,
+                    background: isActive ? "#4f46e5" : "#f0f1f8",
+                    color: isActive ? "#fff" : "#94a3b8",
                   }}
                 >{src.slug}</button>
               );
             })}
           </div>
+          <div style={{ marginTop: 10, fontSize: 12, color: "rgba(11,18,32,0.38)" }}>点击剧名筛选该剧集片段，再次点击取消</div>
         </div>
 
-        {/* 剧集列表目录 */}
-        <div className="drawerBody" style={{ flex: 1, overflowY: "auto", padding: "8px 0 24px" }}>
+        <div className="drawerBody" style={{ flex: 1, overflowY: "auto", padding: "4px 0 24px" }}>
           {displayShows.length === 0 ? (
-            <div style={{ textAlign: "center", padding: 40, color: THEME.colors.faint, fontSize: 13 }}>
+            <div style={{ textAlign: "center", padding: 40, color: "rgba(11,18,32,0.38)", fontSize: 13 }}>
               暂无剧集
             </div>
           ) : (
             <div>
-              {displayShows.map((s, i) => (
-                <div key={s.slug} style={{
-                  display: "flex", alignItems: "center", gap: 14,
-                  padding: "11px 20px",
-                  borderBottom: `1px solid ${THEME.colors.border}`,
-                  background: i % 2 === 0 ? "#fff" : "#fafbfd",
-                }}>
-                  <span style={{
-                    minWidth: 22, fontSize: 12, fontWeight: 700,
-                    color: THEME.colors.faint, textAlign: "right",
-                  }}>{i + 1}</span>
-                  <span style={{ fontSize: 14, color: THEME.colors.ink, fontWeight: 500 }}>
-                    {s.slug}
-                  </span>
-                </div>
-              ))}
+              {displayShows.map((s, i) => {
+                const isSelected = selectedShows?.includes(s.slug);
+                return (
+                  <div
+                    key={s.slug}
+                    onClick={() => handleSelectShow(s.slug)}
+                    className="drawerItem"
+                    style={{ background: isSelected ? "rgba(99,102,241,0.10)" : i % 2 === 0 ? "#fff" : "#fafbfd" }}
+                  >
+                    <span style={{
+                      minWidth: 22, fontSize: 12, fontWeight: 700,
+                      color: isSelected ? "#4f46e5" : "rgba(11,18,32,0.38)", textAlign: "right",
+                    }}>{i + 1}</span>
+                    <span style={{
+                      fontSize: 14, fontWeight: isSelected ? 700 : 500,
+                      color: isSelected ? "#4f46e5" : "#0b1220", flex: 1,
+                    }}>
+                      {s.slug}
+                    </span>
+                    {isSelected && (
+                      <span style={{ fontSize: 11, color: "#4f46e5", fontWeight: 700, whiteSpace: "nowrap" }}>筛选中 ✓</span>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -315,6 +324,8 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onSelectShow, o
         <ShowDrawer
           shows={shows}
           sources={sources}
+          selectedShows={selectedShows}
+          onSelectShow={onSelectShow}
           onClose={() => setDrawerOpen(false)}
         />
       )}
