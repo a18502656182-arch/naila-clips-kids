@@ -111,6 +111,9 @@ export default function RedeemPage() {
         setMsg(errMap[j.error] || j.error || "兑换失败"); return;
       }
       setSuccess({ plan: j.plan, expires_at: j.expires_at });
+      try { window.dispatchEvent(new Event("member_activated")); } catch {}
+      // 跳转前更新缓存，避免主页闪烁
+      try { sessionStorage.setItem("buy_btn_is_member", "1"); } catch {}
       setTimeout(() => router.push(redirectTo), 2200);
     } catch (err) {
       setMsg(err.message || "网络错误，请重试");
