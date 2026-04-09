@@ -125,7 +125,7 @@ export default function BuyResultPage() {
               }}>
                 <span style={{ fontSize: 22, flexShrink: 0 }}>⚠️</span>
                 <div style={{ fontSize: 13, color: "#991b1b", fontWeight: 800, lineHeight: 1.6 }}>
-                  请立即截图或复制保存兑换码！关闭页面后将无法再次查看，丢失后需联系客服找回。
+                  请立即截图或复制保存兑换码！丢失后需联系客服找回。
                 </div>
               </div>
 
