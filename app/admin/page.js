@@ -99,15 +99,31 @@ export default async function AdminPage() {
 
   const userIds = recentAuthUsers.map((u) => u.id);
 
-  const [{ data: subs }, { data: profiles }] = await Promise.all([
+  const [{ data: subs }, { data: profiles }, { data: allProfiles }] = await Promise.all([
     supabase.from("subscriptions").select("user_id,plan,expires_at,status").in("user_id", userIds),
     supabase.from("profiles").select("user_id,username,used_code").in("user_id", userIds),
+    // 拉所有 profiles 用于订单关联（找谁用了哪个兑换码）
+    supabase.from("profiles").select("user_id,username,used_code"),
   ]);
 
   const subMap = {};
   (subs || []).forEach((s) => { subMap[s.user_id] = s; });
   const profileMap = {};
   (profiles || []).forEach((p) => { profileMap[p.user_id] = p; });
+
+  // 构建 used_code → username 映射，用于订单显示谁兑换了
+  const codeToUserMap = {};
+  (allProfiles || []).forEach((p) => {
+    if (p.used_code) {
+      codeToUserMap[p.used_code] = p.username || p.user_id?.slice(0, 8) || "未知用户";
+    }
+  });
+
+  // 给订单附上兑换人信息
+  const ordersWithUser = (orders || []).map((o) => ({
+    ...o,
+    redeemed_by: o.status === "paid" ? (codeToUserMap[o.redeem_code] || null) : null,
+  }));
 
   const usersWithSub = recentAuthUsers.map((u) => ({
     id: u.id,
@@ -125,7 +141,7 @@ export default async function AdminPage() {
       initialTaxonomies={taxonomies || []}
       initialRedeemCodes={redeemCodes || []}
       initialUsers={usersWithSub}
-      initialOrders={orders || []}
+      initialOrders={ordersWithUser}
       token={token}
       stats={{
         userCount,
