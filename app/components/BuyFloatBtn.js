@@ -1,13 +1,18 @@
 "use client";
 // app/components/BuyFloatBtn.js
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { createSupabaseBrowserClient } from "../../utils/supabase/client";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "";
 const CACHE_KEY = "buy_btn_is_member";
 
+// 这些页面本身有会员拦截，不需要显示悬浮块
+const EXCLUDED_PATHS = ["/journal", "/bookmarks", "/practice"];
+
 export default function BuyFloatBtn() {
-  // 先读缓存决定初始状态，避免闪烁
+  const pathname = usePathname();
+
   const [hidden, setHidden] = useState(() => {
     try {
       return sessionStorage.getItem(CACHE_KEY) === "1";
@@ -23,7 +28,6 @@ export default function BuyFloatBtn() {
       const res = await fetch(`${API_BASE}/api/me`, { cache: "no-store", headers });
       const data = await res.json();
       const isMember = !!data?.is_member;
-      // 写入缓存
       try { sessionStorage.setItem(CACHE_KEY, isMember ? "1" : "0"); } catch {}
       setHidden(isMember);
     } catch {
@@ -39,7 +43,7 @@ export default function BuyFloatBtn() {
       if (event === "SIGNED_OUT") {
         try {
           localStorage.removeItem("sb_access_token");
-          sessionStorage.setItem(CACHE_KEY, "0"); // 清缓存
+          sessionStorage.setItem(CACHE_KEY, "0");
         } catch {}
         setHidden(false);
       } else if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
@@ -53,6 +57,8 @@ export default function BuyFloatBtn() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // 排除特定页面
+  if (EXCLUDED_PATHS.some(p => pathname?.startsWith(p))) return null;
   if (hidden) return null;
 
   return (
