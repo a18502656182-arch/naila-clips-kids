@@ -64,6 +64,7 @@ export default async function AdminPage() {
     { data: redeemCodes },
     { count: memberCount },
     { data: authUsersData },
+    { data: orders },
   ] = await Promise.all([
     supabase
       .from("clips_view")
@@ -76,13 +77,17 @@ export default async function AdminPage() {
       .select("code,plan,days,max_uses,used_count,is_active,created_at,expires_at")
       .order("created_at", { ascending: false })
       .limit(200),
-    // 活跃会员数：永久卡(expires_at IS NULL) + 未过期的有效期卡
     supabase
       .from("subscriptions")
       .select("*", { count: "exact", head: true })
       .eq("status", "active")
       .or("expires_at.is.null,expires_at.gt." + new Date().toISOString()),
     supabase.auth.admin.listUsers({ perPage: 1000 }),
+    supabase
+      .from("orders")
+      .select("id,out_trade_no,plan,days,amount,redeem_code,status,created_at,paid_at")
+      .order("created_at", { ascending: false })
+      .limit(200),
   ]);
 
   const allAuthUsers = authUsersData?.users || [];
@@ -120,6 +125,7 @@ export default async function AdminPage() {
       initialTaxonomies={taxonomies || []}
       initialRedeemCodes={redeemCodes || []}
       initialUsers={usersWithSub}
+      initialOrders={orders || []}
       token={token}
       stats={{
         userCount,
