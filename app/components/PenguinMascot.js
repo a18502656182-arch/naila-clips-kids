@@ -335,7 +335,7 @@ export default function PenguinMascot() {
         @keyframes pBounce { 0%,100%{transform:translateY(0)} 30%{transform:translateY(-10px)} 60%{transform:translateY(-4px)} }
         @keyframes bIn { 0%{opacity:0;transform:translateY(8px) scale(0.94)} 100%{opacity:1;transform:translateY(0) scale(1)} }
         .penguin-root { display: none !important; }
-        @media (min-width: 768px) { .penguin-root { display: flex !important; } }
+        @media (min-width: 480px) { .penguin-root { display: flex !important; } }
       `}</style>
 
       <div className="penguin-root" style={{ position: "fixed", left: pos.left, top: pos.top, zIndex: 9000, flexDirection: "column", alignItems: "center", gap: 4, userSelect: "none", WebkitUserSelect: "none" }}>
@@ -357,43 +357,44 @@ export default function PenguinMascot() {
           </div>
         )}
 
-        {/* 人工客服徽章：贴在企鹅右上角 */}
-        <div style={{ position: "relative", display: "inline-block" }}>
-          {!minimized && (
-            <button
-              onClick={(e) => { e.stopPropagation(); setShowWechat(true); }}
-              style={{
-                position: "absolute", top: -6, right: -6, zIndex: 1,
-                fontSize: 10, fontWeight: 900, color: "#fff",
-                background: "linear-gradient(135deg, #059669, #10b981)",
-                border: "2px solid #fff",
-                borderRadius: 999, padding: "2px 7px",
-                cursor: "pointer", whiteSpace: "nowrap",
-                boxShadow: "0 2px 8px rgba(16,185,129,0.45)",
-                lineHeight: 1.5,
-              }}
-            >人工客服</button>
-          )}
-          {/* 企鹅 */}
-          <div
-            ref={penguinRef}
-            onMouseDown={onMouseDown}
-            onClick={handleClick}
-            title="拖动可移位 · 点击说话"
+        {/* 人工客服徽章：企鹅上方独立一行 */}
+        {!minimized && (
+          <button
+            onClick={(e) => { e.stopPropagation(); setShowWechat(true); }}
             style={{
-              width: 52, height: 52, borderRadius: "50%",
-              background: "linear-gradient(135deg,#0f172a,#4f46e5)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 28,
-              cursor: dragging ? "grabbing" : "grab",
-              boxShadow: dragging ? "0 14px 40px rgba(79,70,229,0.55)" : "0 6px 24px rgba(79,70,229,0.35)",
-              animation: dragging ? "none" : bounce ? "pBounce 600ms ease" : "pFloat 3s ease-in-out infinite",
-              transform: dragging ? "scale(1.1)" : "scale(1)",
-              transition: "box-shadow 150ms, transform 150ms",
-              border: "2px solid rgba(255,255,255,0.15)",
+              fontSize: 11, fontWeight: 900, color: "#fff",
+              background: "linear-gradient(135deg, #059669, #0d9488)",
+              border: "none", borderRadius: 999,
+              padding: "4px 12px",
+              cursor: "pointer", whiteSpace: "nowrap",
+              boxShadow: "0 3px 10px rgba(5,150,105,0.40)",
+              letterSpacing: "0.02em",
+              display: "flex", alignItems: "center", gap: 4,
             }}
-          >🐧</div>
-        </div>
+          >
+            <span style={{ fontSize: 12 }}>💬</span> 人工客服
+          </button>
+        )}
+
+        {/* 企鹅 */}
+        <div
+          ref={penguinRef}
+          onMouseDown={onMouseDown}
+          onClick={handleClick}
+          title="拖动可移位 · 点击说话"
+          style={{
+            width: 52, height: 52, borderRadius: "50%",
+            background: "linear-gradient(135deg,#0f172a,#4f46e5)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 28,
+            cursor: dragging ? "grabbing" : "grab",
+            boxShadow: dragging ? "0 14px 40px rgba(79,70,229,0.55)" : "0 6px 24px rgba(79,70,229,0.35)",
+            animation: dragging ? "none" : bounce ? "pBounce 600ms ease" : "pFloat 3s ease-in-out infinite",
+            transform: dragging ? "scale(1.1)" : "scale(1)",
+            transition: "box-shadow 150ms, transform 150ms",
+            border: "2px solid rgba(255,255,255,0.15)",
+          }}
+        >🐧</div>
 
         {/* 底部隐藏按钮 */}
         {!minimized && !dragging && (
