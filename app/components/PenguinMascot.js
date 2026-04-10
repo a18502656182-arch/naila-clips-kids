@@ -283,11 +283,17 @@ export default function PenguinMascot() {
 
   // 触摸事件
   function onTouchStart(e) {
-    e.preventDefault(); // 阻止滚动误触发拖拽
+    e.preventDefault();
     const t = e.touches[0];
     startDrag(t.clientX, t.clientY);
     const onMove = ev => { ev.preventDefault(); const tt = ev.touches[0]; moveDrag(tt.clientX, tt.clientY); };
-    const onEnd = () => { window.removeEventListener("touchmove", onMove); window.removeEventListener("touchend", onEnd); endDrag(); };
+    const onEnd = () => {
+      window.removeEventListener("touchmove", onMove);
+      window.removeEventListener("touchend", onEnd);
+      endDrag();
+      // 手机端：没有移动就视为点击
+      if (!isDragMove.current) handleClick();
+    };
     window.addEventListener("touchmove", onMove, { passive: false });
     window.addEventListener("touchend", onEnd);
   }
@@ -342,7 +348,7 @@ export default function PenguinMascot() {
         {/* 气泡 */}
         {showBubble && !minimized && (
           <div style={{
-            position: "absolute", bottom: 130,
+            position: "absolute", bottom: 90,
             ...(bubbleOnLeft ? { right: 0 } : { left: 0 }),
             width: 210, padding: "10px 30px 10px 14px",
             background: "#fff", borderRadius: 16,
@@ -356,7 +362,38 @@ export default function PenguinMascot() {
           </div>
         )}
 
-        {/* 人工客服徽章：企鹅上方独立一行 */}
+        {/* 企鹅 + 隐藏按钮横排 */}
+        <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 6 }}>
+          {/* 企鹅 */}
+          <div
+            ref={penguinRef}
+            onMouseDown={onMouseDown}
+            onClick={handleClick}
+            title="拖动可移位 · 点击说话"
+            style={{
+              width: 52, height: 52, borderRadius: "50%",
+              background: "linear-gradient(135deg,#0f172a,#4f46e5)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 28,
+              cursor: dragging ? "grabbing" : "grab",
+              boxShadow: dragging ? "0 14px 40px rgba(79,70,229,0.55)" : "0 6px 24px rgba(79,70,229,0.35)",
+              animation: dragging ? "none" : bounce ? "pBounce 600ms ease" : "pFloat 3s ease-in-out infinite",
+              transform: dragging ? "scale(1.1)" : "scale(1)",
+              transition: "box-shadow 150ms, transform 150ms",
+              border: "2px solid rgba(255,255,255,0.15)",
+            }}
+          >🐧</div>
+
+          {/* 隐藏按钮：企鹅右侧 */}
+          {!minimized && !dragging && (
+            <button
+              onClick={() => { setMinimized(true); setShowBubble(false); try { localStorage.setItem(STORAGE_HIDDEN, "1"); } catch {}; }}
+              style={{ fontSize: 10, color: "rgba(11,18,32,0.38)", background: "rgba(255,255,255,0.7)", border: "1px solid rgba(11,18,32,0.10)", borderRadius: 999, cursor: "pointer", padding: "2px 7px", fontWeight: 900, whiteSpace: "nowrap" }}
+            >隐藏</button>
+          )}
+        </div>
+
+        {/* 人工客服：正下方 */}
         {!minimized && (
           <button
             onClick={(e) => { e.stopPropagation(); setShowWechat(true); }}
@@ -373,31 +410,6 @@ export default function PenguinMascot() {
           >
             <span style={{ fontSize: 12 }}>💬</span> 人工客服
           </button>
-        )}
-
-        {/* 企鹅 */}
-        <div
-          ref={penguinRef}
-          onMouseDown={onMouseDown}
-          onClick={handleClick}
-          title="拖动可移位 · 点击说话"
-          style={{
-            width: 52, height: 52, borderRadius: "50%",
-            background: "linear-gradient(135deg,#0f172a,#4f46e5)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 28,
-            cursor: dragging ? "grabbing" : "grab",
-            boxShadow: dragging ? "0 14px 40px rgba(79,70,229,0.55)" : "0 6px 24px rgba(79,70,229,0.35)",
-            animation: dragging ? "none" : bounce ? "pBounce 600ms ease" : "pFloat 3s ease-in-out infinite",
-            transform: dragging ? "scale(1.1)" : "scale(1)",
-            transition: "box-shadow 150ms, transform 150ms",
-            border: "2px solid rgba(255,255,255,0.15)",
-          }}
-        >🐧</div>
-
-        {/* 底部隐藏按钮 */}
-        {!minimized && !dragging && (
-          <button onClick={() => { setMinimized(true); setShowBubble(false); try { localStorage.setItem(STORAGE_HIDDEN, "1"); } catch {} }} style={{ fontSize: 10, color: "rgba(11,18,32,0.40)", background: "none", border: "none", cursor: "pointer", padding: "1px 4px", fontWeight: 900 }}>隐藏</button>
         )}
       </div>
     </>
