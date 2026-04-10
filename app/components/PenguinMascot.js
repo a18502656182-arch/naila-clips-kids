@@ -385,29 +385,15 @@ export default function PenguinMascot() {
         {/* 下方两个按钮并排居中 */}
         {!minimized && !dragging && (
           <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <button
-              onClick={(e) => { e.stopPropagation(); setShowWechat(true); }}
-              style={{
-                fontSize: 10, fontWeight: 900, color: "#fff",
-                background: "linear-gradient(135deg, #059669, #0d9488)",
-                border: "none", borderRadius: 999,
-                padding: "3px 9px",
-                cursor: "pointer", whiteSpace: "nowrap",
-                boxShadow: "0 2px 8px rgba(5,150,105,0.40)",
-                display: "flex", alignItems: "center", gap: 3,
-              }}
-            ><span>💬</span> 客服</button>
-            <button
-              onClick={() => { setMinimized(true); setShowBubble(false); try { localStorage.setItem(STORAGE_HIDDEN, "1"); } catch {}; }}
-              style={{
-                fontSize: 10, fontWeight: 900,
-                color: "rgba(11,18,32,0.45)",
-                background: "rgba(255,255,255,0.75)",
-                border: "1px solid rgba(11,18,32,0.12)",
-                borderRadius: 999, cursor: "pointer",
-                padding: "3px 9px", whiteSpace: "nowrap",
-              }}
-            >隐藏</button>
+            <style>{`
+              .p-cs-btn { font-size: 10px; font-weight: 900; color: #fff; background: linear-gradient(135deg,#059669,#0d9488); border: none; border-radius: 999px; padding: 3px 9px; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(5,150,105,0.40); }
+              .p-hd-btn { font-size: 10px; font-weight: 900; color: rgba(11,18,32,0.45); background: rgba(255,255,255,0.75); border: 1px solid rgba(11,18,32,0.12); border-radius: 999px; cursor: pointer; padding: 3px 9px; white-space: nowrap; }
+              @media (max-width: 768px) {
+                .penguin-root { transform: scale(0.78); transform-origin: bottom left; }
+              }
+            `}</style>
+            <button className="p-cs-btn" onClick={(e) => { e.stopPropagation(); setShowWechat(true); }}>客服</button>
+            <button className="p-hd-btn" onClick={() => { setMinimized(true); setShowBubble(false); try { localStorage.setItem(STORAGE_HIDDEN, "1"); } catch {}; }}>隐藏</button>
           </div>
         )}
       </div>
