@@ -362,54 +362,53 @@ export default function PenguinMascot() {
           </div>
         )}
 
-        {/* 企鹅 + 隐藏按钮横排 */}
-        <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 6 }}>
-          {/* 企鹅 */}
-          <div
-            ref={penguinRef}
-            onMouseDown={onMouseDown}
-            onClick={handleClick}
-            title="拖动可移位 · 点击说话"
-            style={{
-              width: 52, height: 52, borderRadius: "50%",
-              background: "linear-gradient(135deg,#0f172a,#4f46e5)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 28,
-              cursor: dragging ? "grabbing" : "grab",
-              boxShadow: dragging ? "0 14px 40px rgba(79,70,229,0.55)" : "0 6px 24px rgba(79,70,229,0.35)",
-              animation: dragging ? "none" : bounce ? "pBounce 600ms ease" : "pFloat 3s ease-in-out infinite",
-              transform: dragging ? "scale(1.1)" : "scale(1)",
-              transition: "box-shadow 150ms, transform 150ms",
-              border: "2px solid rgba(255,255,255,0.15)",
-            }}
-          >🐧</div>
+        {/* 企鹅 */}
+        <div
+          ref={penguinRef}
+          onMouseDown={onMouseDown}
+          onClick={handleClick}
+          title="拖动可移位 · 点击说话"
+          style={{
+            width: 52, height: 52, borderRadius: "50%",
+            background: "linear-gradient(135deg,#0f172a,#4f46e5)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 28,
+            cursor: dragging ? "grabbing" : "grab",
+            boxShadow: dragging ? "0 14px 40px rgba(79,70,229,0.55)" : "0 6px 24px rgba(79,70,229,0.35)",
+            animation: dragging ? "none" : bounce ? "pBounce 600ms ease" : "pFloat 3s ease-in-out infinite",
+            transform: dragging ? "scale(1.1)" : "scale(1)",
+            transition: "box-shadow 150ms, transform 150ms",
+            border: "2px solid rgba(255,255,255,0.15)",
+          }}
+        >🐧</div>
 
-          {/* 隐藏按钮：企鹅右侧 */}
-          {!minimized && !dragging && (
+        {/* 下方两个按钮并排居中 */}
+        {!minimized && !dragging && (
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowWechat(true); }}
+              style={{
+                fontSize: 10, fontWeight: 900, color: "#fff",
+                background: "linear-gradient(135deg, #059669, #0d9488)",
+                border: "none", borderRadius: 999,
+                padding: "3px 9px",
+                cursor: "pointer", whiteSpace: "nowrap",
+                boxShadow: "0 2px 8px rgba(5,150,105,0.40)",
+                display: "flex", alignItems: "center", gap: 3,
+              }}
+            ><span>💬</span> 客服</button>
             <button
               onClick={() => { setMinimized(true); setShowBubble(false); try { localStorage.setItem(STORAGE_HIDDEN, "1"); } catch {}; }}
-              style={{ fontSize: 10, color: "rgba(11,18,32,0.38)", background: "rgba(255,255,255,0.7)", border: "1px solid rgba(11,18,32,0.10)", borderRadius: 999, cursor: "pointer", padding: "2px 7px", fontWeight: 900, whiteSpace: "nowrap" }}
+              style={{
+                fontSize: 10, fontWeight: 900,
+                color: "rgba(11,18,32,0.45)",
+                background: "rgba(255,255,255,0.75)",
+                border: "1px solid rgba(11,18,32,0.12)",
+                borderRadius: 999, cursor: "pointer",
+                padding: "3px 9px", whiteSpace: "nowrap",
+              }}
             >隐藏</button>
-          )}
-        </div>
-
-        {/* 人工客服：正下方 */}
-        {!minimized && (
-          <button
-            onClick={(e) => { e.stopPropagation(); setShowWechat(true); }}
-            style={{
-              fontSize: 11, fontWeight: 900, color: "#fff",
-              background: "linear-gradient(135deg, #059669, #0d9488)",
-              border: "none", borderRadius: 999,
-              padding: "4px 12px",
-              cursor: "pointer", whiteSpace: "nowrap",
-              boxShadow: "0 3px 10px rgba(5,150,105,0.40)",
-              letterSpacing: "0.02em",
-              display: "flex", alignItems: "center", gap: 4,
-            }}
-          >
-            <span style={{ fontSize: 12 }}>💬</span> 人工客服
-          </button>
+          </div>
         )}
       </div>
     </>
