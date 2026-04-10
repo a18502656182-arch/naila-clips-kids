@@ -334,8 +334,7 @@ export default function PenguinMascot() {
         @keyframes pFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
         @keyframes pBounce { 0%,100%{transform:translateY(0)} 30%{transform:translateY(-10px)} 60%{transform:translateY(-4px)} }
         @keyframes bIn { 0%{opacity:0;transform:translateY(8px) scale(0.94)} 100%{opacity:1;transform:translateY(0) scale(1)} }
-        .penguin-root { display: none !important; }
-        @media (min-width: 480px) { .penguin-root { display: flex !important; } }
+        .penguin-root { display: flex !important; }
       `}</style>
 
       <div className="penguin-root" style={{ position: "fixed", left: pos.left, top: pos.top, zIndex: 9000, flexDirection: "column", alignItems: "center", gap: 4, userSelect: "none", WebkitUserSelect: "none" }}>
@@ -343,7 +342,7 @@ export default function PenguinMascot() {
         {/* 气泡 */}
         {showBubble && !minimized && (
           <div style={{
-            position: "absolute", bottom: 64,
+            position: "absolute", bottom: 130,
             ...(bubbleOnLeft ? { right: 0 } : { left: 0 }),
             width: 210, padding: "10px 30px 10px 14px",
             background: "#fff", borderRadius: 16,
