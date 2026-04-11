@@ -105,10 +105,35 @@ export default function GuidePage() {
           .guide-mobile { display: none; }
           .guide-desktop { display: block; }
 
-          .d-hero { background: #0f172a; padding: 52px 64px; color: #fff; }
+          .d-hero {
+            background: #0f172a; padding: 52px 64px; color: #fff;
+            display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: center;
+          }
           .d-hero-label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; margin-bottom: 14px; }
           .d-hero-title { font-size: 40px; font-weight: 950; line-height: 1.2; margin-bottom: 14px; letter-spacing: -0.02em; }
-          .d-hero-desc { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.8; max-width: 620px; margin: 0; }
+          .d-hero-desc { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.8; max-width: 520px; margin: 0; }
+
+          .d-hero-card {
+            background: rgba(255,255,255,0.07);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 22px;
+            display: flex; flex-direction: column; gap: 16px;
+          }
+          .d-hero-card-title { font-size: 13px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+          .d-hero-card-desc { font-size: 12px; color: rgba(255,255,255,0.52); line-height: 1.75; margin-bottom: 12px; }
+          .d-hero-card-divider { height: 1px; background: rgba(255,255,255,0.08); }
+          .d-hero-btn {
+            display: block; text-align: center; padding: 11px 0; border-radius: 999px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff; text-decoration: none; font-size: 13px; font-weight: 800;
+            box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+          }
+          .d-hero-wechat { display: flex; align-items: center; gap: 14px; }
+          .d-hero-qr { width: 78px; height: 78px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+          .d-hero-qr img { width: 100%; display: block; }
+          .d-hero-wechat-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 5px; }
+          .d-hero-wechat-id { font-size: 15px; font-weight: 900; color: #fff; }
 
           .d-body { padding: 52px 64px 64px; background: #f7f8fd; display: flex; flex-direction: column; gap: 52px; }
 
@@ -160,25 +185,7 @@ export default function GuidePage() {
           .d-step-title { font-size: 15px; font-weight: 800; color: #0b1220; margin-bottom: 6px; }
           .d-step-content { font-size: 13px; color: rgba(11,18,32,0.55); line-height: 1.75; }
 
-          .d-bottom-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-          }
-          .d-bot-card { background: #0f172a; border-radius: 14px; padding: 26px 28px; color: #fff; }
-          .d-bot-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 10px; }
-          .d-bot-desc { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.8; margin-bottom: 20px; }
-          .d-bot-btn {
-            display: block; text-align: center; padding: 12px 0; border-radius: 999px;
-            background: linear-gradient(135deg, #8b5cf6, #6366f1);
-            color: #fff; text-decoration: none; font-size: 14px; font-weight: 800;
-            box-shadow: 0 6px 20px rgba(99,102,241,0.4);
-          }
-          .d-wechat-row { display: flex; align-items: center; gap: 20px; }
-          .d-qr { width: 90px; height: 90px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
-          .d-qr img { width: 100%; display: block; }
-          .d-wechat-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
-          .d-wechat-id { font-size: 20px; font-weight: 900; color: #fff; }
+
         }
       `}</style>
 
@@ -253,9 +260,30 @@ export default function GuidePage() {
       {/* ══ 电脑端 ══ */}
       <div className="guide-desktop">
         <div className="d-hero">
-          <div className="d-hero-label">DRAMA SCENE LIBRARY · 使用指南</div>
-          <h1 className="d-hero-title">怎么用这个网站学英语</h1>
-          <p className="d-hero-desc">精选来自美剧、电影、动画的真实英语片段，覆盖日常生活、职场、旅行、人文等实用场景，90% 来自英语核心圈母语演员的真实对话。</p>
+          <div>
+            <div className="d-hero-label">DRAMA SCENE LIBRARY · 使用指南</div>
+            <h1 className="d-hero-title">怎么用这个网站学英语</h1>
+            <p className="d-hero-desc">精选来自美剧、电影、动画的真实英语片段，覆盖日常生活、职场、旅行、人文等实用场景，90% 来自英语核心圈母语演员的真实对话。</p>
+          </div>
+          <div className="d-hero-card">
+            <div>
+              <div className="d-hero-card-title">✨ 关于会员</div>
+              <div className="d-hero-card-desc">免费片段随便看，会员解锁全站所有内容。支持支付宝购买，有月卡、季卡、年卡和永久卡可以选。</div>
+              <a href="/buy" className="d-hero-btn">立即开通会员 →</a>
+            </div>
+            <div className="d-hero-card-divider" />
+            <div>
+              <div className="d-hero-card-title">💬 联系客服</div>
+              <div className="d-hero-card-desc">购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。</div>
+              <div className="d-hero-wechat">
+                <div className="d-hero-qr"><img src={WECHAT_QR_URL} alt="微信客服" /></div>
+                <div>
+                  <div className="d-hero-wechat-label">扫码或搜索微信号</div>
+                  <div className="d-hero-wechat-id">{WECHAT_ID}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="d-body">
@@ -287,27 +315,7 @@ export default function GuidePage() {
             </div>
           </div>
 
-          <div>
-            <div className="d-sec-title">购买与支持</div>
-            <div className="d-bottom-grid">
-              <div className="d-bot-card">
-                <div className="d-bot-title">✨ 关于会员</div>
-                <div className="d-bot-desc">免费片段随便看，会员解锁全站所有内容。支持支付宝购买，有月卡、季卡、年卡和永久卡可以选。</div>
-                <a href="/buy" className="d-bot-btn">立即开通会员 →</a>
-              </div>
-              <div className="d-bot-card">
-                <div className="d-bot-title">💬 联系客服</div>
-                <div className="d-bot-desc">购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。</div>
-                <div className="d-wechat-row">
-                  <div className="d-qr"><img src={WECHAT_QR_URL} alt="微信客服" /></div>
-                  <div>
-                    <div className="d-wechat-label">扫码或搜索微信号</div>
-                    <div className="d-wechat-id">{WECHAT_ID}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>
