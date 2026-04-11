@@ -108,29 +108,35 @@ export default function GuidePage() {
 
           .d-hero {
             background: #0f172a; padding: 52px 64px; color: #fff;
-            display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: center;
+            display: grid; grid-template-columns: 1fr 360px; gap: 64px; align-items: center;
           }
           .d-hero-label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; margin-bottom: 14px; }
           .d-hero-title { font-size: 40px; font-weight: 950; line-height: 1.2; margin-bottom: 14px; letter-spacing: -0.02em; }
           .d-hero-desc { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.8; max-width: 520px; margin: 0; }
 
           .d-hero-card {
-            background: rgba(255,255,255,0.07);
-            border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 28px 28px;
-            display: grid;
-            grid-template-columns: 1fr 1px 1fr;
-            gap: 28px;
-            align-items: center;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
           }
-          .d-hero-card-divider { background: rgba(255,255,255,0.08); align-self: stretch; }
-          .d-hero-card-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 20px; }
+          .d-hero-card-item {
+            background: rgba(255,255,255,0.07);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+          }
+          .d-hero-card-title { font-size: 15px; font-weight: 900; color: #fff; }
+          .d-hero-card-sub { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 4px; }
           .d-hero-btn {
-            display: block; text-align: center; padding: 11px 0; border-radius: 999px;
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 10px 20px; border-radius: 999px; flex-shrink: 0;
             background: linear-gradient(135deg, #8b5cf6, #6366f1);
             color: #fff; text-decoration: none; font-size: 13px; font-weight: 800;
-            box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+            box-shadow: 0 4px 14px rgba(99,102,241,0.4); white-space: nowrap;
           }
 
           .d-body { padding: 52px 64px 64px; background: #f7f8fd; display: flex; flex-direction: column; gap: 52px; }
@@ -264,13 +270,18 @@ export default function GuidePage() {
             <p className="d-hero-desc">精选来自美剧、电影、动画的真实英语片段，覆盖日常生活、职场、旅行、人文等实用场景，90% 来自英语核心圈母语演员的真实对话。</p>
           </div>
           <div className="d-hero-card">
-            <div>
-              <div className="d-hero-card-title">✨ 开通会员</div>
+            <div className="d-hero-card-item">
+              <div>
+                <div className="d-hero-card-title">✨ 开通会员</div>
+                <div className="d-hero-card-sub">解锁全站所有内容</div>
+              </div>
               <a href="/buy" className="d-hero-btn">立即开通 →</a>
             </div>
-            <div className="d-hero-card-divider" />
-            <div>
-              <div className="d-hero-card-title">💬 联系客服</div>
+            <div className="d-hero-card-item">
+              <div>
+                <div className="d-hero-card-title">💬 联系客服</div>
+                <div className="d-hero-card-sub">购买咨询 · 使用问题</div>
+              </div>
               <WechatButton btnStyle="light" />
             </div>
           </div>
