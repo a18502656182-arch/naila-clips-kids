@@ -1,16 +1,19 @@
 "use client";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { createSupabaseBrowserClient } from "../../utils/supabase/client";
 
 export default function WelcomeModal() {
   const [show, setShow] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
+    if (pathname !== "/") return;
     const supabase = createSupabaseBrowserClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) setShow(true);
     });
-  }, []);
+  }, [pathname]);
 
   function close() {
     setShow(false);
