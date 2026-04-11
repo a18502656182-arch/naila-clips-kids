@@ -159,10 +159,11 @@ export default function UserMenuClient() {
         `}</style>
 
         <a href="/guide" style={{
-            display: "inline-flex", alignItems: "center", gap: 4,
-            fontSize: 13, fontWeight: 700, color: "rgba(11,18,32,0.55)",
-            textDecoration: "none", padding: "6px 10px", borderRadius: 8,
-            marginRight: 4,
+            display: "inline-flex", alignItems: "center", gap: 5,
+            fontSize: 13, fontWeight: 800, color: "#6366f1",
+            textDecoration: "none", padding: "6px 12px", borderRadius: 999,
+            background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.20)",
+            marginRight: 6, whiteSpace: "nowrap",
           }}>📖 使用指南</a>
         <div className="um-auth-row">
           <a
@@ -189,6 +190,14 @@ export default function UserMenuClient() {
   const expiryStr = formatExpiry(meData?.ends_at || meData?.expires_at || meData?.end_at);
 
   return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <a href="/guide" style={{
+        display: "inline-flex", alignItems: "center", gap: 5,
+        fontSize: 13, fontWeight: 800, color: "#6366f1",
+        textDecoration: "none", padding: "6px 12px", borderRadius: 999,
+        background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.20)",
+        whiteSpace: "nowrap",
+      }}>📖 使用指南</a>
     <div ref={wrapRef} style={{ position: "relative" }}>
       <button
         type="button"
@@ -393,6 +402,7 @@ export default function UserMenuClient() {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }
