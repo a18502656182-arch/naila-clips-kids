@@ -158,6 +158,12 @@ export default function UserMenuClient() {
           }
         `}</style>
 
+        <a href="/guide" style={{
+            display: "inline-flex", alignItems: "center", gap: 4,
+            fontSize: 13, fontWeight: 700, color: "rgba(11,18,32,0.55)",
+            textDecoration: "none", padding: "6px 10px", borderRadius: 8,
+            marginRight: 4,
+          }}>📖 使用指南</a>
         <div className="um-auth-row">
           <a
             href="/login"
