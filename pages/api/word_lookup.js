@@ -1,5 +1,4 @@
 // pages/api/word_lookup.js
-// 并行查询 Free Dictionary API（音标/词性）+ 有道翻译（中文释义）
 import crypto from "crypto";
 
 const YOUDAO_APP_ID = process.env.YOUDAO_APP_ID;
@@ -27,11 +26,18 @@ async function queryYoudao(word) {
     const r = await fetch(`${YOUDAO_API}?${params}`);
     if (!r.ok) return null;
     const data = await r.json();
-    if (data.errorCode !== "0") return null;
-    const dictExplains = data.basic?.explains || [];
-    const translation = data.translation?.[0] || "";
-    return dictExplains.length > 0 ? dictExplains.join("；") : translation;
-  } catch {
+    // 调试：把完整返回记录到控制台
+    console.log("Youdao response:", JSON.stringify(data));
+    if (data.errorCode !== "0") {
+      console.log("Youdao error code:", data.errorCode);
+      return null;
+    }
+    // NMT 接口：优先 basic.explains，其次 translation
+    const explains = data.basic?.explains || [];
+    const translation = Array.isArray(data.translation) ? data.translation[0] : "";
+    return explains.length > 0 ? explains.join("；") : translation || null;
+  } catch (e) {
+    console.log("Youdao exception:", e.message);
     return null;
   }
 }
