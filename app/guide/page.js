@@ -1,5 +1,6 @@
 // app/guide/page.js
 import Link from "next/link";
+import WechatButton from "./WechatButton";
 
 const WECHAT_QR_URL = "/cf-img/qvilyoTfnpu3-vu3LTcGwQ/94686906-f46c-44cc-b53c-0d6b77166500/qr";
 const WECHAT_ID = "wll74748585";
@@ -117,23 +118,22 @@ export default function GuidePage() {
             background: rgba(255,255,255,0.07);
             border-radius: 16px;
             border: 1px solid rgba(255,255,255,0.1);
-            padding: 22px;
-            display: flex; flex-direction: column; gap: 16px;
+            padding: 22px 24px;
+            display: grid;
+            grid-template-columns: 1fr 1px 1fr;
+            gap: 20px;
+            align-items: center;
           }
+          .d-hero-card-divider { background: rgba(255,255,255,0.08); align-self: stretch; }
           .d-hero-card-title { font-size: 13px; font-weight: 900; color: #fff; margin-bottom: 6px; }
-          .d-hero-card-desc { font-size: 12px; color: rgba(255,255,255,0.52); line-height: 1.75; margin-bottom: 12px; }
-          .d-hero-card-divider { height: 1px; background: rgba(255,255,255,0.08); }
+          .d-hero-card-desc { font-size: 12px; color: rgba(255,255,255,0.52); line-height: 1.7; margin-bottom: 14px; }
           .d-hero-btn {
-            display: block; text-align: center; padding: 11px 0; border-radius: 999px;
+            display: block; text-align: center; padding: 10px 0; border-radius: 999px;
             background: linear-gradient(135deg, #8b5cf6, #6366f1);
             color: #fff; text-decoration: none; font-size: 13px; font-weight: 800;
             box-shadow: 0 4px 14px rgba(99,102,241,0.4);
           }
-          .d-hero-wechat { display: flex; align-items: center; gap: 14px; }
-          .d-hero-qr { width: 78px; height: 78px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
-          .d-hero-qr img { width: 100%; display: block; }
-          .d-hero-wechat-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 5px; }
-          .d-hero-wechat-id { font-size: 15px; font-weight: 900; color: #fff; }
+          .d-hero-wechat-label { font-size: 11px; color: rgba(255,255,255,0.45); margin-bottom: 6px; }
 
           .d-body { padding: 52px 64px 64px; background: #f7f8fd; display: flex; flex-direction: column; gap: 52px; }
 
@@ -274,14 +274,8 @@ export default function GuidePage() {
             <div className="d-hero-card-divider" />
             <div>
               <div className="d-hero-card-title">💬 联系客服</div>
-              <div className="d-hero-card-desc">购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。</div>
-              <div className="d-hero-wechat">
-                <div className="d-hero-qr"><img src={WECHAT_QR_URL} alt="微信客服" /></div>
-                <div>
-                  <div className="d-hero-wechat-label">扫码或搜索微信号</div>
-                  <div className="d-hero-wechat-id">{WECHAT_ID}</div>
-                </div>
-              </div>
+              <div className="d-hero-card-desc">购买咨询、使用问题、对网站的任何建议都可以联系我们。</div>
+              <WechatButton btnStyle="light" />
             </div>
           </div>
         </div>
