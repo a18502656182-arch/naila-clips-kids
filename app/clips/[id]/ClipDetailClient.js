@@ -1029,12 +1029,8 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     const x = rect.left + rect.width / 2;
     const y = rect.bottom + window.scrollY + 8;
     if (found) {
-      // vocab 里有的词，直接显示，同时后台查音标和词性补充
-      setTermPopup({ term, v: found.v, kind: found.kind, x, y, lookupLoading: true, lookupData: null, lookupError: false });
-      fetch(`/api/word_lookup?q=${encodeURIComponent(normTerm)}`)
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(data => setTermPopup(prev => prev?.term === term ? { ...prev, lookupLoading: false, lookupData: data } : prev))
-        .catch(() => setTermPopup(prev => prev?.term === term ? { ...prev, lookupLoading: false } : prev));
+      // vocab 里有的词，直接显示原有词汇卡数据，不调字典
+      setTermPopup({ term, v: found.v, kind: found.kind, x, y, lookupLoading: false, lookupData: null, lookupError: false });
       return;
     }
     // vocab 里没有，并行查音标+中文
