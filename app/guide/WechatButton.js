@@ -45,9 +45,10 @@ export default function WechatButton({ btnStyle = "light" }) {
           display: "inline-flex", alignItems: "center", gap: 7,
           padding: "10px 18px", borderRadius: 999, cursor: "pointer",
           fontSize: 13, fontWeight: 800,
-          background: isLight ? "rgba(255,255,255,0.1)" : "rgba(5,150,105,0.08)",
-          border: isLight ? "1px solid rgba(255,255,255,0.2)" : "1px solid rgba(5,150,105,0.2)",
+          background: isLight ? "rgba(255,255,255,0.15)" : "rgba(5,150,105,0.08)",
+          border: isLight ? "1px solid rgba(255,255,255,0.25)" : "1px solid rgba(5,150,105,0.2)",
           color: isLight ? "#fff" : "#059669",
+          boxShadow: isLight ? "0 4px 14px rgba(0,0,0,0.2)" : "none",
           transition: "all 160ms ease",
         }}
       >
