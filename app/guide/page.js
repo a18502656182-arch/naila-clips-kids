@@ -5,29 +5,27 @@ const WECHAT_QR_URL = "/cf-img/qvilyoTfnpu3-vu3LTcGwQ/94686906-f46c-44cc-b53c-0d
 const WECHAT_ID = "wll74748585";
 
 const STEPS = [
-  { num: "01", icon: "🎬", title: "选片段，建语感", content: "在首页按话题或剧集筛选你感兴趣的内容，感兴趣的主题学起来事半功倍。点开一个片段，先不看字幕整体看一遍，熟悉语境和语速。" },
-  { num: "02", icon: "📚", title: "精学一个片段", content: "觉得太快就调到 0.75x，打开双语字幕再看一遍。结合词汇卡理解片段里的单词、短语和地道表达，遇到不认识的词直接点字幕查词，有意思的表达点词汇卡里的收藏存到词汇本。" },
-  { num: "03", icon: "🗣️", title: "开口说出来", content: "打开单句暂停，每句播完之后凭记忆复述，反复几遍直到能脱口而出。最后挑战自己：关字幕、调回原速，跟着视频实时跟读，模仿语速、发音、语调和节奏。" },
-  { num: "04", icon: "🎧", title: "练耳朵", content: "打开听写模式，播完一句写下你听到的，没听清就开单句循环反复听，写完所有字幕后打开英文字幕对照，记下没听出来的词，针对有困难的部分重点循环。" },
-  { num: "05", icon: "🎮", title: "复习，别让词白学", content: "学完当天打开词汇本，看看今天收藏的词，进词汇游戏用6种不同的游戏模式巩固记忆，玩一轮下来印象深刻多了。" },
-  { num: "06", icon: "📒", title: "打卡，看到自己的进步", content: "每天学完在手帐页查看今日任务完成状态和学习热力图，生成打卡海报记录自己的连续学习天数，坚持下去你会惊讶于自己的进步。" },
+  { num: "1", title: "选片段，建语感", content: "在首页按话题或剧集筛选你感兴趣的内容，感兴趣的主题学起来事半功倍。点开一个片段，先不看字幕整体看一遍，熟悉语境和语速。" },
+  { num: "2", title: "精学一个片段", content: "觉得太快就调到 0.75x，打开双语字幕再看一遍。结合词汇卡理解片段里的单词、短语和地道表达，遇到不认识的词直接点字幕查词，有意思的表达点词汇卡里的收藏存到词汇本。" },
+  { num: "3", title: "开口说出来", content: "打开单句暂停，每句播完之后凭记忆复述，反复几遍直到能脱口而出。最后挑战自己：关字幕、调回原速，跟着视频实时跟读，模仿语速、发音、语调和节奏。" },
+  { num: "4", title: "练耳朵", content: "打开听写模式，播完一句写下你听到的，没听清就开单句循环反复听，写完所有字幕后打开英文字幕对照，记下没听出来的词，针对有困难的部分重点循环。" },
+  { num: "5", title: "复习，别让词白学", content: "学完当天打开词汇本，看看今天收藏的词，进词汇游戏用6种不同的游戏模式巩固记忆，玩一轮下来印象深刻多了。" },
+  { num: "6", title: "打卡，看到自己的进步", content: "每天学完在手帐页查看今日任务完成状态和学习热力图，生成打卡海报记录自己的连续学习天数，坚持下去你会惊讶于自己的进步。" },
 ];
 
 const FEATURES = [
-  { icon: "🎬", title: "动态双语字幕", desc: "按语义群手工对齐，支持双语、纯英文、纯中文切换，单句暂停和单句循环都有。" },
-  { icon: "🔍", title: "点词查词", desc: "点击字幕里任意单词，弹出音标、词性、中文释义，不用离开页面查字典。" },
-  { icon: "📚", title: "词汇卡", desc: "精选单词、短语和地道表达，附音标、中英释义和例句，点击字幕块直接播放对应片段。" },
-  { icon: "🎧", title: "听写模式", desc: "播放一句自己写下听到的，配合单句循环反复听，练听力的神器。" },
-  { icon: "❤️", title: "收藏", desc: "收藏喜欢的片段和词汇，随时回来复习，词汇本里还能标记掌握程度。" },
-  { icon: "🎮", title: "词汇游戏", desc: "6种游戏模式：气泡拼写、连连看、单词探探、台词磁力贴、盲听气balloon、极速二选一。" },
-  { icon: "📒", title: "学习手帐", desc: "记录每天的学习轨迹，查看热力图和连续打卡天数，生成打卡海报分享给朋友。" },
+  { icon: "🎬", title: "动态双语字幕", desc: "按语义群手工对齐，支持双语/英文/中文切换，单句暂停和单句循环。" },
+  { icon: "🔍", title: "点词查词", desc: "点击字幕里任意单词，弹出音标、词性、中文释义。" },
+  { icon: "📚", title: "词汇卡", desc: "精选表达附音标、中英释义和例句，点字幕块直接播放对应片段。" },
+  { icon: "🎧", title: "听写模式", desc: "播放一句写下听到的，配合单句循环反复练，练听力的神器。" },
+  { icon: "🎮", title: "词汇游戏", desc: "6种游戏模式巩固记忆，玩一轮下来印象深刻多了。" },
+  { icon: "📒", title: "学习手帐", desc: "热力图、连续打卡天数，生成打卡海报分享给朋友。" },
 ];
 
 export default function GuidePage() {
   return (
     <div style={{ minHeight: "100vh", background: "#f7f8fd", fontFamily: "system-ui, -apple-system, sans-serif" }}>
       <style>{`
-        /* ── 顶部导航 ── */
         .guide-nav {
           background: rgba(255,255,255,0.95);
           backdrop-filter: blur(12px);
@@ -41,394 +39,275 @@ export default function GuidePage() {
           z-index: 10;
         }
 
-        /* ── 手机端布局 ── */
         .guide-mobile { display: block; }
         .guide-desktop { display: none; }
 
-        .mobile-section {
-          padding: 28px 20px;
-        }
-        .mobile-hero {
-          background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%);
-          color: #fff;
-          padding: 32px 20px 28px;
-        }
-        .mobile-feature-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
-        }
-        .mobile-feature-card {
-          background: #fff;
-          border-radius: 12px;
-          border: 1px solid rgba(11,18,32,0.07);
-          padding: 12px;
-        }
-        .mobile-step-card {
-          background: #fff;
-          border-radius: 12px;
-          border: 1px solid rgba(11,18,32,0.07);
-          padding: 14px 16px;
-          display: flex;
-          gap: 12px;
-          align-items: flex-start;
-          margin-bottom: 8px;
-        }
-        .mobile-bottom {
-          background: linear-gradient(160deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%);
-          color: #fff;
-          padding: 32px 20px 40px;
-        }
-        .mobile-card {
-          background: rgba(255,255,255,0.08);
-          border-radius: 14px;
-          border: 1px solid rgba(255,255,255,0.12);
-          padding: 16px 18px;
-          margin-bottom: 12px;
-        }
+        /* ══ 手机端 ══ */
+        .m-hero { background: #0f172a; padding: 28px 20px 24px; color: #fff; }
+        .m-hero-label { font-size: 10px; color: rgba(255,255,255,0.4); font-weight: 600; letter-spacing: 0.08em; margin-bottom: 8px; }
+        .m-hero-title { font-size: 22px; font-weight: 900; line-height: 1.3; margin-bottom: 8px; }
+        .m-hero-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.75; margin: 0; }
 
-        /* ── 电脑端布局 ── */
+        .m-section { padding: 24px 16px; }
+        .m-section-title { font-size: 15px; font-weight: 900; color: #0b1220; margin-bottom: 14px; }
+
+        .m-feat-list { display: flex; flex-direction: column; gap: 8px; }
+        .m-feat-item {
+          display: flex; align-items: flex-start; gap: 12px;
+          background: #fff; border-radius: 12px;
+          border: 1px solid rgba(11,18,32,0.07); padding: 12px 14px;
+        }
+        .m-feat-icon-wrap {
+          width: 32px; height: 32px; border-radius: 8px;
+          background: rgba(99,102,241,0.08);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 16px; flex-shrink: 0;
+        }
+        .m-feat-name { font-size: 13px; font-weight: 800; color: #0b1220; margin-bottom: 2px; }
+        .m-feat-desc { font-size: 12px; color: rgba(11,18,32,0.55); line-height: 1.65; }
+
+        .m-steps { display: flex; flex-direction: column; }
+        .m-step { display: flex; gap: 12px; align-items: flex-start; }
+        .m-step-left { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+        .m-step-num {
+          width: 26px; height: 26px; border-radius: 50%;
+          background: #0f172a; color: #fff;
+          font-size: 12px; font-weight: 800;
+          display: flex; align-items: center; justify-content: center;
+        }
+        .m-step-line { width: 1px; flex: 1; min-height: 16px; background: rgba(11,18,32,0.12); margin: 4px 0; }
+        .m-step-body { padding-bottom: 16px; flex: 1; padding-top: 3px; }
+        .m-step-title { font-size: 14px; font-weight: 800; color: #0b1220; margin-bottom: 4px; }
+        .m-step-content { font-size: 12px; color: rgba(11,18,32,0.55); line-height: 1.7; }
+
+        .m-bottom { background: #0f172a; padding: 28px 16px 40px; }
+        .m-bottom-card {
+          background: rgba(255,255,255,0.07); border-radius: 14px;
+          border: 1px solid rgba(255,255,255,0.1); padding: 16px; margin-bottom: 12px;
+        }
+        .m-bottom-card:last-child { margin-bottom: 0; }
+        .m-bottom-title { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+        .m-bottom-desc { font-size: 12px; color: rgba(255,255,255,0.55); line-height: 1.75; margin-bottom: 14px; }
+        .m-btn {
+          display: block; text-align: center; padding: 11px 0; border-radius: 999px;
+          background: linear-gradient(135deg, #8b5cf6, #6366f1);
+          color: #fff; text-decoration: none; font-size: 14px; font-weight: 800;
+          box-shadow: 0 6px 16px rgba(99,102,241,0.35);
+        }
+        .m-wechat-row { display: flex; align-items: center; gap: 14px; }
+        .m-qr { width: 72px; height: 72px; border-radius: 10px; overflow: hidden; flex-shrink: 0; }
+        .m-qr img { width: 100%; display: block; }
+        .m-wechat-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+        .m-wechat-id { font-size: 16px; font-weight: 800; color: #fff; }
+
+        /* ══ 电脑端 ══ */
         @media (min-width: 900px) {
           .guide-mobile { display: none; }
           .guide-desktop { display: block; }
 
-          /* 顶部 Hero 横幅 */
-          .desktop-hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 55%, #312e81 100%);
-            color: #fff;
-            padding: 64px 80px 56px;
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 40px;
-          }
-          .desktop-hero-title {
-            font-size: 48px;
-            font-weight: 950;
-            line-height: 1.15;
-            letter-spacing: -0.02em;
-            margin: 0 0 16px;
-          }
-          .desktop-hero-sub {
-            font-size: 17px;
-            color: rgba(255,255,255,0.62);
-            line-height: 1.8;
-            max-width: 560px;
-            margin: 0;
-          }
-          .desktop-hero-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex-shrink: 0;
-            min-width: 200px;
-          }
+          .d-hero { background: #0f172a; padding: 52px 64px; color: #fff; }
+          .d-hero-label { font-size: 11px; color: rgba(255,255,255,0.35); letter-spacing: 0.1em; margin-bottom: 14px; }
+          .d-hero-title { font-size: 40px; font-weight: 950; line-height: 1.2; margin-bottom: 14px; letter-spacing: -0.02em; }
+          .d-hero-desc { font-size: 15px; color: rgba(255,255,255,0.55); line-height: 1.8; max-width: 620px; margin: 0; }
 
-          /* 主内容区 */
-          .desktop-body {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 56px 80px 80px;
-          }
-          .desktop-section-title {
-            font-size: 28px;
-            font-weight: 950;
-            color: #0b1220;
-            margin: 0 0 24px;
+          .d-body { padding: 52px 64px 64px; background: #f7f8fd; display: flex; flex-direction: column; gap: 52px; }
+
+          .d-sec-title {
+            font-size: 20px; font-weight: 950; color: #0b1220;
+            margin-bottom: 20px; padding-bottom: 12px;
+            border-bottom: 1px solid rgba(11,18,32,0.08);
             letter-spacing: -0.01em;
           }
 
-          /* 功能网格：3列 */
-          .desktop-feature-grid {
+          .d-feat-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 64px;
-          }
-          .desktop-feature-card {
-            background: #fff;
-            border-radius: 16px;
-            border: 1px solid rgba(11,18,32,0.07);
-            padding: 20px 22px;
-            display: flex;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 14px;
-            align-items: flex-start;
-            box-shadow: 0 2px 12px rgba(11,18,32,0.04);
           }
-          .desktop-feature-icon {
-            font-size: 26px;
-            flex-shrink: 0;
-            margin-top: 2px;
-          }
-          .desktop-feature-name {
-            font-size: 16px;
-            font-weight: 800;
-            color: #0b1220;
-            margin-bottom: 6px;
-          }
-          .desktop-feature-desc {
-            font-size: 14px;
-            color: rgba(11,18,32,0.55);
-            line-height: 1.75;
-          }
-
-          /* 学习步骤：2列 */
-          .desktop-steps-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 64px;
-          }
-          .desktop-step-card {
-            background: #fff;
-            border-radius: 16px;
+          .d-feat-card {
+            background: #fff; border-radius: 14px;
             border: 1px solid rgba(11,18,32,0.07);
-            padding: 20px 22px;
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-            box-shadow: 0 2px 12px rgba(11,18,32,0.04);
+            padding: 18px 20px; display: flex; gap: 14px; align-items: flex-start;
+            box-shadow: 0 2px 8px rgba(11,18,32,0.04);
           }
-          .desktop-step-icon-wrap {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(124,58,237,0.08));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+          .d-feat-icon-wrap {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: rgba(99,102,241,0.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
           }
-          .desktop-step-num {
-            font-size: 11px;
-            font-weight: 900;
-            color: #6366f1;
-            margin-bottom: 4px;
-            letter-spacing: 0.06em;
-          }
-          .desktop-step-title {
-            font-size: 17px;
-            font-weight: 800;
-            color: #0b1220;
-            margin-bottom: 6px;
-          }
-          .desktop-step-content {
-            font-size: 14px;
-            color: rgba(11,18,32,0.58);
-            line-height: 1.8;
-          }
+          .d-feat-name { font-size: 15px; font-weight: 800; color: #0b1220; margin-bottom: 5px; }
+          .d-feat-desc { font-size: 13px; color: rgba(11,18,32,0.55); line-height: 1.7; }
 
-          /* 底部：会员 + 客服横排 */
-          .desktop-bottom {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 60%, #312e81 100%);
-            border-radius: 20px;
-            padding: 40px 48px;
+          .d-steps-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px;
-            color: #fff;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
           }
-          .desktop-bottom-card {
-            background: rgba(255,255,255,0.07);
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 24px 28px;
+          .d-step-card {
+            background: #fff; border-radius: 14px;
+            border: 1px solid rgba(11,18,32,0.07);
+            padding: 18px 20px;
+            box-shadow: 0 2px 8px rgba(11,18,32,0.04);
           }
-          .desktop-bottom-title {
-            font-size: 18px;
-            font-weight: 900;
-            margin-bottom: 10px;
+          .d-step-num {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: #0f172a; color: #fff;
+            font-size: 12px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 12px;
           }
-          .desktop-bottom-desc {
-            font-size: 14px;
-            color: rgba(255,255,255,0.62);
-            line-height: 1.8;
-            margin-bottom: 20px;
+          .d-step-title { font-size: 15px; font-weight: 800; color: #0b1220; margin-bottom: 6px; }
+          .d-step-content { font-size: 13px; color: rgba(11,18,32,0.55); line-height: 1.75; }
+
+          .d-bottom-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
           }
+          .d-bot-card { background: #0f172a; border-radius: 14px; padding: 26px 28px; color: #fff; }
+          .d-bot-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 10px; }
+          .d-bot-desc { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.8; margin-bottom: 20px; }
+          .d-bot-btn {
+            display: block; text-align: center; padding: 12px 0; border-radius: 999px;
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff; text-decoration: none; font-size: 14px; font-weight: 800;
+            box-shadow: 0 6px 20px rgba(99,102,241,0.4);
+          }
+          .d-wechat-row { display: flex; align-items: center; gap: 20px; }
+          .d-qr { width: 90px; height: 90px; border-radius: 12px; overflow: hidden; flex-shrink: 0; }
+          .d-qr img { width: 100%; display: block; }
+          .d-wechat-label { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 6px; }
+          .d-wechat-id { font-size: 20px; font-weight: 900; color: #fff; }
         }
       `}</style>
 
-      {/* 顶部导航 */}
+      {/* 导航 */}
       <div className="guide-nav">
         <Link href="/" style={{ fontSize: 13, color: "rgba(11,18,32,0.5)", textDecoration: "none", fontWeight: 600 }}>← 回首页</Link>
         <span style={{ color: "rgba(11,18,32,0.2)" }}>|</span>
         <span style={{ fontSize: 14, fontWeight: 800, color: "#0b1220" }}>使用指南</span>
       </div>
 
-      {/* ══════════════ 手机端 ══════════════ */}
+      {/* ══ 手机端 ══ */}
       <div className="guide-mobile">
-
-        {/* Hero */}
-        <div className="mobile-hero">
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", fontWeight: 700, marginBottom: 10, letterSpacing: "0.06em" }}>DRAMA SCENE LIBRARY</div>
-          <h1 style={{ fontSize: 26, fontWeight: 950, margin: "0 0 10px", lineHeight: 1.3 }}>怎么用这个网站学英语</h1>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.62)", lineHeight: 1.8, margin: 0 }}>
-            精选来自美剧、电影、动画的真实英语片段，双语字幕 + 词汇卡，帮你在真实语境里学地道英语。
-          </p>
+        <div className="m-hero">
+          <div className="m-hero-label">DRAMA SCENE LIBRARY</div>
+          <h1 className="m-hero-title">怎么用这个网站学英语</h1>
+          <p className="m-hero-desc">精选来自美剧、电影、动画的真实英语片段，双语字幕 + 词汇卡，帮你在真实语境里学地道英语。</p>
         </div>
 
-        {/* 功能介绍 */}
-        <div className="mobile-section">
-          <h2 style={{ fontSize: 17, fontWeight: 900, color: "#0b1220", margin: "0 0 14px" }}>🛠️ 这里有什么</h2>
-          <div className="mobile-feature-grid">
+        <div className="m-section">
+          <div className="m-section-title">🛠️ 这里有什么</div>
+          <div className="m-feat-list">
             {FEATURES.map((f, i) => (
-              <div key={i} className="mobile-feature-card">
-                <div style={{ fontSize: 22, marginBottom: 6 }}>{f.icon}</div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#0b1220", marginBottom: 3 }}>{f.title}</div>
-                <div style={{ fontSize: 12, color: "rgba(11,18,32,0.55)", lineHeight: 1.65 }}>{f.desc}</div>
+              <div key={i} className="m-feat-item">
+                <div className="m-feat-icon-wrap">{f.icon}</div>
+                <div>
+                  <div className="m-feat-name">{f.title}</div>
+                  <div className="m-feat-desc">{f.desc}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 学习步骤 */}
-        <div style={{ padding: "0 20px 28px" }}>
-          <h2 style={{ fontSize: 17, fontWeight: 900, color: "#0b1220", margin: "0 0 14px" }}>📋 完整学习步骤</h2>
-          {STEPS.map((s, i) => (
-            <div key={i} className="mobile-step-card">
-              <div style={{
-                width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-                background: "linear-gradient(135deg, rgba(99,102,241,0.12), rgba(124,58,237,0.08))",
-                display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16,
-              }}>{s.icon}</div>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 900, color: "#6366f1", marginBottom: 2, letterSpacing: "0.06em" }}>STEP {s.num}</div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#0b1220", marginBottom: 4 }}>{s.title}</div>
-                <div style={{ fontSize: 13, color: "rgba(11,18,32,0.58)", lineHeight: 1.75 }}>{s.content}</div>
+        <div className="m-section" style={{ paddingTop: 0 }}>
+          <div className="m-section-title">📋 完整学习步骤</div>
+          <div className="m-steps">
+            {STEPS.map((s, i) => (
+              <div key={i} className="m-step">
+                <div className="m-step-left">
+                  <div className="m-step-num">{s.num}</div>
+                  {i < STEPS.length - 1 && <div className="m-step-line" />}
+                </div>
+                <div className="m-step-body">
+                  <div className="m-step-title">{s.title}</div>
+                  <div className="m-step-content">{s.content}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        {/* 会员 + 客服（最下面） */}
-        <div className="mobile-bottom">
-          <div className="mobile-card">
-            <div style={{ fontSize: 15, fontWeight: 900, marginBottom: 8 }}>✨ 关于会员</div>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 16 }}>
-              免费片段随便看，会员解锁全站所有内容。支持支付宝购买，有月卡、季卡、年卡和永久卡可以选。
-            </div>
-            <a href="/buy" style={{
-              display: "block", textAlign: "center", padding: "12px 0",
-              borderRadius: 999, background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
-              color: "#fff", textDecoration: "none", fontSize: 14, fontWeight: 800,
-              boxShadow: "0 6px 16px rgba(99,102,241,0.35)",
-            }}>立即开通会员 →</a>
+        <div className="m-bottom">
+          <div className="m-bottom-card">
+            <div className="m-bottom-title">✨ 关于会员</div>
+            <div className="m-bottom-desc">免费片段随便看，会员解锁全站所有内容。支持支付宝购买，有月卡、季卡、年卡和永久卡可以选。</div>
+            <a href="/buy" className="m-btn">立即开通会员 →</a>
           </div>
-
-          <div className="mobile-card" style={{ marginBottom: 0 }}>
-            <div style={{ fontSize: 15, fontWeight: 900, marginBottom: 8 }}>💬 联系客服</div>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", lineHeight: 1.75, marginBottom: 14 }}>
-              购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div style={{ borderRadius: 10, overflow: "hidden", width: 100, flexShrink: 0 }}>
-                <img src={WECHAT_QR_URL} alt="微信客服" style={{ width: "100%", display: "block" }} />
-              </div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)" }}>
-                扫码或搜索微信号<br />
-                <span style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{WECHAT_ID}</span>
+          <div className="m-bottom-card">
+            <div className="m-bottom-title">💬 联系客服</div>
+            <div className="m-bottom-desc">购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。</div>
+            <div className="m-wechat-row">
+              <div className="m-qr"><img src={WECHAT_QR_URL} alt="微信客服" /></div>
+              <div>
+                <div className="m-wechat-label">扫码或搜索微信号</div>
+                <div className="m-wechat-id">{WECHAT_ID}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ══════════════ 电脑端 ══════════════ */}
+      {/* ══ 电脑端 ══ */}
       <div className="guide-desktop">
-
-        {/* Hero 横幅 */}
-        <div className="desktop-hero">
-          <div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 700, letterSpacing: "0.1em", marginBottom: 16 }}>DRAMA SCENE LIBRARY · 使用指南</div>
-            <h1 className="desktop-hero-title">
-              怎么用这个网站<br />学英语
-            </h1>
-            <p className="desktop-hero-sub">
-              精选来自美剧、电影、动画的真实英语片段，覆盖日常生活、职场、旅行、人文等实用场景，90% 来自英语核心圈母语演员的真实对话。
-            </p>
-          </div>
-          <div className="desktop-hero-actions">
-            <a href="/buy" style={{
-              display: "block", textAlign: "center", padding: "14px 0",
-              borderRadius: 999, background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
-              color: "#fff", textDecoration: "none", fontSize: 15, fontWeight: 800,
-              boxShadow: "0 8px 24px rgba(99,102,241,0.4)", whiteSpace: "nowrap",
-            }}>✨ 立即开通会员</a>
-            <a href="/" style={{
-              display: "block", textAlign: "center", padding: "13px 0",
-              borderRadius: 999, background: "rgba(255,255,255,0.1)",
-              border: "1px solid rgba(255,255,255,0.18)",
-              color: "#fff", textDecoration: "none", fontSize: 15, fontWeight: 700,
-              whiteSpace: "nowrap",
-            }}>← 回到首页</a>
-          </div>
+        <div className="d-hero">
+          <div className="d-hero-label">DRAMA SCENE LIBRARY · 使用指南</div>
+          <h1 className="d-hero-title">怎么用这个网站学英语</h1>
+          <p className="d-hero-desc">精选来自美剧、电影、动画的真实英语片段，覆盖日常生活、职场、旅行、人文等实用场景，90% 来自英语核心圈母语演员的真实对话。</p>
         </div>
 
-        {/* 主内容 */}
-        <div className="desktop-body">
-
-          {/* 功能介绍 */}
-          <h2 className="desktop-section-title">🛠️ 这里有什么</h2>
-          <div className="desktop-feature-grid">
-            {FEATURES.map((f, i) => (
-              <div key={i} className="desktop-feature-card">
-                <div className="desktop-feature-icon">{f.icon}</div>
-                <div>
-                  <div className="desktop-feature-name">{f.title}</div>
-                  <div className="desktop-feature-desc">{f.desc}</div>
+        <div className="d-body">
+          <div>
+            <div className="d-sec-title">🛠️ 这里有什么</div>
+            <div className="d-feat-grid">
+              {FEATURES.map((f, i) => (
+                <div key={i} className="d-feat-card">
+                  <div className="d-feat-icon-wrap">{f.icon}</div>
+                  <div>
+                    <div className="d-feat-name">{f.title}</div>
+                    <div className="d-feat-desc">{f.desc}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* 学习步骤 */}
-          <h2 className="desktop-section-title">📋 完整学习步骤</h2>
-          <div className="desktop-steps-grid">
-            {STEPS.map((s, i) => (
-              <div key={i} className="desktop-step-card">
-                <div className="desktop-step-icon-wrap">{s.icon}</div>
-                <div>
-                  <div className="desktop-step-num">STEP {s.num}</div>
-                  <div className="desktop-step-title">{s.title}</div>
-                  <div className="desktop-step-content">{s.content}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* 会员 + 客服 */}
-          <div className="desktop-bottom">
-            <div className="desktop-bottom-card">
-              <div className="desktop-bottom-title">✨ 关于会员</div>
-              <div className="desktop-bottom-desc">
-                免费片段随便看，会员解锁全站所有内容。支持支付宝购买，有月卡、季卡、年卡和永久卡可以选。
-              </div>
-              <a href="/buy" style={{
-                display: "block", textAlign: "center", padding: "13px 0",
-                borderRadius: 999, background: "linear-gradient(135deg, #8b5cf6, #6366f1)",
-                color: "#fff", textDecoration: "none", fontSize: 15, fontWeight: 800,
-                boxShadow: "0 6px 20px rgba(99,102,241,0.4)",
-              }}>立即开通会员 →</a>
+              ))}
             </div>
+          </div>
 
-            <div className="desktop-bottom-card">
-              <div className="desktop-bottom-title">💬 联系客服</div>
-              <div className="desktop-bottom-desc">
-                购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-                <div style={{ borderRadius: 12, overflow: "hidden", width: 110, flexShrink: 0 }}>
-                  <img src={WECHAT_QR_URL} alt="微信客服" style={{ width: "100%", display: "block" }} />
+          <div>
+            <div className="d-sec-title">📋 完整学习步骤</div>
+            <div className="d-steps-grid">
+              {STEPS.map((s, i) => (
+                <div key={i} className="d-step-card">
+                  <div className="d-step-num">{s.num}</div>
+                  <div className="d-step-title">{s.title}</div>
+                  <div className="d-step-content">{s.content}</div>
                 </div>
-                <div>
-                  <div style={{ fontSize: 14, color: "rgba(255,255,255,0.62)", marginBottom: 6 }}>扫码或搜索微信号</div>
-                  <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>{WECHAT_ID}</div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="d-sec-title">购买与支持</div>
+            <div className="d-bottom-grid">
+              <div className="d-bot-card">
+                <div className="d-bot-title">✨ 关于会员</div>
+                <div className="d-bot-desc">免费片段随便看，会员解锁全站所有内容。支持支付宝购买，有月卡、季卡、年卡和永久卡可以选。</div>
+                <a href="/buy" className="d-bot-btn">立即开通会员 →</a>
+              </div>
+              <div className="d-bot-card">
+                <div className="d-bot-title">💬 联系客服</div>
+                <div className="d-bot-desc">购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。</div>
+                <div className="d-wechat-row">
+                  <div className="d-qr"><img src={WECHAT_QR_URL} alt="微信客服" /></div>
+                  <div>
+                    <div className="d-wechat-label">扫码或搜索微信号</div>
+                    <div className="d-wechat-id">{WECHAT_ID}</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
