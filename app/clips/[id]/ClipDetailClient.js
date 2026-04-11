@@ -132,7 +132,7 @@ const HIGHLIGHT_COLORS = {
 };
 
 // buildHighlighter 接收 { term -> kind } 映射，三种词汇同时高亮显示不同颜色
-// 所有单词都可点击查词，vocab 里的词额外有彩色高亮
+// vocab 里的词彩色高亮可点击；其他单词普通显示但也可点击查词
 function buildHighlighter(termKindMap) {
   const terms = Object.keys(termKindMap || {});
   const clean = Array.from(new Set(terms.map(t => String(t || "").trim()).filter(Boolean))).sort((a, b) => b.length - a.length);
@@ -510,16 +510,15 @@ function VocabCard({ v, kind, showZh, segments, onLocate, favSet, onToggleFav })
 // 点击高亮词弹出的迷你词汇卡
 function TermPopup({ popup, onClose }) {
   if (!popup) return null;
-  const { term, v, kind, x, y, dictData, dictLoading, dictError } = popup;
-  const safeX = typeof window !== "undefined" ? Math.min(x, window.innerWidth - 240) : x;
-  const safeY = typeof window !== "undefined" ? Math.min(y, window.innerHeight - 220) : y;
+  const { term, v, kind, x, y, lookupData, lookupLoading, lookupError } = popup;
+  const safeX = typeof window !== "undefined" ? Math.min(x, window.innerWidth - 250) : x;
+  const safeY = typeof window !== "undefined" ? Math.min(y, window.innerHeight - 180) : y;
 
-  // 有 vocab 数据时显示 vocab 内容，否则显示字典查询结果
-  const ipa = v?.ipa || (dictData && dictData[0]?.phonetics?.find(p => p.text)?.text) || "";
-  const meaning = v?.meaning_zh || (dictData && dictData[0]?.meanings?.[0]?.definitions?.[0]?.definition) || "";
-  const exEn = v?.example_en || (dictData && dictData[0]?.meanings?.[0]?.definitions?.[0]?.example) || "";
-  const exZh = v?.example_zh || "";
-  const audioUrl = v?.audio_url || (dictData && dictData[0]?.phonetics?.find(p => p.audio)?.audio) || "";
+  // vocab 有数据优先用 vocab，否则用查词结果
+  const ipa = v?.ipa || lookupData?.phonetic || "";
+  const partOfSpeech = lookupData?.partOfSpeech || "";
+  const zhMeaning = v?.meaning_zh || lookupData?.zh || "";
+  const audioUrl = v?.audio_url || lookupData?.audio || "";
 
   return (
     <>
@@ -532,27 +531,29 @@ function TermPopup({ popup, onClose }) {
         animation: "bIn 200ms cubic-bezier(.2,.9,.2,1)",
       }}>
         <button onClick={onClose} style={{ position: "absolute", top: 8, right: 8, width: 20, height: 20, borderRadius: "50%", border: "none", background: "rgba(11,18,32,0.07)", cursor: "pointer", fontSize: 11, display: "flex", alignItems: "center", justifyContent: "center", color: "#64748b" }}>✕</button>
-        <div style={{ fontWeight: 900, fontSize: 16, marginBottom: 2 }}>{term}</div>
-        {dictLoading && <div style={{ fontSize: 13, color: "#94a3b8", padding: "8px 0" }}>查询中...</div>}
-        {dictError && !v && <div style={{ fontSize: 12, color: "#ef4444", padding: "4px 0" }}>暂无词典数据</div>}
-        {!dictLoading && (
-          <>
-            {ipa && <div style={{ fontSize: 12, color: "#94a3b8", marginBottom: 6 }}>/ {ipa} /</div>}
-            {meaning && <div style={{ fontSize: 13, fontWeight: 700, color: "#0f172a", marginBottom: 8, lineHeight: 1.5 }}>{meaning}</div>}
-            {(exEn || exZh) && (
-              <div style={{ fontSize: 12, background: "#f3fbff", borderRadius: 10, padding: "7px 10px", border: "1px solid #cfe6ff", lineHeight: 1.55 }}>
-                {exEn && <div style={{ color: "#0b5aa6", fontWeight: 600 }}>{exEn}</div>}
-                {exZh && <div style={{ color: "#64748b", marginTop: 3 }}>{exZh}</div>}
+        <div style={{ fontWeight: 900, fontSize: 16, marginBottom: 4 }}>{term}</div>
+        {lookupLoading && <div style={{ fontSize: 13, color: "#94a3b8", padding: "6px 0" }}>查询中...</div>}
+        {lookupError && !v && <div style={{ fontSize: 12, color: "#ef4444", padding: "4px 0" }}>暂无数据</div>}
+        {!lookupLoading && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {(ipa || partOfSpeech) && (
+              <div style={{ fontSize: 12, color: "#94a3b8" }}>
+                {ipa ? `/ ${ipa} / ` : ""}{partOfSpeech ? <span style={{ fontStyle: "italic" }}>{partOfSpeech}</span> : null}
               </div>
             )}
-            <button onClick={() => { if (audioUrl) { new Audio(audioUrl).play().catch(() => speakEn(term)); } else { speakEn(term); } }} style={{ marginTop: 8, border: "1px solid #e2e8f0", background: "transparent", borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontSize: 12, color: "#64748b" }}>🔊 发音</button>
-          </>
+            {zhMeaning && (
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#0f172a", lineHeight: 1.5 }}>{zhMeaning}</div>
+            )}
+            <button
+              onClick={() => { if (audioUrl) { new Audio(audioUrl).play().catch(() => speakEn(term)); } else { speakEn(term); } }}
+              style={{ marginTop: 4, border: "1px solid #e2e8f0", background: "transparent", borderRadius: 8, padding: "4px 10px", cursor: "pointer", fontSize: 12, color: "#64748b", alignSelf: "flex-start" }}
+            >🔊 发音</button>
+          </div>
         )}
       </div>
     </>
   );
 }
-
 // 未登录收藏弹窗
 function BookmarkLoginModal({ onClose }) {
   return (
@@ -1028,19 +1029,20 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     const x = rect.left + rect.width / 2;
     const y = rect.bottom + window.scrollY + 8;
     if (found) {
-      setTermPopup({ term, v: found.v, kind: found.kind, x, y });
+      // vocab 里有的词，直接显示，同时后台查音标和词性补充
+      setTermPopup({ term, v: found.v, kind: found.kind, x, y, lookupLoading: true, lookupData: null, lookupError: false });
+      fetch(`/api/word_lookup?q=${encodeURIComponent(normTerm)}`)
+        .then(r => r.ok ? r.json() : Promise.reject())
+        .then(data => setTermPopup(prev => prev?.term === term ? { ...prev, lookupLoading: false, lookupData: data } : prev))
+        .catch(() => setTermPopup(prev => prev?.term === term ? { ...prev, lookupLoading: false } : prev));
       return;
     }
-    // vocab 里没有，调字典 API 查词
-    setTermPopup({ term, v: null, kind: null, x, y, dictLoading: true, dictData: null, dictError: false });
-    fetch(`/dict/${encodeURIComponent(normTerm)}`)
+    // vocab 里没有，并行查音标+中文
+    setTermPopup({ term, v: null, kind: null, x, y, lookupLoading: true, lookupData: null, lookupError: false });
+    fetch(`/api/word_lookup?q=${encodeURIComponent(normTerm)}`)
       .then(r => r.ok ? r.json() : Promise.reject())
-      .then(data => {
-        setTermPopup(prev => prev?.term === term ? { ...prev, dictLoading: false, dictData: data } : prev);
-      })
-      .catch(() => {
-        setTermPopup(prev => prev?.term === term ? { ...prev, dictLoading: false, dictError: true } : prev);
-      });
+      .then(data => setTermPopup(prev => prev?.term === term ? { ...prev, lookupLoading: false, lookupData: data } : prev))
+      .catch(() => setTermPopup(prev => prev?.term === term ? { ...prev, lookupLoading: false, lookupError: true } : prev));
   }
 
   const segments = useMemo(() => Array.isArray(details?.segments) ? details.segments : [], [details]);
