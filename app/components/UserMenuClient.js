@@ -120,7 +120,7 @@ export default function UserMenuClient() {
 
   if (!email) {
     return (
-      <>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <style>{`
           .um-auth-row {
             display: flex;
@@ -159,12 +159,12 @@ export default function UserMenuClient() {
         `}</style>
 
         <a href="/guide" style={{
-            display: "inline-flex", alignItems: "center", gap: 5,
-            fontSize: 13, fontWeight: 800, color: "#6366f1",
+            display: "inline-flex", alignItems: "center",
+            fontSize: 13, fontWeight: 800, color: "#dc2626",
             textDecoration: "none", padding: "6px 12px", borderRadius: 999,
-            background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.20)",
-            marginRight: 6, whiteSpace: "nowrap",
-          }}>📖 使用指南</a>
+            background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.20)",
+            whiteSpace: "nowrap",
+          }}>用前必看</a>
         <div className="um-auth-row">
           <a
             href="/login"
@@ -181,7 +181,7 @@ export default function UserMenuClient() {
             注册
           </a>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -192,12 +192,12 @@ export default function UserMenuClient() {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
       <a href="/guide" style={{
-        display: "inline-flex", alignItems: "center", gap: 5,
-        fontSize: 13, fontWeight: 800, color: "#6366f1",
+        display: "inline-flex", alignItems: "center",
+        fontSize: 13, fontWeight: 800, color: "#dc2626",
         textDecoration: "none", padding: "6px 12px", borderRadius: 999,
-        background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.20)",
+        background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.20)",
         whiteSpace: "nowrap",
-      }}>📖 使用指南</a>
+      }}>用前必看</a>
     <div ref={wrapRef} style={{ position: "relative" }}>
       <button
         type="button"
