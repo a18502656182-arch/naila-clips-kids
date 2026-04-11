@@ -32,10 +32,9 @@ async function queryYoudao(word) {
       console.log("Youdao error code:", data.errorCode);
       return null;
     }
-    // NMT 接口：优先 basic.explains，其次 translation
-    const explains = data.basic?.explains || [];
-    const translation = Array.isArray(data.translation) ? data.translation[0] : "";
-    return explains.length > 0 ? explains.join("；") : translation || null;
+    // NMT 接口格式：translateResults[0].translation
+    const nmtResult = data.translateResults?.[0]?.translation || "";
+    return nmtResult || null;
   } catch (e) {
     console.log("Youdao exception:", e.message);
     return null;
