@@ -1,10 +1,10 @@
 // pages/api/word_lookup.js
 // 并行查询 Free Dictionary API（音标/词性）+ 有道翻译（中文释义）
-const crypto = require("crypto");
+import crypto from "crypto";
 
 const YOUDAO_APP_ID = process.env.YOUDAO_APP_ID;
 const YOUDAO_APP_SECRET = process.env.YOUDAO_APP_SECRET;
-const YOUDAO_API = "https://openapi.youdao.com/api";
+const YOUDAO_API = "https://openapi.youdao.com/v2/api";
 
 function youdaoSign(appId, word, salt, curtime, appSecret) {
   const input = word.length <= 20
@@ -16,21 +16,24 @@ function youdaoSign(appId, word, salt, curtime, appSecret) {
 
 async function queryYoudao(word) {
   if (!YOUDAO_APP_ID || !YOUDAO_APP_SECRET) return null;
-  const salt = Date.now().toString();
-  const curtime = Math.floor(Date.now() / 1000).toString();
-  const sign = youdaoSign(YOUDAO_APP_ID, word, salt, curtime, YOUDAO_APP_SECRET);
-  const params = new URLSearchParams({
-    q: word, from: "en", to: "zh-CHS",
-    appKey: YOUDAO_APP_ID, salt, sign, signType: "v3", curtime,
-  });
-  const r = await fetch(`${YOUDAO_API}?${params}`);
-  if (!r.ok) return null;
-  const data = await r.json();
-  if (data.errorCode !== "0") return null;
-  // 优先用词典释义，没有则用翻译结果
-  const dictExplains = data.basic?.explains || [];
-  const translation = data.translation?.[0] || "";
-  return dictExplains.length > 0 ? dictExplains.join("；") : translation;
+  try {
+    const salt = Date.now().toString();
+    const curtime = Math.floor(Date.now() / 1000).toString();
+    const sign = youdaoSign(YOUDAO_APP_ID, word, salt, curtime, YOUDAO_APP_SECRET);
+    const params = new URLSearchParams({
+      q: word, from: "en", to: "zh-CHS",
+      appKey: YOUDAO_APP_ID, salt, sign, signType: "v3", curtime,
+    });
+    const r = await fetch(`${YOUDAO_API}?${params}`);
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (data.errorCode !== "0") return null;
+    const dictExplains = data.basic?.explains || [];
+    const translation = data.translation?.[0] || "";
+    return dictExplains.length > 0 ? dictExplains.join("；") : translation;
+  } catch {
+    return null;
+  }
 }
 
 async function queryDictionary(word) {
@@ -40,12 +43,8 @@ async function queryDictionary(word) {
     const data = await r.json();
     if (!Array.isArray(data) || !data[0]) return null;
     const entry = data[0];
-    // 取音标
-    const phonetic = entry.phonetic ||
-      entry.phonetics?.find(p => p.text)?.text || "";
-    // 取音频
+    const phonetic = entry.phonetic || entry.phonetics?.find(p => p.text)?.text || "";
     const audio = entry.phonetics?.find(p => p.audio)?.audio || "";
-    // 取词性
     const partOfSpeech = entry.meanings?.[0]?.partOfSpeech || "";
     return { phonetic, audio, partOfSpeech };
   } catch {
@@ -53,14 +52,13 @@ async function queryDictionary(word) {
   }
 }
 
-module.exports = async function handler(req, res) {
-  res.setHeader("Cache-Control", "public, max-age=86400"); // 缓存1天
+export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "public, max-age=86400");
   const word = (req.query.q || "").trim().toLowerCase();
   if (!word || !/^[a-z'-]+$/.test(word)) {
     return res.status(400).json({ error: "invalid_word" });
   }
 
-  // 并行查询
   const [youdaoResult, dictResult] = await Promise.allSettled([
     queryYoudao(word),
     queryDictionary(word),
@@ -76,4 +74,4 @@ module.exports = async function handler(req, res) {
     partOfSpeech: dict?.partOfSpeech || "",
     zh: zh || "",
   });
-};
+}
