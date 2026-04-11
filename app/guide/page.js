@@ -241,11 +241,11 @@ export default function GuidePage() {
             <a href="/buy" className="m-btn">立即开通会员 →</a>
           </div>
           <div className="m-bottom-card" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-            <div>
+            <div style={{ flex: 1 }}>
               <div className="m-bottom-title" style={{ marginBottom: 4 }}>💬 联系客服</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>购买咨询 · 使用问题</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.65 }}>购买咨询、使用问题、对网站的任何建议都可以加微信联系我们。</div>
             </div>
-            <WechatButton btnStyle="light" />
+            <WechatButton btnStyle="light" compact />
           </div>
         </div>
       </div>
