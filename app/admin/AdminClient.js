@@ -1381,7 +1381,13 @@ function UsersPanel({ initialUsers, onToast }) {
                       注册码：<code style={{ fontFamily: "monospace", color: T.muted }}>{u.used_code}</code>
                     </span>
                   )}
-                  <span style={{ fontSize: 11, color: T.faint }}>注册：{fmt(u.created_at)}</span>
+                  {u.used_plan && (() => {
+                    const { plan, days } = u.used_plan;
+                    const label = days === 0 ? "永久卡" : days >= 365 ? "年卡" : days >= 90 ? "季卡" : days >= 30 ? "月卡" : `试用卡(${days}天)`;
+                    const color = days === 0 ? T.vip : days >= 365 ? T.vip : days >= 90 ? T.warn : days >= 30 ? T.accent : T.good;
+                    return <Chip color={color}>{label}</Chip>;
+                  })()}
+                  <span style={{ fontSize: 11, color: T.faint }}>注册：{fmtFull(u.created_at)}</span>
                 </div>
               </div>
               <div style={{ display: "flex", gap: 6 }}>
