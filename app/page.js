@@ -31,7 +31,7 @@ function normRow(r) {
     created_at: r.created_at,
     upload_time: r.upload_time ?? null,
     access_tier: r.access_tier,
-    cover_url: proxyCoverUrl(r.cover_url) ?? null,
+    cover_url: proxyCoverUrl(r.cover_url),
     video_url: r.video_url ?? null,
     difficulty: typeof r.difficulty_slug === "string" ? r.difficulty_slug : null,
     // topic_slugs 存 genre + duration 标签
