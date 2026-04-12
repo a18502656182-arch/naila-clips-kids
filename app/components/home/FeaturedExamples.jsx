@@ -17,7 +17,6 @@ export default function FeaturedExamples({ featured }) {
   const cover = featured.cover_url || "";
   const duration = formatDuration(featured.duration_sec);
   const title = featured.title || `Clip #${featured.id}`;
-  const desc = featured.description || "";
   const isVip = featured.access_tier === "vip";
 
   return (
@@ -59,16 +58,6 @@ export default function FeaturedExamples({ featured }) {
           color: ${THEME.colors.ink};
           line-height: 1.25;
           margin: 0 0 6px 0;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-        .featDesc {
-          font-size: 12.5px;
-          color: ${THEME.colors.muted};
-          line-height: 1.5;
-          margin: 0;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
@@ -124,7 +113,23 @@ export default function FeaturedExamples({ featured }) {
         {/* 白底内容区 */}
         <div className="featBody">
           <h3 className="featTitle">{title}</h3>
-          {desc && <p className="featDesc">{desc}</p>}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", marginTop: 6 }}>
+            {featured.difficulty && (
+              <span style={{ display: "inline-flex", alignItems: "center", padding: "2px 7px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(245,158,11,0.14)", color: "#92400e" }}>
+                {featured.difficulty}
+              </span>
+            )}
+            {(featured.topics || []).map((t) => (
+              <span key={t} style={{ display: "inline-flex", alignItems: "center", padding: "2px 7px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(99,102,241,0.12)", color: "#3730a3" }}>
+                {t}
+              </span>
+            ))}
+            {(featured.channels || []).map((c) => (
+              <span key={c} style={{ display: "inline-flex", alignItems: "center", padding: "2px 7px", borderRadius: 999, fontSize: 11, fontWeight: 700, background: "rgba(6,182,212,0.13)", color: "#0e7490" }}>
+                {c}
+              </span>
+            ))}
+          </div>
         </div>
 
       </Link>
