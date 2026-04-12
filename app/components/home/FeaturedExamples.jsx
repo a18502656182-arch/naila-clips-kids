@@ -43,7 +43,7 @@ export default function FeaturedExamples({ featured }) {
         .featCover {
           position: relative;
           width: 100%;
-          aspect-ratio: 5/3;
+          height: 240px;
           background: rgba(11,18,32,0.06);
           overflow: hidden;
           flex-shrink: 0;
