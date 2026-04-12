@@ -86,13 +86,21 @@ function SingleSelectDropdown({ label, options, selected, onSelect, renderLabel 
 }
 
 // ── 剧集目录抽屉（点击筛选）────────────────────────────────
+const PINNED_SOURCES = ["美剧", "电影", "动画", "英剧"];
+
 function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
-  const [activeSource, setActiveSource] = useState(sources[0]?.slug || null);
+  const sortedSources = useMemo(() => {
+    const pinned = PINNED_SOURCES.map(name => sources.find(s => s.slug === name)).filter(Boolean);
+    const rest = sources.filter(s => !PINNED_SOURCES.includes(s.slug));
+    return [...pinned, ...rest];
+  }, [sources]);
+
+  const [activeSource, setActiveSource] = useState(sortedSources[0]?.slug || null);
 
   const displayShows = useMemo(() => {
     if (!activeSource) return shows;
     return shows.filter((s) => s.source === activeSource);
-  }, [shows, activeSource, sources]);
+  }, [shows, activeSource, sortedSources]);
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
@@ -152,7 +160,7 @@ function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
             }}>✕</button>
           </div>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {sources.map((src) => {
+            {sortedSources.map((src) => {
               const isActive = activeSource === src.slug;
               return (
                 <button
@@ -216,8 +224,6 @@ function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
 const HOT_COUNT = 10;
 const HOT_COUNT_MOBILE = 5;
 
-const PINNED_SHOWS = ["绝望主妇", "生活大爆炸", "老友记", "破产姐妹", "绝命毒师"];
-
 // 云标签循环配色（未选中状态）
 const TAG_COLORS = [
   { bg: "rgba(99,102,241,0.10)", color: "#4338ca", border: "rgba(99,102,241,0.25)" },
@@ -238,12 +244,8 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onSelectShow, o
     return shows.filter((s) => s.slug.toLowerCase().includes(showSearch.toLowerCase()));
   }, [shows, showSearch]);
 
-  // 置顶剧名排在前面，其余按原顺序补足 HOT_COUNT 个
-  const hotShows = useMemo(() => {
-    const pinned = PINNED_SHOWS.map(name => shows.find(s => s.slug === name)).filter(Boolean);
-    const rest = shows.filter(s => !PINNED_SHOWS.includes(s.slug));
-    return [...pinned, ...rest].slice(0, HOT_COUNT);
-  }, [shows]);
+  // 固定取前 HOT_COUNT 个，顺序不变；手机端通过 className 隐藏第6-10个
+  const hotShows = useMemo(() => shows.slice(0, HOT_COUNT), [shows]);
 
   const displayShows = showSearch.trim() ? filteredShows : hotShows;
 
