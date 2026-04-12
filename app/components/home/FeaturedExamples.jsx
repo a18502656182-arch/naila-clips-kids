@@ -17,107 +17,116 @@ export default function FeaturedExamples({ featured }) {
   const cover = featured.cover_url || "";
   const duration = formatDuration(featured.duration_sec);
   const title = featured.title || `Clip #${featured.id}`;
+  const desc = featured.description || "";
   const isVip = featured.access_tier === "vip";
 
   return (
     <>
       <style>{`
-        .featuredHeroCard {
+        .featCard {
+          display: flex;
+          flex-direction: column;
+          border-radius: ${THEME.radii.lg}px;
+          border: 1px solid ${THEME.colors.border};
+          background: ${THEME.colors.surface};
+          box-shadow: ${THEME.colors.shadow};
+          overflow: hidden;
+          text-decoration: none;
+          color: inherit;
           transform: translateY(0);
-          transition: transform 200ms ease, box-shadow 200ms ease;
+          transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
         }
-        .featuredHeroCard:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 20px 48px rgba(15,23,42,0.14);
+        .featCard:hover {
+          transform: translateY(-1px);
+          box-shadow: ${THEME.colors.shadowHover};
+          border-color: ${THEME.colors.border2};
         }
-        @media (max-width: 640px) {
-          .featuredHeroCard {
-            height: 260px !important;
-            border-radius: 20px !important;
-          }
+        .featCover {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 5/3;
+          background: rgba(11,18,32,0.06);
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+        .featBody {
+          padding: 12px;
+          background: ${THEME.colors.surface};
+        }
+        .featTitle {
+          font-size: 15px;
+          font-weight: 950;
+          color: ${THEME.colors.ink};
+          line-height: 1.25;
+          margin: 0 0 6px 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .featDesc {
+          font-size: 12.5px;
+          color: ${THEME.colors.muted};
+          line-height: 1.5;
+          margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
       `}</style>
 
-      <Link
-        href={`/clips/${featured.id}`}
-        className="featuredHeroCard"
-        style={{
-          position: "relative",
-          width: "100%",
-          height: 320,
-          borderRadius: 24,
-          overflow: "hidden",
-          display: "block",
-          textDecoration: "none",
-          border: `1px solid ${THEME.colors.border}`,
-          boxShadow: "0 16px 38px rgba(15,23,42,0.10)",
-          background: "rgba(11,18,32,0.06)",
-        }}
-      >
-        {/* 封面图 */}
-        {cover ? (
-          <img
-            src={cover}
-            alt={title}
-            style={{
-              position: "absolute", inset: 0,
-              width: "100%", height: "100%",
-              objectFit: "cover",
-            }}
-          />
-        ) : (
-          <div style={{ position: "absolute", inset: 0, background: "rgba(11,18,32,0.06)" }} />
-        )}
+      <Link href={`/clips/${featured.id}`} className="featCard">
 
-        {/* 渐变遮罩 */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          background: "linear-gradient(180deg, rgba(8,15,30,0.06) 0%, rgba(8,15,30,0.00) 30%, rgba(8,15,30,0.45) 100%)",
-        }} />
+        {/* 封面图区域 */}
+        <div className="featCover">
+          {cover ? (
+            <img
+              src={cover}
+              alt={title}
+              style={{
+                position: "absolute", inset: 0,
+                width: "100%", height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <div style={{ position: "absolute", inset: 0, background: "rgba(11,18,32,0.06)" }} />
+          )}
 
-        {/* 右上角：免费/会员 + 时长 */}
-        <div style={{
-          position: "absolute", top: 12, right: 12,
-          display: "flex", gap: 6, alignItems: "center", zIndex: 3,
-        }}>
-          <span style={{
-            padding: "5px 10px", borderRadius: 999,
-            background: isVip ? "#7c3aed" : "#10b981",
-            color: "#fff", fontSize: 12, fontWeight: 800,
+          {/* 左上角：免费/会员标签 */}
+          <div style={{
+            position: "absolute", left: 10, top: 10,
+            display: "flex", gap: 6, zIndex: 2,
           }}>
-            {isVip ? "会员" : "免费试看"}
-          </span>
-          {duration && (
             <span style={{
-              padding: "5px 10px", borderRadius: 999,
-              background: "rgba(11,18,32,0.70)",
-              color: "#fff", fontSize: 12, fontWeight: 800,
+              display: "inline-flex", alignItems: "center",
+              padding: "3px 8px", borderRadius: 999,
+              background: isVip ? "#7c3aed" : "#10b981",
+              color: "#fff", fontSize: 11, fontWeight: 800,
+            }}>
+              {isVip ? "会员" : "免费"}
+            </span>
+          </div>
+
+          {/* 右下角：时长 */}
+          {duration && (
+            <div style={{
+              position: "absolute", right: 10, bottom: 10, zIndex: 2,
+              background: "rgba(11,18,32,0.78)", color: "#fff",
+              fontSize: 12, padding: "4px 6px", borderRadius: 8, fontWeight: 700,
             }}>
               {duration}
-            </span>
+            </div>
           )}
         </div>
 
-        {/* 底部标题 */}
-        <div style={{
-          position: "absolute", left: 14, right: 14, bottom: 14, zIndex: 3,
-        }}>
-          <div style={{
-            padding: "10px 14px",
-            borderRadius: 14,
-            background: "rgba(255,255,255,0.88)",
-            border: "1px solid rgba(255,255,255,0.65)",
-            backdropFilter: "blur(12px)",
-            boxShadow: "0 8px 20px rgba(15,23,42,0.10)",
-            fontSize: 16,
-            fontWeight: 950,
-            letterSpacing: "-0.02em",
-            color: THEME.colors.ink,
-            lineHeight: 1.25,
-          }}>
-            {title}
-          </div>
+        {/* 白底内容区 */}
+        <div className="featBody">
+          <h3 className="featTitle">{title}</h3>
+          {desc && <p className="featDesc">{desc}</p>}
         </div>
+
       </Link>
     </>
   );
