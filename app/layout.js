@@ -1,4 +1,5 @@
 import PenguinWrapper from "./components/PenguinWrapper";
+import BuyFloatBtn from "./components/BuyFloatBtn";
 import WelcomeModal from "./components/WelcomeModal";
 
 export const metadata = {
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
       <body style={{ margin: 0 }}>
         {children}
         <PenguinWrapper />
+        <BuyFloatBtn />
         <WelcomeModal />
       </body>
     </html>
