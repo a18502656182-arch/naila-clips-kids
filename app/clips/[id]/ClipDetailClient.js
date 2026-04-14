@@ -1679,19 +1679,12 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
             <div style={{ width: "100%", height: "100%", background: THEME.colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, border: `1px solid ${THEME.colors.border}`, boxShadow: "0 -20px 50px rgba(0,0,0,0.12)", overflow: "hidden", boxSizing: "border-box", display: "flex", flexDirection: "column" }} onClick={e => e.stopPropagation()}>
               {/* 当前字幕：实时跟随视频播放 */}
               {activeSegIdx >= 0 && segments[activeSegIdx] && (
-                <div style={{ padding: "10px 14px 12px", borderBottom: `1px solid ${THEME.colors.border}`, background: THEME.colors.bg, flexShrink: 0 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
-                    <div style={{ width: 3, height: 14, borderRadius: 999, background: THEME.colors.accent, flexShrink: 0 }} />
-                    <span style={{ fontSize: 11, fontWeight: 700, color: THEME.colors.accent, letterSpacing: "0.04em" }}>正在播放</span>
-                    <span style={{ fontSize: 11, color: THEME.colors.faint }}>
-                      {fmtSec(segments[activeSegIdx].start)} – {fmtSec(segments[activeSegIdx].end)}
-                    </span>
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: THEME.colors.ink, lineHeight: 1.6, letterSpacing: "0.01em" }}>
+                <div style={{ padding: "10px 14px 12px", borderBottom: `1px solid ${THEME.colors.border}`, background: "#f0f6ff", flexShrink: 0 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#1d4ed8", lineHeight: 1.6 }}>
                     {segments[activeSegIdx].en || ""}
                   </div>
                   {segments[activeSegIdx].zh && (
-                    <div style={{ fontSize: 13, color: THEME.colors.muted, marginTop: 4, lineHeight: 1.5, paddingLeft: 9, borderLeft: `2px solid ${THEME.colors.border2}` }}>
+                    <div style={{ fontSize: 13, color: "#3b82f6", marginTop: 4, lineHeight: 1.5 }}>
                       {segments[activeSegIdx].zh}
                     </div>
                   )}
