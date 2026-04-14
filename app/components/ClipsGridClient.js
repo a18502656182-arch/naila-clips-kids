@@ -498,10 +498,16 @@ function BookmarkBtn({ clipId, saved, loggedIn, onNeedLogin, onToggle }) {
 }
 
 const PAGE_SIZE = 12;
+const VISIBLE_KEY = "meiju_visible_count_v1";
 
 export default function ClipsGridClient({ allItems, filters }) {
   // 当前显示条数（无限滚动通过增加这个数字实现）
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [visibleCount, setVisibleCount] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem("meiju_visible_count_v1");
+      return saved ? Math.max(PAGE_SIZE, parseInt(saved, 10)) : PAGE_SIZE;
+    } catch { return PAGE_SIZE; }
+  });
 
   const [loading, setLoading] = useState(false);
   const [err] = useState("");
@@ -613,8 +619,14 @@ export default function ClipsGridClient({ allItems, filters }) {
     if (cur !== prevFiltersRef.current) {
       prevFiltersRef.current = cur;
       setVisibleCount(PAGE_SIZE);
+      try { sessionStorage.removeItem(VISIBLE_KEY); } catch {}
     }
   }, [filters]);
+
+  // visibleCount变化时保存
+  useEffect(() => {
+    try { sessionStorage.setItem(VISIBLE_KEY, String(visibleCount)); } catch {}
+  }, [visibleCount]);
 
   // 当前实际显示的条目
   const items = filteredAll.slice(0, visibleCount);
@@ -629,13 +641,8 @@ export default function ClipsGridClient({ allItems, filters }) {
       userScrolledRef.current = true;
       window.removeEventListener("scroll", onScroll, { passive: true });
     };
-    const onRestored = () => { userScrolledRef.current = true; };
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("scroll_restored", onRestored);
-    return () => {
-      window.removeEventListener("scroll", onScroll, { passive: true });
-      window.removeEventListener("scroll_restored", onRestored);
-    };
+    return () => window.removeEventListener("scroll", onScroll, { passive: true });
   }, []);
 
   function loadMore() {
