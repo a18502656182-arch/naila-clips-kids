@@ -679,6 +679,8 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
   const mobileListRef = useRef(null);
   const desktopListRef = useRef(null);
   const rowRefs = useRef({});
+  const stickyRef = useRef(null);
+  const [stickyBottom, setStickyBottom] = useState(0);
 
   const [favSet, setFavSet] = useState(() => new Set());
   const [vCur, setVCur] = useState(0);
@@ -1244,6 +1246,22 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     return () => {};
   }, [isMobile, vocabOpen]);
 
+  // 动态获取sticky区域实际底部位置
+  useEffect(() => {
+    if (!isMobile) return;
+    function updateStickyBottom() {
+      const el = stickyRef.current;
+      if (el) setStickyBottom(el.getBoundingClientRect().bottom);
+    }
+    updateStickyBottom();
+    window.addEventListener("resize", updateStickyBottom);
+    window.addEventListener("scroll", updateStickyBottom);
+    return () => {
+      window.removeEventListener("resize", updateStickyBottom);
+      window.removeEventListener("scroll", updateStickyBottom);
+    };
+  }, [isMobile, checkingAccess]);
+
   // ─── 骨架屏（替代进入时白屏）────────────────────────────
   if (loading) {
     return (
@@ -1581,7 +1599,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
         {showBookmarkLoginModal && <BookmarkLoginModal onClose={() => setShowBookmarkLoginModal(false)} />}
         <TermPopup popup={termPopup} onClose={() => setTermPopup(null)} />
         {/* 视频区：去掉Card和padding，完全填满宽度 */}
-        <div style={{ position: "sticky", top: 52, zIndex: 10, background: "#1a1a2e" }}>
+        <div ref={stickyRef} style={{ position: "sticky", top: 52, zIndex: 10, background: "#1a1a2e" }}>
           {videoOrGate("38vh", true)}
           {subMode === "dictation" ? <div style={{ padding: "8px 12px", background: THEME.colors.bg }}>{dictPanel}</div> : null}
           {/* 模式tab行 + 自动跟随按钮 */}
@@ -1657,7 +1675,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
         )}
 
         {vocabOpen && (
-          <div role="dialog" aria-modal="true" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 50, top: "calc(52px + 38vh)" }} onClick={() => setVocabOpen(false)}>
+          <div role="dialog" aria-modal="true" style={{ position: "fixed", left: 0, right: 0, bottom: 0, zIndex: 50, top: stickyBottom || "calc(52px + 38vh)" }} onClick={() => setVocabOpen(false)}>
             <div style={{ width: "100%", height: "100%", background: THEME.colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20, border: `1px solid ${THEME.colors.border}`, boxShadow: "0 -20px 50px rgba(0,0,0,0.12)", overflow: "hidden", boxSizing: "border-box", display: "flex", flexDirection: "column" }} onClick={e => e.stopPropagation()}>
               {/* 当前字幕：实时跟随视频播放 */}
               {activeSegIdx >= 0 && segments[activeSegIdx] && (
