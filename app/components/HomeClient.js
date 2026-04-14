@@ -1,27 +1,81 @@
 "use client";
 // app/components/HomeClient.js
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import FiltersClient from "./FiltersClient";
 import ClipsGridClient from "./ClipsGridClient";
 
 const BANNER_KEY = "meiju_free_banner_closed_v1";
+const FILTERS_KEY = "meiju_home_filters_v1";
+const SCROLL_KEY = "meiju_home_scroll_v1";
+
+const DEFAULT_FILTERS = {
+  sort: "newest",
+  access: [],
+  difficulty: [],
+  genre: "",
+  duration: "",
+  show: [],
+  showSearch: "",
+};
 
 export default function HomeClient({ allItems, initialTaxonomies }) {
-  const [filters, setFilters] = useState({
-    sort: "newest",
-    access: [],
-    difficulty: [],
-    genre: "",
-    duration: "",
-    show: [],
-    showSearch: "",
+  const [filters, setFilters] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem(FILTERS_KEY);
+      return saved ? JSON.parse(saved) : DEFAULT_FILTERS;
+    } catch { return DEFAULT_FILTERS; }
   });
+
   const [showBanner, setShowBanner] = useState(false);
+  const containerRef = useRef(null);
+  const scrollRestored = useRef(false);
 
   useEffect(() => {
     try {
       if (!localStorage.getItem(BANNER_KEY)) setShowBanner(true);
     } catch {}
+  }, []);
+
+  // 恢复滚动位置
+  useEffect(() => {
+    if (scrollRestored.current) return;
+    scrollRestored.current = true;
+    try {
+      const saved = sessionStorage.getItem(SCROLL_KEY);
+      if (saved) {
+        const top = parseInt(saved, 10);
+        // 等 DOM 渲染完成再滚动
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            window.scrollTo({ top, behavior: "instant" });
+          });
+        });
+      }
+    } catch {}
+  }, []);
+
+  // 保存筛选状态
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(FILTERS_KEY, JSON.stringify(filters));
+    } catch {}
+  }, [filters]);
+
+  // 离开时保存滚动位置
+  useEffect(() => {
+    function saveScroll() {
+      try {
+        sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
+      } catch {}
+    }
+    window.addEventListener("beforeunload", saveScroll);
+    // Next.js 客户端路由跳转时 beforeunload 不触发，用 pagehide 补充
+    window.addEventListener("pagehide", saveScroll);
+    return () => {
+      saveScroll(); // 组件卸载时（路由跳转）也保存
+      window.removeEventListener("beforeunload", saveScroll);
+      window.removeEventListener("pagehide", saveScroll);
+    };
   }, []);
 
   function closeBanner() {
@@ -35,7 +89,7 @@ export default function HomeClient({ allItems, initialTaxonomies }) {
   }
 
   return (
-    <div>
+    <div ref={containerRef}>
       {showBanner && (
         <div style={{
           display: "flex", alignItems: "center", gap: 10,
