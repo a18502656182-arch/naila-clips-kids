@@ -33,8 +33,11 @@ export default function RootLayout({ children }) {
             filter: invert(1) hue-rotate(180deg);
           }
         `}</style>
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet" />
       </head>
-      <body style={{ margin: 0, fontFamily: "'PingFang SC', 'Microsoft YaHei', sans-serif" }}>
+      <body style={{ margin: 0, fontFamily: "'Noto Serif SC', serif" }}>
         <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('dark_mode')==='1')document.body.classList.add('dark-mode')}catch(e){}` }} />
         {children}
         <PenguinWrapper />
