@@ -17,9 +17,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
         <style>{`
           *, *::before, *::after { -webkit-tap-highlight-color: transparent; }
           :focus-visible { outline: 2px solid rgba(99,102,241,0.5); outline-offset: 2px; }
@@ -30,7 +27,7 @@ export default function RootLayout({ children }) {
             background: #fff;
           }
           body.dark-mode, body.dark-mode * {
-            font-family: 'Noto Sans SC', sans-serif !important;
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important;
           }
           body.dark-mode img,
           body.dark-mode video,
