@@ -21,6 +21,16 @@ export default function RootLayout({ children }) {
           *, *::before, *::after { -webkit-tap-highlight-color: transparent; }
           :focus-visible { outline: 2px solid rgba(99,102,241,0.5); outline-offset: 2px; }
           :focus:not(:focus-visible) { outline: none; }
+          body.dark-mode {
+            filter: invert(1) hue-rotate(180deg);
+            background: #fff;
+          }
+          body.dark-mode img,
+          body.dark-mode video,
+          body.dark-mode iframe,
+          body.dark-mode canvas {
+            filter: invert(1) hue-rotate(180deg);
+          }
         `}</style>
       </head>
       <body style={{ margin: 0 }}>
