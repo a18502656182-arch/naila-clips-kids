@@ -42,10 +42,7 @@ export default function UserMenuClient() {
     try {
       const isDark = localStorage.getItem("dark_mode") === "1";
       setDarkMode(isDark);
-      if (isDark) {
-        document.body.classList.add("dark-mode");
-        document.body.style.fontFamily = "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif";
-      }
+      if (isDark) document.body.classList.add("dark-mode");
     } catch {}
   }, []);
 
@@ -55,11 +52,9 @@ export default function UserMenuClient() {
     try {
       if (next) {
         document.body.classList.add("dark-mode");
-        document.body.style.fontFamily = "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif";
         localStorage.setItem("dark_mode", "1");
       } else {
         document.body.classList.remove("dark-mode");
-        document.body.style.fontFamily = "";
         localStorage.removeItem("dark_mode");
       }
     } catch {}
