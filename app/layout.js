@@ -17,6 +17,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
         <style>{`
           *, *::before, *::after { -webkit-tap-highlight-color: transparent; }
           :focus-visible { outline: 2px solid rgba(99,102,241,0.5); outline-offset: 2px; }
@@ -36,12 +39,8 @@ export default function RootLayout({ children }) {
             filter: invert(1) hue-rotate(180deg);
           }
         `}</style>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet" />
       </head>
-      <body style={{ margin: 0 }} suppressHydrationWarning>
-        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('dark_mode')==='1')document.body.classList.add('dark-mode')}catch(e){}` }} />
+      <body style={{ margin: 0 }}>
         {children}
         <PenguinWrapper />
         <BuyFloatBtn />
