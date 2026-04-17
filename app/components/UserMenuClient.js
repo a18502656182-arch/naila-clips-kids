@@ -40,7 +40,9 @@ export default function UserMenuClient() {
 
   useEffect(() => {
     try {
-      setDarkMode(localStorage.getItem("dark_mode") === "1");
+      const isDark = localStorage.getItem("dark_mode") === "1";
+      setDarkMode(isDark);
+      if (isDark) document.body.classList.add("dark-mode");
     } catch {}
   }, []);
 
