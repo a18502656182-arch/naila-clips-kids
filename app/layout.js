@@ -24,6 +24,7 @@ export default function RootLayout({ children }) {
           body.dark-mode {
             filter: invert(1) hue-rotate(180deg);
             background: #fff;
+            font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
           }
           body.dark-mode img,
           body.dark-mode video,
