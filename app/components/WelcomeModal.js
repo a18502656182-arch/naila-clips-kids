@@ -8,7 +8,6 @@ export default function WelcomeModal() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // 初始化深色模式
     try {
       if (localStorage.getItem("dark_mode") === "1") {
         document.body.classList.add("dark-mode");
@@ -54,13 +53,9 @@ export default function WelcomeModal() {
         <div style={{ fontSize: 18, fontWeight: 900, color: "#0b1220", marginBottom: 12, lineHeight: 1.3 }}>
           欢迎来到影视英语场景库！
         </div>
-        <div style={{ fontSize: 14, color: "rgba(11,18,32,0.65)", lineHeight: 1.8, marginBottom: 12 }}>
+        <div style={{ fontSize: 14, color: "rgba(11,18,32,0.65)", lineHeight: 1.8, marginBottom: 20 }}>
           这里收录了来自美剧、电影、动画的真实英语片段，双语字幕 + 词汇卡，帮你在真实语境里学地道英语。<br /><br />
           想知道怎么用效果最好？点下方按钮查看完整学习指南 👇
-        </div>
-        <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.7, marginBottom: 20, padding: "10px 14px", borderRadius: 10, background: "rgba(99,102,241,0.06)", border: "1px solid rgba(99,102,241,0.15)" }}>
-          <span style={{ color: "#6366f1", fontWeight: 900 }}>访问权限</span>
-          <span style={{ color: "#0b1220" }}>中点击免费选项可以试看多个视频哦！</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <a
