@@ -8,14 +8,6 @@ export default function WelcomeModal() {
   const pathname = usePathname();
 
   useEffect(() => {
-    try {
-      if (localStorage.getItem("dark_mode") === "1") {
-        document.body.classList.add("dark-mode");
-      }
-    } catch {}
-  }, []);
-
-  useEffect(() => {
     if (pathname !== "/") return;
     const supabase = createSupabaseBrowserClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
