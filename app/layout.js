@@ -3,12 +3,12 @@ import BuyFloatBtn from "./components/BuyFloatBtn";
 import WelcomeModal from "./components/WelcomeModal";
 
 export const metadata = {
-  title: "影视英语场景库 — 精选英美剧片段·双语字幕·词汇卡片",
-  description: "精选英美剧、电影、动画真实片段，配合双语字幕与词汇卡片。用地道的影视语料，持续把听力输入变成口语输出，把英语练到真正敢开口。",
-  keywords: "英语学习, 英美剧, 双语字幕, 词汇卡片, 口语练习, 英语听力, 美剧英语",
+  title: "儿童英语启蒙库 — 动画片段·双语字幕·趣味学英语",
+  description: "精选动画、儿童影视真实英语片段，配合双语字幕与词汇卡片。让孩子在真实语境中快乐学英语，轻松建立英语语感。",
+  keywords: "儿童英语, 动画英语, 启蒙英语, 双语字幕, 少儿英语, 英语学习, 儿童英语动画",
   openGraph: {
-    title: "影视英语场景库",
-    description: "精选英美剧、电影、动画真实片段，配合双语字幕与词汇卡片",
+    title: "儿童英语启蒙库",
+    description: "精选动画、儿童影视真实英语片段，配合双语字幕与词汇卡片",
     type: "website",
   },
 };
@@ -17,9 +17,6 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-CN">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet" />
         <style>{`
           *, *::before, *::after { -webkit-tap-highlight-color: transparent; }
           :focus-visible { outline: 2px solid rgba(99,102,241,0.5); outline-offset: 2px; }
@@ -34,14 +31,12 @@ export default function RootLayout({ children }) {
           body.dark-mode canvas {
             filter: invert(1) hue-rotate(180deg);
           }
-
-
           body.dark-mode mark {
             filter: invert(1) hue-rotate(180deg);
           }
         `}</style>
       </head>
-      <body style={{ margin: 0, fontFamily: "'Noto Serif SC', serif" }}>
+      <body style={{ margin: 0 }}>
         <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('dark_mode')==='1')document.body.classList.add('dark-mode')}catch(e){}` }} />
         {children}
         <PenguinWrapper />
