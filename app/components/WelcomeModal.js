@@ -41,13 +41,19 @@ export default function WelcomeModal() {
           width: "100%", maxWidth: 400,
         }}
       >
-        <div style={{ fontSize: 24, marginBottom: 10 }}>👋</div>
+        <div style={{ fontSize: 28, marginBottom: 10 }}>🎬</div>
         <div style={{ fontSize: 18, fontWeight: 900, color: "#0b1220", marginBottom: 12, lineHeight: 1.3 }}>
-          欢迎来到影视英语场景库！
+          欢迎来到儿童英语启蒙库！
         </div>
-        <div style={{ fontSize: 14, color: "rgba(11,18,32,0.65)", lineHeight: 1.8, marginBottom: 20 }}>
-          这里收录了来自美剧、电影、动画的真实英语片段，双语字幕 + 词汇卡，帮你在真实语境里学地道英语。<br /><br />
-          想知道怎么用效果最好？点下方按钮查看完整学习指南 👇
+        <div style={{ fontSize: 14, color: "rgba(11,18,32,0.65)", lineHeight: 1.8, marginBottom: 8 }}>
+          这里收录了来自动画片、儿童影视的真实英语片段，双语字幕 + 词汇卡，让孩子在真实语境里快乐学英语。
+        </div>
+        <div style={{ fontSize: 14, marginBottom: 20, lineHeight: 1.8 }}>
+          <span style={{ color: "rgba(11,18,32,0.65)" }}>点 </span>
+          <span style={{ color: "#e53e3e", fontWeight: 800 }}>访问权限</span>
+          <span style={{ color: "rgba(11,18,32,0.65)" }}>中的「</span>
+          <span style={{ color: "#e53e3e", fontWeight: 800 }}>免费</span>
+          <span style={{ color: "rgba(11,18,32,0.65)" }}>」选项可以试看多个视频哦！</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <a
@@ -62,7 +68,7 @@ export default function WelcomeModal() {
               boxShadow: "0 8px 20px rgba(124,58,237,0.25)",
             }}
           >
-            查看学习指南 →
+            查看使用指南 →
           </a>
           <button
             onClick={close}
