@@ -80,17 +80,12 @@ function VocabFavCard({ item, onRemove, showZh, onMastery }) {
   const { term, kind, data, clip_id, mastery_level } = item;
   const [collapsed, setCollapsed] = useState(false);
   const [mastery, setMastery] = useState(mastery_level ?? 0);
-
   const MASTERY_OPTS = [
     { level: 0, emoji: "🔴", label: "还不会", bg: "#fff1f2", border: "#fecdd3", color: "#dc2626" },
     { level: 1, emoji: "🟡", label: "学一半", bg: "#fffbeb", border: "#fde68a", color: "#d97706" },
     { level: 2, emoji: "🟢", label: "学会了", bg: "#f0fdf4", border: "#86efac", color: "#16a34a" },
   ];
-
-  function handleMastery(level) {
-    setMastery(level);
-    onMastery?.(item.id, level);
-  }
+  function handleMastery(level) { setMastery(level); onMastery?.(item.id, level); }
 
   const kindLabel = kind === "phrases" ? "短语" : kind === "expressions" ? "地道表达" : "单词";
   const kindColor = kind === "phrases" ? "#0b5aa6" : kind === "expressions" ? "#3c3ccf" : "#b86b00";
@@ -162,7 +157,6 @@ function VocabFavCard({ item, onRemove, showZh, onMastery }) {
                 color: mastery === m.level ? m.color : "#9ca3af",
                 borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 800,
                 cursor: "pointer", transition: "all 120ms ease",
-                transform: mastery === m.level ? "scale(1.05)" : "scale(1)",
               }}>{m.emoji} {m.label}</button>
             ))}
           </div>
@@ -287,49 +281,13 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
     } catch {}
   }
 
-  // ── 闪卡状态 ──
   const [flashMode, setFlashMode] = useState(false);
   const [flashIdx, setFlashIdx] = useState(0);
   const [flashFlipped, setFlashFlipped] = useState(false);
-  const [flashResults, setFlashResults] = useState({}); // { id: true/false }
+  const [flashResults, setFlashResults] = useState({});
   const [flashDone, setFlashDone] = useState(false);
-
-  // ── 按视频分组 ──
   const [groupByClip, setGroupByClip] = useState(false);
   const [masteryFilter, setMasteryFilter] = useState(null);
-
-  function startFlash() {
-    const deck = filteredVocab.filter(x => (x.mastery_level ?? 0) < 2);
-    if (deck.length === 0) return;
-    setFlashMode(true);
-    setFlashIdx(0);
-    setFlashFlipped(false);
-    setFlashResults({});
-    setFlashDone(false);
-  }
-
-  function flashAnswer(knew) {
-    const item = flashDeck[flashIdx];
-    const newLevel = knew ? Math.min(2, (item.mastery_level ?? 0) + 1) : Math.max(0, (item.mastery_level ?? 0) - 1);
-    updateMastery(item.id, newLevel);
-    setFlashResults(r => ({ ...r, [item.id]: knew }));
-    if (flashIdx + 1 >= flashDeck.length) {
-      setFlashDone(true);
-    } else {
-      setFlashIdx(i => i + 1);
-      setFlashFlipped(false);
-    }
-  }
-
-  const flashDeck = filteredVocab.filter(x => (x.mastery_level ?? 0) < 2);
-
-  // 按视频分组
-  const groupedByClip = vocabItems.reduce((acc, item) => {
-    const key = item.clip_id || 0;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(item);
-    return acc;
-  }, {});
 
   const filteredVideos = videoItems.filter(item =>
     !videoSearch || (item.clip?.title || "").toLowerCase().includes(videoSearch.toLowerCase())
@@ -343,6 +301,29 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
     const matchKind = vocabKind === "all" || item.kind === vocabKind;
     return matchSearch && matchKind;
   });
+
+  const flashDeck = filteredVocab.filter(x => (x.mastery_level ?? 0) < 2);
+
+  const groupedByClip = vocabItems.reduce((acc, item) => {
+    const key = item.clip_id || 0;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
+  function startFlash() {
+    if (flashDeck.length === 0) return;
+    setFlashMode(true); setFlashIdx(0);
+    setFlashFlipped(false); setFlashResults({}); setFlashDone(false);
+  }
+
+  function flashAnswer(knew, item) {
+    const newLevel = knew ? Math.min(2, (item.mastery_level ?? 0) + 1) : Math.max(0, (item.mastery_level ?? 0) - 1);
+    updateMastery(item.id, newLevel);
+    setFlashResults(r => ({ ...r, [item.id]: knew }));
+    if (flashIdx + 1 >= flashDeck.length) { setFlashDone(true); }
+    else { setFlashIdx(i => i + 1); setFlashFlipped(false); }
+  }
 
   const navBar = (
     <div style={{
@@ -432,7 +413,7 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
           {/* ── 词汇本 tab ── */}
           {tab === "vocab" && (
             <>
-              {/* 闪卡模式弹窗 */}
+              {/* 闪卡弹窗 */}
               {flashMode && (
                 <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
                   <div style={{ background: "#fff", borderRadius: 24, padding: 28, width: "100%", maxWidth: 420, boxShadow: "0 24px 60px rgba(0,0,0,0.2)" }}>
@@ -441,77 +422,79 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
                         <div style={{ textAlign: "center", fontSize: 40, marginBottom: 12 }}>🎉</div>
                         <div style={{ textAlign: "center", fontSize: 18, fontWeight: 900, marginBottom: 8 }}>本轮复习完成！</div>
                         <div style={{ textAlign: "center", fontSize: 14, color: "#6b7280", marginBottom: 20 }}>
-                          会了 {Object.values(flashResults).filter(Boolean).length} 个，
-                          还需练习 {Object.values(flashResults).filter(x => !x).length} 个
+                          会了 {Object.values(flashResults).filter(Boolean).length} 个 · 还需练习 {Object.values(flashResults).filter(x => !x).length} 个
                         </div>
                         <button onClick={() => setFlashMode(false)} style={{ width: "100%", background: "#6366f1", color: "#fff", border: "none", borderRadius: 999, padding: "14px 0", fontSize: 15, fontWeight: 800, cursor: "pointer" }}>返回词汇本</button>
                       </>
-                    ) : flashDeck[flashIdx] ? (
-                      <>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                          <span style={{ fontSize: 13, color: "#9ca3af" }}>{flashIdx + 1} / {flashDeck.length}</span>
-                          <button onClick={() => setFlashMode(false)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#9ca3af" }}>✕</button>
-                        </div>
-                        <div style={{ background: "#f8fafc", borderRadius: 16, padding: "28px 20px", textAlign: "center", marginBottom: 20, minHeight: 140, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                          <div style={{ fontSize: 28, fontWeight: 900, color: "#0b1220", marginBottom: 8 }}>{flashDeck[flashIdx].term}</div>
-                          {flashDeck[flashIdx].data?.ipa && <div style={{ fontSize: 14, color: "#9ca3af", marginBottom: 8 }}>/{flashDeck[flashIdx].data.ipa}/</div>}
-                          {flashFlipped ? (
-                            <>
-                              <div style={{ fontSize: 16, color: "#374151", fontWeight: 700, marginBottom: 6 }}>{flashDeck[flashIdx].data?.meaning_zh}</div>
-                              {flashDeck[flashIdx].data?.example_en && <div style={{ fontSize: 13, color: "#6b7280", fontStyle: "italic" }}>{flashDeck[flashIdx].data.example_en}</div>}
-                            </>
-                          ) : (
-                            <button onClick={() => setFlashFlipped(true)} style={{ marginTop: 8, background: "#e0e7ff", color: "#4f46e5", border: "none", borderRadius: 999, padding: "10px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>翻转看答案 👆</button>
-                          )}
-                        </div>
-                        {flashFlipped && (
-                          <div style={{ display: "flex", gap: 12 }}>
-                            <button onClick={() => flashAnswer(false)} style={{ flex: 1, background: "#fff1f2", color: "#dc2626", border: "2px solid #fecdd3", borderRadius: 999, padding: "12px 0", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>❌ 还不会</button>
-                            <button onClick={() => flashAnswer(true)} style={{ flex: 1, background: "#f0fdf4", color: "#16a34a", border: "2px solid #86efac", borderRadius: 999, padding: "12px 0", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>✅ 会了！</button>
+                    ) : flashDeck[flashIdx] ? (() => {
+                      const card = flashDeck[flashIdx];
+                      return (
+                        <>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                            <span style={{ fontSize: 13, color: "#9ca3af" }}>{flashIdx + 1} / {flashDeck.length}</span>
+                            <button onClick={() => setFlashMode(false)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#9ca3af" }}>✕</button>
                           </div>
-                        )}
-                      </>
-                    ) : null}
+                          <div style={{ background: "#f8fafc", borderRadius: 16, padding: "28px 20px", textAlign: "center", marginBottom: 20, minHeight: 140, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                            <div style={{ fontSize: 28, fontWeight: 900, color: "#0b1220", marginBottom: 8 }}>{card.term}</div>
+                            {card.data?.ipa && <div style={{ fontSize: 14, color: "#9ca3af", marginBottom: 8 }}>/{card.data.ipa}/</div>}
+                            {flashFlipped ? (
+                              <>
+                                <div style={{ fontSize: 16, color: "#374151", fontWeight: 700, marginBottom: 6 }}>{card.data?.meaning_zh}</div>
+                                {card.data?.example_en && <div style={{ fontSize: 13, color: "#6b7280", fontStyle: "italic" }}>{card.data.example_en}</div>}
+                              </>
+                            ) : (
+                              <button onClick={() => setFlashFlipped(true)} style={{ marginTop: 8, background: "#e0e7ff", color: "#4f46e5", border: "none", borderRadius: 999, padding: "10px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>翻转看答案 👆</button>
+                            )}
+                          </div>
+                          {flashFlipped && (
+                            <div style={{ display: "flex", gap: 12 }}>
+                              <button onClick={() => flashAnswer(false, card)} style={{ flex: 1, background: "#fff1f2", color: "#dc2626", border: "2px solid #fecdd3", borderRadius: 999, padding: "12px 0", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>❌ 还不会</button>
+                              <button onClick={() => flashAnswer(true, card)} style={{ flex: 1, background: "#f0fdf4", color: "#16a34a", border: "2px solid #86efac", borderRadius: 999, padding: "12px 0", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>✅ 会了！</button>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })() : null}
                   </div>
                 </div>
               )}
 
               {/* 工具栏 */}
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                 <input value={vocabSearch} onChange={e => setVocabSearch(e.target.value)}
-                  placeholder="搜索单词或中文含义..."
-                  style={{ flex: 1, minWidth: 180, padding: "10px 14px", border: "2px solid #e5e7eb", borderRadius: 12, fontSize: 13, outline: "none" }} />
+                  placeholder="搜索单词或中文..."
+                  style={{ flex: 1, minWidth: 160, padding: "10px 14px", border: "2px solid #e5e7eb", borderRadius: 12, fontSize: 13, outline: "none" }} />
                 <button onClick={startFlash} disabled={flashDeck.length === 0} style={{
                   background: flashDeck.length > 0 ? "linear-gradient(135deg,#6366f1,#7c3aed)" : "#e5e7eb",
                   color: flashDeck.length > 0 ? "#fff" : "#9ca3af",
-                  border: "none", borderRadius: 999, padding: "10px 18px", fontSize: 13, fontWeight: 800, cursor: flashDeck.length > 0 ? "pointer" : "default", whiteSpace: "nowrap",
-                }}>🃏 闪卡复习 ({flashDeck.length})</button>
+                  border: "none", borderRadius: 999, padding: "10px 16px", fontSize: 12, fontWeight: 800,
+                  cursor: flashDeck.length > 0 ? "pointer" : "default", whiteSpace: "nowrap",
+                }}>🃏 闪卡 ({flashDeck.length})</button>
                 <button onClick={() => setGroupByClip(x => !x)} style={{
-                  background: groupByClip ? "#eff6ff" : "#f9fafb",
-                  color: groupByClip ? "#3b82f6" : "#6b7280",
+                  background: groupByClip ? "#eff6ff" : "#f9fafb", color: groupByClip ? "#3b82f6" : "#6b7280",
                   border: `2px solid ${groupByClip ? "#bfdbfe" : "#e5e7eb"}`,
-                  borderRadius: 999, padding: "10px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
-                }}>📺 按视频分组</button>
+                  borderRadius: 999, padding: "10px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
+                }}>📺 按视频</button>
                 <button onClick={() => setShowZh(x => !x)} style={{
                   border: `2px solid ${showZh ? "#a5b4fc" : "#e5e7eb"}`,
                   background: showZh ? "#eef2ff" : "#f9fafb", color: showZh ? "#4f46e5" : "#6b7280",
-                  borderRadius: 999, padding: "10px 14px", fontSize: 13, fontWeight: 700, cursor: "pointer",
-                }}>{showZh ? "中文 ON" : "中文 OFF"}</button>
-                <button onClick={loadVocab} style={{ border: "2px solid #e5e7eb", background: "#f9fafb", borderRadius: 12, padding: "10px 14px", fontSize: 13, cursor: "pointer", color: "#6b7280" }}>↺</button>
+                  borderRadius: 999, padding: "10px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer",
+                }}>{showZh ? "中文 ON" : "OFF"}</button>
+                <button onClick={loadVocab} style={{ border: "2px solid #e5e7eb", background: "#f9fafb", borderRadius: 12, padding: "10px 12px", fontSize: 13, cursor: "pointer", color: "#6b7280" }}>↺</button>
               </div>
 
               {/* 掌握度筛选 */}
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
                 {[
-                  { val: null, emoji: "📚", label: `全部 (${vocabItems.length})` },
-                  { val: 0, emoji: "🔴", label: `还不会 (${vocabItems.filter(x => (x.mastery_level ?? 0) === 0).length})` },
-                  { val: 1, emoji: "🟡", label: `学一半 (${vocabItems.filter(x => (x.mastery_level ?? 0) === 1).length})` },
-                  { val: 2, emoji: "🟢", label: `学会了 (${vocabItems.filter(x => (x.mastery_level ?? 0) === 2).length})` },
+                  { val: null, emoji: "📚", label: `全部(${vocabItems.length})` },
+                  { val: 0, emoji: "🔴", label: `还不会(${vocabItems.filter(x=>(x.mastery_level??0)===0).length})` },
+                  { val: 1, emoji: "🟡", label: `学一半(${vocabItems.filter(x=>(x.mastery_level??0)===1).length})` },
+                  { val: 2, emoji: "🟢", label: `学会了(${vocabItems.filter(x=>(x.mastery_level??0)===2).length})` },
                 ].map(f => (
                   <button key={String(f.val)} onClick={() => setMasteryFilter(f.val)} style={{
-                    border: `2px solid ${masteryFilter === f.val ? "#6366f1" : "#e5e7eb"}`,
-                    background: masteryFilter === f.val ? "#eef2ff" : "#f9fafb",
-                    color: masteryFilter === f.val ? "#4f46e5" : "#6b7280",
+                    border: `2px solid ${masteryFilter===f.val ? "#6366f1" : "#e5e7eb"}`,
+                    background: masteryFilter===f.val ? "#eef2ff" : "#f9fafb",
+                    color: masteryFilter===f.val ? "#4f46e5" : "#6b7280",
                     borderRadius: 999, padding: "7px 14px", fontSize: 12, fontWeight: 800, cursor: "pointer",
                   }}>{f.emoji} {f.label}</button>
                 ))}
@@ -528,16 +511,15 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
                 </div>
               ) : filteredVocab.length === 0 ? (
                 <div style={{ border: "2px solid #e5e7eb", borderRadius: 16, background: "#fff", padding: 40, textAlign: "center", color: "#9ca3af", fontSize: 14 }}>
-                  {vocabItems.length === 0 ? "还没有收藏任何词汇，去看视频时点词汇卡的 🤍 收藏吧 ~" : "没有符合筛选条件的词汇"}
+                  {vocabItems.length === 0 ? "还没有收藏词汇，看视频时点词汇卡的 🤍 收藏吧" : "没有符合筛选条件的词汇"}
                 </div>
               ) : groupByClip ? (
-                // 按视频分组视图
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   {Object.entries(groupedByClip).map(([clipId, items]) => {
                     const filtered = items.filter(item => {
-                      const matchSearch = !vocabSearch || item.term.toLowerCase().includes(vocabSearch.toLowerCase()) || (item.data?.meaning_zh || "").includes(vocabSearch);
-                      const matchMastery = masteryFilter === null || (item.mastery_level ?? 0) === masteryFilter;
-                      return matchSearch && matchMastery;
+                      const ms = !vocabSearch || item.term.toLowerCase().includes(vocabSearch.toLowerCase()) || (item.data?.meaning_zh||"").includes(vocabSearch);
+                      const mm = masteryFilter === null || (item.mastery_level??0) === masteryFilter;
+                      return ms && mm;
                     });
                     if (filtered.length === 0) return null;
                     return (
@@ -545,7 +527,7 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
                         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
                           <div style={{ height: 2, flex: 1, background: "#e5e7eb" }} />
                           <a href={`/clips/${clipId}`} style={{ fontSize: 13, fontWeight: 800, color: "#6366f1", textDecoration: "none", background: "#eef2ff", border: "2px solid #c7d2fe", borderRadius: 999, padding: "4px 14px", whiteSpace: "nowrap" }}>
-                            📺 视频 #{clipId} → ({filtered.length}个词)
+                            📺 视频 #{clipId}（{filtered.length}个词）
                           </a>
                           <div style={{ height: 2, flex: 1, background: "#e5e7eb" }} />
                         </div>
