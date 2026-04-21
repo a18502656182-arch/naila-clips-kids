@@ -352,8 +352,7 @@ function SubtitleRow({ seg, idx, active, onClick, subMode, rowRef, loopIdx, onTo
           {!isDictation && onReading && (
             <button type="button" title="跟读这一句" onClick={e => { e.stopPropagation(); onReading(idx); }} style={{
               border: `1px solid #f59e0b`,
-              background: "#fffbeb",
-              color: "#d97706",
+              background: "#fffbeb", color: "#d97706",
               borderRadius: THEME.radii.pill,
               width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer", fontSize: 13, flexShrink: 0,
@@ -584,10 +583,8 @@ function TermPopup({ popup, onClose }) {
 }
 // 未登录收藏弹窗
 
-// ── 跟读评分弹窗 ──────────────────────────────────────────────
 function ReadingModal({ modal, state, score, recognized, onClose, onStart, onListen, onSave }) {
   const { seg, idx } = modal;
-
   function getScoreColor(s) {
     if (s >= 80) return "#16a34a";
     if (s >= 60) return "#d97706";
@@ -598,7 +595,6 @@ function ReadingModal({ modal, state, score, recognized, onClose, onStart, onLis
     if (s >= 60) return "不错，再练练！";
     return "再试一次吧！";
   }
-
   return (
     <div onClick={onClose} style={{
       position: "fixed", inset: 0, zIndex: 10001,
@@ -611,107 +607,54 @@ function ReadingModal({ modal, state, score, recognized, onClose, onStart, onLis
         boxShadow: "0 24px 60px rgba(11,18,32,0.18)",
         padding: "24px 20px", width: "100%", maxWidth: 400,
       }}>
-        {/* 标题 */}
-        <div style={{ fontSize: 15, fontWeight: 900, color: "#0b1220", marginBottom: 16 }}>
-          📖 跟读第 {idx + 1} 句
-        </div>
-
-        {/* 原文展示 */}
-        <div style={{
-          background: "#f0f6ff", borderRadius: 12, padding: "12px 14px", marginBottom: 16,
-          borderLeft: "3px solid #3b82f6",
-        }}>
+        <div style={{ fontSize: 15, fontWeight: 900, color: "#0b1220", marginBottom: 16 }}>📖 跟读第 {idx + 1} 句</div>
+        <div style={{ background: "#f0f6ff", borderRadius: 12, padding: "12px 14px", marginBottom: 16, borderLeft: "3px solid #3b82f6" }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: "#1d4ed8", lineHeight: 1.6 }}>{seg.en}</div>
           <div style={{ fontSize: 13, color: "#3b82f6", marginTop: 4 }}>{seg.zh}</div>
         </div>
-
-        {/* 步骤内容 */}
         {state === "idle" && (
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 13, color: "rgba(11,18,32,0.55)", marginBottom: 16, lineHeight: 1.7 }}>
-              先听一遍原声，再点麦克风跟读
-            </div>
+            <div style={{ fontSize: 13, color: "rgba(11,18,32,0.55)", marginBottom: 16, lineHeight: 1.7 }}>先听一遍原声，再点麦克风跟读</div>
             <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-              <button onClick={onStart} style={{
-                background: "linear-gradient(135deg, #6366f1, #7c3aed)",
-                color: "#fff", border: "none", borderRadius: 999,
-                padding: "12px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer",
-                boxShadow: "0 8px 20px rgba(124,58,237,0.25)",
-              }}>▶ 播放原声</button>
-              <button onClick={onListen} style={{
-                background: "#fff", color: "#0b1220",
-                border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999,
-                padding: "12px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer",
-              }}>🎙 直接跟读</button>
+              <button onClick={onStart} style={{ background: "linear-gradient(135deg, #6366f1, #7c3aed)", color: "#fff", border: "none", borderRadius: 999, padding: "12px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>▶ 播放原声</button>
+              <button onClick={onListen} style={{ background: "#fff", color: "#0b1220", border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999, padding: "12px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>🎙 直接跟读</button>
             </div>
           </div>
         )}
-
         {state === "playing" && (
           <div style={{ textAlign: "center", padding: "8px 0" }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>🔊</div>
             <div style={{ fontSize: 14, color: "rgba(11,18,32,0.55)" }}>正在播放原声…</div>
-            <button onClick={onListen} style={{
-              marginTop: 16, background: "#fff", color: "#0b1220",
-              border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999,
-              padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer",
-            }}>跳过，直接跟读</button>
+            <button onClick={onListen} style={{ marginTop: 16, background: "#fff", color: "#0b1220", border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999, padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>跳过，直接跟读</button>
           </div>
         )}
-
         {state === "listening" && (
           <div style={{ textAlign: "center", padding: "8px 0" }}>
-            <div style={{ fontSize: 40, marginBottom: 8, animation: "pulse 1s infinite" }}>🎙</div>
+            <div style={{ fontSize: 40, marginBottom: 8 }}>🎙</div>
             <div style={{ fontSize: 14, fontWeight: 700, color: "#dc2626", marginBottom: 4 }}>正在录音…</div>
             <div style={{ fontSize: 12, color: "rgba(11,18,32,0.45)" }}>请跟读上方英文句子</div>
-            <style>{`@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.7;transform:scale(1.1)} }`}</style>
           </div>
         )}
-
         {state === "result" && score !== null && (
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 48, fontWeight: 900, color: getScoreColor(score), marginBottom: 4 }}>
-              {score}
-            </div>
+            <div style={{ fontSize: 48, fontWeight: 900, color: getScoreColor(score), marginBottom: 4 }}>{score}</div>
             <div style={{ fontSize: 14, color: "rgba(11,18,32,0.55)", marginBottom: 8 }}>分</div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: getScoreColor(score), marginBottom: 12 }}>
-              {getScoreLabel(score)}
-            </div>
-            {recognized && (
-              <div style={{
-                background: "#f8fafc", borderRadius: 10, padding: "10px 12px",
-                fontSize: 13, color: "rgba(11,18,32,0.6)", marginBottom: 16,
-                border: "1px solid rgba(11,18,32,0.08)",
-              }}>
+            <div style={{ fontSize: 16, fontWeight: 800, color: getScoreColor(score), marginBottom: 12 }}>{getScoreLabel(score)}</div>
+            {recognized ? (
+              <div style={{ background: "#f8fafc", borderRadius: 10, padding: "10px 12px", fontSize: 13, color: "rgba(11,18,32,0.6)", marginBottom: 16, border: "1px solid rgba(11,18,32,0.08)" }}>
                 你说的：<span style={{ color: "#0b1220", fontWeight: 600 }}>{recognized}</span>
               </div>
+            ) : (
+              <div style={{ background: "#fff5f5", borderRadius: 10, padding: "10px 12px", fontSize: 13, color: "#dc2626", marginBottom: 16, border: "1px solid #fecaca" }}>未能识别，请再试一次</div>
             )}
-            {score >= 80 && (
-              <div style={{ fontSize: 13, color: "#16a34a", marginBottom: 12 }}>+1 ⭐ 已获得星星！</div>
-            )}
+            {score >= 80 && <div style={{ fontSize: 13, color: "#16a34a", marginBottom: 12 }}>+1 ⭐ 已获得星星！</div>}
             <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-              <button onClick={onListen} style={{
-                background: "#fff", color: "#0b1220",
-                border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999,
-                padding: "10px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer",
-              }}>🎙 再试一次</button>
-              {score >= 60 && (
-                <button onClick={onSave} style={{
-                  background: "linear-gradient(135deg, #6366f1, #7c3aed)",
-                  color: "#fff", border: "none", borderRadius: 999,
-                  padding: "10px 20px", fontSize: 13, fontWeight: 800, cursor: "pointer",
-                }}>保存并继续</button>
-              )}
+              <button onClick={onListen} style={{ background: "#fff", color: "#0b1220", border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>🎙 再试一次</button>
+              {score >= 60 && <button onClick={onSave} style={{ background: "linear-gradient(135deg, #6366f1, #7c3aed)", color: "#fff", border: "none", borderRadius: 999, padding: "10px 20px", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>保存并继续</button>}
             </div>
           </div>
         )}
-
-        <button onClick={onClose} style={{
-          display: "block", width: "100%", marginTop: 16,
-          border: "1px solid rgba(11,18,32,0.1)", background: "transparent",
-          borderRadius: 999, padding: "10px 0", cursor: "pointer",
-          fontSize: 13, color: "rgba(11,18,32,0.4)",
-        }}>关闭</button>
+        <button onClick={onClose} style={{ display: "block", width: "100%", marginTop: 16, border: "1px solid rgba(11,18,32,0.1)", background: "transparent", borderRadius: 999, padding: "10px 0", cursor: "pointer", fontSize: 13, color: "rgba(11,18,32,0.4)" }}>关闭</button>
       </div>
     </div>
   );
@@ -825,15 +768,16 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
   const desktopListRef = useRef(null);
 
   // ── 跟读评分 ──
-  const [readingModal, setReadingModal] = useState(null); // { seg, idx } | null
-  const [readingState, setReadingState] = useState("idle"); // idle | playing | listening | result
+  const [readingModal, setReadingModal] = useState(null);
+  const [readingState, setReadingState] = useState("idle");
   const [readingScore, setReadingScore] = useState(null);
   const [readingRecognized, setReadingRecognized] = useState("");
   const recognitionRef = useRef(null);
+  const readingStateRef = useRef("idle");
+  const hasResultRef = useRef(false);
 
   // ── 星星 ──
   const [totalStars, setTotalStars] = useState(null);
-
   useEffect(() => {
     const token = getToken();
     if (!token) return;
@@ -1192,9 +1136,6 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
   }, [clipId]);
 
   // ── 跟读处理函数 ──────────────────────────────────────
-  const readingStateRef = useRef("idle"); // 用 ref 避免闭包旧值问题
-  const hasResultRef = useRef(false);     // 标记是否已经拿到识别结果
-
   function startReadingPlay() {
     if (!readingModal) return;
     const seg = readingModal.seg;
@@ -1205,7 +1146,6 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     const start = parseTime(seg.start);
     const end = parseTime(seg.end);
     v.currentTime = Math.max(0, start);
-    // 暂停原来的播放，只播这一句
     v.play?.().catch(() => {});
     const check = setInterval(() => {
       if (v.currentTime >= end - 0.05) {
@@ -1223,22 +1163,48 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     setReadingScore(null);
     setReadingRecognized("");
 
-    // 用 MediaRecorder 录音，发给后端讯飞接口识别
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      const chunks = [];
-      const mr = new MediaRecorder(stream);
-      recognitionRef.current = { stream, mr };
+    const seg = readingModal?.seg;
+    const segDuration = seg ? Math.max(3000, (parseTime(seg.end) - parseTime(seg.start)) * 1000 + 1500) : 4000;
+    const recordDuration = Math.min(segDuration, 8000);
+    const sampleRate = 16000;
 
-      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+    navigator.mediaDevices.getUserMedia({ audio: { sampleRate, channelCount: 1 }, video: false }).then(stream => {
+      recognitionRef.current = { stream };
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate });
+      const source = audioCtx.createMediaStreamSource(stream);
+      const bufferSize = 4096;
+      const processor = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+      const pcmChunks = [];
 
-      mr.onstop = async () => {
+      processor.onaudioprocess = (e) => {
+        const input = e.inputBuffer.getChannelData(0);
+        const int16 = new Int16Array(input.length);
+        for (let i = 0; i < input.length; i++) {
+          int16[i] = Math.max(-32768, Math.min(32767, Math.round(input[i] * 32768)));
+        }
+        pcmChunks.push(new Uint8Array(int16.buffer));
+      };
+
+      source.connect(processor);
+      processor.connect(audioCtx.destination);
+
+      setTimeout(async () => {
+        processor.disconnect();
+        source.disconnect();
+        audioCtx.close();
         stream.getTracks().forEach(t => t.stop());
         if (readingStateRef.current !== "listening") return;
         try {
-          // 转成 ArrayBuffer → base64
-          const blob = new Blob(chunks, { type: "audio/webm" });
-          const arrayBuffer = await blob.arrayBuffer();
-          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          const totalLen = pcmChunks.reduce((s, c) => s + c.length, 0);
+          const merged = new Uint8Array(totalLen);
+          let offset = 0;
+          pcmChunks.forEach(c => { merged.set(c, offset); offset += c.length; });
+          let binary = "";
+          const chunkSize = 8192;
+          for (let i = 0; i < merged.length; i += chunkSize) {
+            binary += String.fromCharCode(...merged.subarray(i, i + chunkSize));
+          }
+          const base64 = btoa(binary);
           const token = getToken();
           const headers = { "Content-Type": "application/json" };
           if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -1247,7 +1213,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
             body: JSON.stringify({ audio: base64 }),
           });
           const data = await resp.json();
-          const recognized = data.text || "";
+          const recognized = (data.text || "").trim();
           hasResultRef.current = true;
           setReadingRecognized(recognized);
           const score = calcReadingScore(readingModal.seg.en, recognized);
@@ -1260,16 +1226,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
           readingStateRef.current = "result";
           setReadingScore(0);
         }
-      };
-
-      mr.start();
-      // 录音3秒后自动停止（可以根据字幕长度动态调整）
-      const seg = readingModal?.seg;
-      const segDuration = seg ? Math.max(3000, (parseTime(seg.end) - parseTime(seg.start)) * 1000 + 1500) : 4000;
-      setTimeout(() => {
-        if (mr.state === "recording") mr.stop();
-      }, Math.min(segDuration, 8000));
-
+      }, recordDuration);
     }).catch(() => {
       setReadingState("result");
       readingStateRef.current = "result";
@@ -1296,28 +1253,22 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
       await fetch(remote("/api/reading_score_save"), {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify({
-          clip_id: clipId,
-          seg_index: readingModal.idx,
-          score,
-          recognized,
-        }),
+        body: JSON.stringify({ clip_id: clipId, seg_index: readingModal.idx, score, recognized }),
       });
-      // 更新星星数
       if (score >= 60) setTotalStars(prev => prev !== null ? prev + 1 : 1);
     } catch {}
   }
 
   function closeReadingModal() {
     if (recognitionRef.current) {
-      try { recognitionRef.current.mr?.stop(); } catch {}
       try { recognitionRef.current.stream?.getTracks().forEach(t => t.stop()); } catch {}
     }
     setReadingModal(null);
     setReadingState("idle");
+    readingStateRef.current = "idle";
   }
 
-  async function toggleBookmark() {
+    async function toggleBookmark() {
     if (!me?.logged_in) { setShowBookmarkLoginModal(true); return; }
     if (bookmarkLoading) return;
     setBookmarkLoading(true);
@@ -1626,13 +1577,9 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
           }}
         >{bookmarked ? "❤️ 已收藏" : "🤍 收藏"}</button>
         {totalStars !== null && (
-          <div style={{
-            display: "flex", alignItems: "center", gap: 4,
-            background: "#fffbeb", border: "1px solid #fde68a",
-            borderRadius: 999, padding: "6px 12px", flexShrink: 0,
-          }}>
-            <span style={{ fontSize: 14 }}>⭐</span>
-            <span style={{ fontSize: 13, fontWeight: 800, color: "#d97706" }}>{totalStars}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 4, background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 999, padding: "6px 10px", flexShrink: 0 }}>
+            <span style={{ fontSize: 13 }}>⭐</span>
+            <span style={{ fontSize: 12, fontWeight: 800, color: "#d97706" }}>{totalStars}</span>
           </div>
         )}
       </div>
@@ -1828,7 +1775,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
             onClickTerm={handleClickTerm}
             clozeMode={clozeMode}
             clozeRevealed={clozeRevealed}
-            onReading={(idx) => { setReadingModal({ seg, idx }); setReadingState("idle"); setReadingScore(null); setReadingRecognized(""); }} />
+            onReading={(i) => { setReadingModal({ seg, idx: i }); setReadingState("idle"); readingStateRef.current = "idle"; setReadingScore(null); setReadingRecognized(""); }} />
         ))}
       </div>
     );
@@ -2054,11 +2001,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
                 }}
               >{bookmarked ? "❤️ 已收藏" : "🤍 收藏"}</button>
               {totalStars !== null && (
-                <div style={{
-                  display: "flex", alignItems: "center", gap: 4,
-                  background: "#fffbeb", border: "1px solid #fde68a",
-                  borderRadius: 999, padding: "5px 10px", flexShrink: 0,
-                }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 4, background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 999, padding: "5px 10px", flexShrink: 0 }}>
                   <span style={{ fontSize: 13 }}>⭐</span>
                   <span style={{ fontSize: 12, fontWeight: 800, color: "#d97706" }}>{totalStars}</span>
                 </div>
