@@ -1192,50 +1192,93 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
   }, [clipId]);
 
   // ── 跟读处理函数 ──────────────────────────────────────
+  const readingStateRef = useRef("idle"); // 用 ref 避免闭包旧值问题
+  const hasResultRef = useRef(false);     // 标记是否已经拿到识别结果
+
   function startReadingPlay() {
     if (!readingModal) return;
     const seg = readingModal.seg;
     const v = document.querySelector("video");
     if (!v) { startReadingListen(); return; }
     setReadingState("playing");
+    readingStateRef.current = "playing";
     const start = parseTime(seg.start);
     const end = parseTime(seg.end);
-    v.currentTime = start;
-    v.play?.();
+    v.currentTime = Math.max(0, start);
+    // 暂停原来的播放，只播这一句
+    v.play?.().catch(() => {});
     const check = setInterval(() => {
-      if (v.currentTime >= end) {
+      if (v.currentTime >= end - 0.05) {
         clearInterval(check);
         v.pause?.();
         startReadingListen();
       }
-    }, 100);
+    }, 80);
   }
 
   function startReadingListen() {
     setReadingState("listening");
+    readingStateRef.current = "listening";
+    hasResultRef.current = false;
     setReadingScore(null);
     setReadingRecognized("");
     try {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) { setReadingState("result"); setReadingScore(0); return; }
+      if (!SpeechRecognition) {
+        setReadingState("result");
+        readingStateRef.current = "result";
+        setReadingScore(0);
+        return;
+      }
       const rec = new SpeechRecognition();
       rec.lang = "en-US";
       rec.interimResults = false;
-      rec.maxAlternatives = 1;
+      rec.maxAlternatives = 3;
+      rec.continuous = false;
       recognitionRef.current = rec;
+
       rec.onresult = (e) => {
-        const recognized = e.results[0]?.[0]?.transcript || "";
+        hasResultRef.current = true;
+        // 取所有候选结果里最长的那个
+        let best = "";
+        for (let i = 0; i < e.results.length; i++) {
+          for (let j = 0; j < e.results[i].length; j++) {
+            const t = e.results[i][j].transcript || "";
+            if (t.length > best.length) best = t;
+          }
+        }
+        const recognized = best.trim();
         setReadingRecognized(recognized);
         const score = calcReadingScore(readingModal.seg.en, recognized);
         setReadingScore(score);
         setReadingState("result");
+        readingStateRef.current = "result";
         if (score >= 60) saveReadingScore(score, recognized);
       };
-      rec.onerror = () => { setReadingState("result"); setReadingScore(0); };
-      rec.onend = () => { if (readingState === "listening") { setReadingState("result"); setReadingScore(0); } };
+
+      rec.onerror = (e) => {
+        // no-speech 不算错误，等 onend 处理
+        if (e.error === "no-speech") return;
+        if (!hasResultRef.current) {
+          setReadingState("result");
+          readingStateRef.current = "result";
+          setReadingScore(0);
+        }
+      };
+
+      rec.onend = () => {
+        // 只有没拿到结果时才显示0分
+        if (!hasResultRef.current) {
+          setReadingState("result");
+          readingStateRef.current = "result";
+          setReadingScore(0);
+        }
+      };
+
       rec.start();
     } catch {
       setReadingState("result");
+      readingStateRef.current = "result";
       setReadingScore(0);
     }
   }
