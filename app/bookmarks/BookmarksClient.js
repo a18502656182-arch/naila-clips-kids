@@ -286,7 +286,6 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
   const [flashFlipped, setFlashFlipped] = useState(false);
   const [flashResults, setFlashResults] = useState({});
   const [flashDone, setFlashDone] = useState(false);
-  const [groupByClip, setGroupByClip] = useState(false);
   const [masteryFilter, setMasteryFilter] = useState(null);
 
   const filteredVideos = videoItems.filter(item =>
@@ -304,13 +303,6 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
 
   const flashDeck = filteredVocab.filter(x => (x.mastery_level ?? 0) < 2);
 
-  const groupedByClip = vocabItems.reduce((acc, item) => {
-    const key = item.clip_id || 0;
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(item);
-    return acc;
-  }, {});
-
   function startFlash() {
     if (flashDeck.length === 0) return;
     setFlashMode(true); setFlashIdx(0);
@@ -318,7 +310,9 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
   }
 
   function flashAnswer(knew, item) {
-    const newLevel = knew ? Math.min(2, (item.mastery_level ?? 0) + 1) : Math.max(0, (item.mastery_level ?? 0) - 1);
+    // 从 vocabItems 取最新的 mastery_level，避免快照旧值
+    const cur = vocabItems.find(x => x.id === item.id)?.mastery_level ?? 0;
+    const newLevel = knew ? Math.min(2, cur + 1) : Math.max(0, cur - 1);
     updateMastery(item.id, newLevel);
     setFlashResults(r => ({ ...r, [item.id]: knew }));
     if (flashIdx + 1 >= flashDeck.length) { setFlashDone(true); }
@@ -470,11 +464,7 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
                   border: "none", borderRadius: 999, padding: "10px 16px", fontSize: 12, fontWeight: 800,
                   cursor: flashDeck.length > 0 ? "pointer" : "default", whiteSpace: "nowrap",
                 }}>🃏 闪卡 ({flashDeck.length})</button>
-                <button onClick={() => setGroupByClip(x => !x)} style={{
-                  background: groupByClip ? "#eff6ff" : "#f9fafb", color: groupByClip ? "#3b82f6" : "#6b7280",
-                  border: `2px solid ${groupByClip ? "#bfdbfe" : "#e5e7eb"}`,
-                  borderRadius: 999, padding: "10px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap",
-                }}>📺 按视频</button>
+
                 <button onClick={() => setShowZh(x => !x)} style={{
                   border: `2px solid ${showZh ? "#a5b4fc" : "#e5e7eb"}`,
                   background: showZh ? "#eef2ff" : "#f9fafb", color: showZh ? "#4f46e5" : "#6b7280",
@@ -512,31 +502,6 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
               ) : filteredVocab.length === 0 ? (
                 <div style={{ border: "2px solid #e5e7eb", borderRadius: 16, background: "#fff", padding: 40, textAlign: "center", color: "#9ca3af", fontSize: 14 }}>
                   {vocabItems.length === 0 ? "还没有收藏词汇，看视频时点词汇卡的 🤍 收藏吧" : "没有符合筛选条件的词汇"}
-                </div>
-              ) : groupByClip ? (
-                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                  {Object.entries(groupedByClip).map(([clipId, items]) => {
-                    const filtered = items.filter(item => {
-                      const ms = !vocabSearch || item.term.toLowerCase().includes(vocabSearch.toLowerCase()) || (item.data?.meaning_zh||"").includes(vocabSearch);
-                      const mm = masteryFilter === null || (item.mastery_level??0) === masteryFilter;
-                      return ms && mm;
-                    });
-                    if (filtered.length === 0) return null;
-                    return (
-                      <div key={clipId}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                          <div style={{ height: 2, flex: 1, background: "#e5e7eb" }} />
-                          <a href={`/clips/${clipId}`} style={{ fontSize: 13, fontWeight: 800, color: "#6366f1", textDecoration: "none", background: "#eef2ff", border: "2px solid #c7d2fe", borderRadius: 999, padding: "4px 14px", whiteSpace: "nowrap" }}>
-                            📺 视频 #{clipId}（{filtered.length}个词）
-                          </a>
-                          <div style={{ height: 2, flex: 1, background: "#e5e7eb" }} />
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                          {filtered.map(item => <VocabFavCard key={item.id} item={item} onRemove={removeVocab} showZh={showZh} onMastery={updateMastery} />)}
-                        </div>
-                      </div>
-                    );
-                  })}
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
