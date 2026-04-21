@@ -748,17 +748,6 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     } catch {}
   }
 
-  // ── 星星 ──
-  const [totalStars, setTotalStars] = useState(null);
-  useEffect(() => {
-    const token = getToken();
-    if (!token) return;
-    fetch(remote("/api/star_total"), {
-      headers: { "Authorization": `Bearer ${token}` },
-    }).then(r => r.json()).then(d => {
-      if (d.ok) setTotalStars(d.total_stars);
-    }).catch(() => {});
-  }, []);
   const rowRefs = useRef({});
   const stickyRef = useRef(null);
   const [stickyBottom, setStickyBottom] = useState(0);
