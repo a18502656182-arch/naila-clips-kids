@@ -76,9 +76,22 @@ function VideoCard({ item, onRemove }) {
 }
 
 // ─── 词汇卡片 ─────────────────────────────────────────────
-function VocabFavCard({ item, onRemove, showZh }) {
-  const { term, kind, data, clip_id } = item;
+function VocabFavCard({ item, onRemove, showZh, onMastery }) {
+  const { term, kind, data, clip_id, mastery_level } = item;
   const [collapsed, setCollapsed] = useState(false);
+  const [mastery, setMastery] = useState(mastery_level ?? 0);
+
+  const MASTERY = [
+    { level: 0, emoji: "🔴", label: "还不会", bg: "#fff1f2", border: "#fecdd3", color: "#dc2626" },
+    { level: 1, emoji: "🟡", label: "学一半", bg: "#fffbeb", border: "#fde68a", color: "#d97706" },
+    { level: 2, emoji: "🟢", label: "学会了", bg: "#f0fdf4", border: "#86efac", color: "#16a34a" },
+  ];
+  const cur = MASTERY[mastery] || MASTERY[0];
+
+  async function handleMastery(level) {
+    setMastery(level);
+    onMastery?.(item.id, level);
+  }
 
   const kindLabel = kind === "phrases" ? "短语" : kind === "expressions" ? "地道表达" : "单词";
   const kindColor = kind === "phrases" ? "#0b5aa6" : kind === "expressions" ? "#3c3ccf" : "#b86b00";
@@ -140,6 +153,24 @@ function VocabFavCard({ item, onRemove, showZh }) {
               <div style={{ marginTop: 4, fontSize: 13, lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{data.use_case_zh}</div>
             </div>
           )}
+          {/* 掌握度按钮 */}
+          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 600, flexShrink: 0 }}>我的掌握：</span>
+            <div style={{ display: "flex", gap: 6 }}>
+              {MASTERY.map(m => (
+                <button key={m.level} onClick={() => handleMastery(m.level)} style={{
+                  border: `2px solid ${mastery === m.level ? m.border : "#f3f4f6"}`,
+                  background: mastery === m.level ? m.bg : "#fafafa",
+                  color: mastery === m.level ? m.color : "#9ca3af",
+                  borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 800,
+                  cursor: "pointer", transition: "all 120ms ease",
+                  transform: mastery === m.level ? "scale(1.05)" : "scale(1)",
+                }}>
+                  {m.emoji} {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </>
       )}
     </div>
@@ -251,13 +282,27 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
     } catch {}
   }
 
+  async function updateMastery(id, level) {
+    try {
+      setVocabItems(prev => prev.map(x => x.id === id ? { ...x, mastery_level: level } : x));
+      await doFetch(remote("/api/vocab_update_mastery"), {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ updates: [{ id, mastery_level: level }] }),
+      });
+    } catch {}
+  }
+
   const filteredVideos = videoItems.filter(item =>
     !videoSearch || (item.clip?.title || "").toLowerCase().includes(videoSearch.toLowerCase())
   );
 
+  const [masteryFilter, setMasteryFilter] = useState(null); // null=全部 0=没学会 1=学一半 2=学会了
+
   const filteredVocab = vocabItems.filter(item => {
     const matchSearch = !vocabSearch || item.term.toLowerCase().includes(vocabSearch.toLowerCase()) ||
       (item.data?.meaning_zh || "").includes(vocabSearch);
+    const matchMastery = masteryFilter === null || (item.mastery_level ?? 0) === masteryFilter;
+    return matchSearch && matchMastery;
     const matchKind = vocabKind === "all" || item.kind === vocabKind;
     return matchSearch && matchKind;
   });
@@ -388,7 +433,24 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {filteredVocab.map(item => <VocabFavCard key={item.id} item={item} onRemove={removeVocab} showZh={showZh} />)}
+                  {/* 掌握度筛选 */}
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+                    {[
+                      { val: null, emoji: "📚", label: `全部 (${vocabItems.length})` },
+                      { val: 0, emoji: "🔴", label: `还不会 (${vocabItems.filter(x => (x.mastery_level ?? 0) === 0).length})` },
+                      { val: 1, emoji: "🟡", label: `学一半 (${vocabItems.filter(x => (x.mastery_level ?? 0) === 1).length})` },
+                      { val: 2, emoji: "🟢", label: `学会了 (${vocabItems.filter(x => (x.mastery_level ?? 0) === 2).length})` },
+                    ].map(f => (
+                      <button key={String(f.val)} onClick={() => setMasteryFilter(f.val)} style={{
+                        border: `2px solid ${masteryFilter === f.val ? "#6366f1" : "#e5e7eb"}`,
+                        background: masteryFilter === f.val ? "#eef2ff" : "#f9fafb",
+                        color: masteryFilter === f.val ? "#4f46e5" : "#6b7280",
+                        borderRadius: 999, padding: "6px 14px", fontSize: 12, fontWeight: 800,
+                        cursor: "pointer", transition: "all 120ms ease",
+                      }}>{f.emoji} {f.label}</button>
+                    ))}
+                  </div>
+                                    {filteredVocab.map(item => <VocabFavCard key={item.id} item={item} onRemove={removeVocab} showZh={showZh} onMastery={updateMastery} />)}
                 </div>
               )}
             </>
