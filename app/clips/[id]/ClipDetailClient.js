@@ -281,7 +281,7 @@ function IconBtn({ title, onClick, active, children }) {
 }
 
 // 普通双语/单语字幕行
-function SubtitleRow({ seg, idx, active, onClick, subMode, rowRef, loopIdx, onToggleLoop, renderEn, dictationMap, recording, onRecordToggle, onRecordPlay, onRecordSave, onRecordDelete, onPlaySegment, onClickTerm, clozeMode, clozeRevealed }) {
+function SubtitleRow({ seg, idx, active, onClick, subMode, rowRef, loopIdx, onToggleLoop, renderEn, dictationMap, recording, onRecordToggle, onRecordPlay, onRecordSave, onRecordDelete, onPlaySegment, onClickTerm, clozeMode, clozeRevealed, onReading }) {
   const isDictation = subMode === "dictation";
   const savedText = dictationMap?.[idx]?.input_text;
   const savedAt = dictationMap?.[idx]?.updated_at;
@@ -347,6 +347,17 @@ function SubtitleRow({ seg, idx, active, onClick, subMode, rowRef, loopIdx, onTo
                 <span title="已保存" style={{ width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: "#16a34a" }}>✅</span>
               )}
             </>
+          )}
+          {/* 跟读评分按钮 */}
+          {!isDictation && onReading && (
+            <button type="button" title="跟读这一句" onClick={e => { e.stopPropagation(); onReading(idx); }} style={{
+              border: `1px solid #f59e0b`,
+              background: "#fffbeb",
+              color: "#d97706",
+              borderRadius: THEME.radii.pill,
+              width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", fontSize: 13, flexShrink: 0,
+            }}>📖</button>
           )}
           {/* 录音按钮（没有录音时，或正在录音时显示） */}
           {!isDictation && (!recording?.url || recording?.recording) && (
@@ -572,6 +583,140 @@ function TermPopup({ popup, onClose }) {
   );
 }
 // 未登录收藏弹窗
+
+// ── 跟读评分弹窗 ──────────────────────────────────────────────
+function ReadingModal({ modal, state, score, recognized, onClose, onStart, onListen, onSave }) {
+  const { seg, idx } = modal;
+
+  function getScoreColor(s) {
+    if (s >= 80) return "#16a34a";
+    if (s >= 60) return "#d97706";
+    return "#dc2626";
+  }
+  function getScoreLabel(s) {
+    if (s >= 80) return "很棒！";
+    if (s >= 60) return "不错，再练练！";
+    return "再试一次吧！";
+  }
+
+  return (
+    <div onClick={onClose} style={{
+      position: "fixed", inset: 0, zIndex: 10001,
+      background: "rgba(11,18,32,0.55)", backdropFilter: "blur(4px)",
+      display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: "#fff", borderRadius: 20,
+        border: "1px solid rgba(11,18,32,0.08)",
+        boxShadow: "0 24px 60px rgba(11,18,32,0.18)",
+        padding: "24px 20px", width: "100%", maxWidth: 400,
+      }}>
+        {/* 标题 */}
+        <div style={{ fontSize: 15, fontWeight: 900, color: "#0b1220", marginBottom: 16 }}>
+          📖 跟读第 {idx + 1} 句
+        </div>
+
+        {/* 原文展示 */}
+        <div style={{
+          background: "#f0f6ff", borderRadius: 12, padding: "12px 14px", marginBottom: 16,
+          borderLeft: "3px solid #3b82f6",
+        }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#1d4ed8", lineHeight: 1.6 }}>{seg.en}</div>
+          <div style={{ fontSize: 13, color: "#3b82f6", marginTop: 4 }}>{seg.zh}</div>
+        </div>
+
+        {/* 步骤内容 */}
+        {state === "idle" && (
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 13, color: "rgba(11,18,32,0.55)", marginBottom: 16, lineHeight: 1.7 }}>
+              先听一遍原声，再点麦克风跟读
+            </div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              <button onClick={onStart} style={{
+                background: "linear-gradient(135deg, #6366f1, #7c3aed)",
+                color: "#fff", border: "none", borderRadius: 999,
+                padding: "12px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer",
+                boxShadow: "0 8px 20px rgba(124,58,237,0.25)",
+              }}>▶ 播放原声</button>
+              <button onClick={onListen} style={{
+                background: "#fff", color: "#0b1220",
+                border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999,
+                padding: "12px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer",
+              }}>🎙 直接跟读</button>
+            </div>
+          </div>
+        )}
+
+        {state === "playing" && (
+          <div style={{ textAlign: "center", padding: "8px 0" }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>🔊</div>
+            <div style={{ fontSize: 14, color: "rgba(11,18,32,0.55)" }}>正在播放原声…</div>
+            <button onClick={onListen} style={{
+              marginTop: 16, background: "#fff", color: "#0b1220",
+              border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999,
+              padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer",
+            }}>跳过，直接跟读</button>
+          </div>
+        )}
+
+        {state === "listening" && (
+          <div style={{ textAlign: "center", padding: "8px 0" }}>
+            <div style={{ fontSize: 40, marginBottom: 8, animation: "pulse 1s infinite" }}>🎙</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: "#dc2626", marginBottom: 4 }}>正在录音…</div>
+            <div style={{ fontSize: 12, color: "rgba(11,18,32,0.45)" }}>请跟读上方英文句子</div>
+            <style>{`@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.7;transform:scale(1.1)} }`}</style>
+          </div>
+        )}
+
+        {state === "result" && score !== null && (
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 48, fontWeight: 900, color: getScoreColor(score), marginBottom: 4 }}>
+              {score}
+            </div>
+            <div style={{ fontSize: 14, color: "rgba(11,18,32,0.55)", marginBottom: 8 }}>分</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: getScoreColor(score), marginBottom: 12 }}>
+              {getScoreLabel(score)}
+            </div>
+            {recognized && (
+              <div style={{
+                background: "#f8fafc", borderRadius: 10, padding: "10px 12px",
+                fontSize: 13, color: "rgba(11,18,32,0.6)", marginBottom: 16,
+                border: "1px solid rgba(11,18,32,0.08)",
+              }}>
+                你说的：<span style={{ color: "#0b1220", fontWeight: 600 }}>{recognized}</span>
+              </div>
+            )}
+            {score >= 80 && (
+              <div style={{ fontSize: 13, color: "#16a34a", marginBottom: 12 }}>+1 ⭐ 已获得星星！</div>
+            )}
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              <button onClick={onListen} style={{
+                background: "#fff", color: "#0b1220",
+                border: "2px solid rgba(11,18,32,0.15)", borderRadius: 999,
+                padding: "10px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer",
+              }}>🎙 再试一次</button>
+              {score >= 60 && (
+                <button onClick={onSave} style={{
+                  background: "linear-gradient(135deg, #6366f1, #7c3aed)",
+                  color: "#fff", border: "none", borderRadius: 999,
+                  padding: "10px 20px", fontSize: 13, fontWeight: 800, cursor: "pointer",
+                }}>保存并继续</button>
+              )}
+            </div>
+          </div>
+        )}
+
+        <button onClick={onClose} style={{
+          display: "block", width: "100%", marginTop: 16,
+          border: "1px solid rgba(11,18,32,0.1)", background: "transparent",
+          borderRadius: 999, padding: "10px 0", cursor: "pointer",
+          fontSize: 13, color: "rgba(11,18,32,0.4)",
+        }}>关闭</button>
+      </div>
+    </div>
+  );
+}
+
 function BookmarkLoginModal({ onClose }) {
   return (
     <div onClick={onClose} style={{
@@ -678,6 +823,26 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
 
   const mobileListRef = useRef(null);
   const desktopListRef = useRef(null);
+
+  // ── 跟读评分 ──
+  const [readingModal, setReadingModal] = useState(null); // { seg, idx } | null
+  const [readingState, setReadingState] = useState("idle"); // idle | playing | listening | result
+  const [readingScore, setReadingScore] = useState(null);
+  const [readingRecognized, setReadingRecognized] = useState("");
+  const recognitionRef = useRef(null);
+
+  // ── 星星 ──
+  const [totalStars, setTotalStars] = useState(null);
+
+  useEffect(() => {
+    const token = getToken();
+    if (!token) return;
+    fetch(remote("/api/star_total"), {
+      headers: { "Authorization": `Bearer ${token}` },
+    }).then(r => r.json()).then(d => {
+      if (d.ok) setTotalStars(d.total_stars);
+    }).catch(() => {});
+  }, []);
   const rowRefs = useRef({});
   const stickyRef = useRef(null);
   const [stickyBottom, setStickyBottom] = useState(0);
@@ -1014,12 +1179,103 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     if (!clipId) return;
     const token = getToken();
     if (!token) return;
+    const headers = { "Content-Type": "application/json", "Authorization": `Bearer ${token}` };
     fetch(remote("/api/view_log"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+      method: "POST", headers,
       body: JSON.stringify({ clip_id: clipId }),
     }).catch(() => {});
+    // 同时记录星星（看视频得1颗星）
+    fetch(remote("/api/star_log"), {
+      method: "POST", headers,
+      body: JSON.stringify({ action: "watch_clip", clip_id: clipId }),
+    }).catch(() => {});
   }, [clipId]);
+
+  // ── 跟读处理函数 ──────────────────────────────────────
+  function startReadingPlay() {
+    if (!readingModal) return;
+    const seg = readingModal.seg;
+    const v = document.querySelector("video");
+    if (!v) { startReadingListen(); return; }
+    setReadingState("playing");
+    const start = parseTime(seg.start);
+    const end = parseTime(seg.end);
+    v.currentTime = start;
+    v.play?.();
+    const check = setInterval(() => {
+      if (v.currentTime >= end) {
+        clearInterval(check);
+        v.pause?.();
+        startReadingListen();
+      }
+    }, 100);
+  }
+
+  function startReadingListen() {
+    setReadingState("listening");
+    setReadingScore(null);
+    setReadingRecognized("");
+    try {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) { setReadingState("result"); setReadingScore(0); return; }
+      const rec = new SpeechRecognition();
+      rec.lang = "en-US";
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      recognitionRef.current = rec;
+      rec.onresult = (e) => {
+        const recognized = e.results[0]?.[0]?.transcript || "";
+        setReadingRecognized(recognized);
+        const score = calcReadingScore(readingModal.seg.en, recognized);
+        setReadingScore(score);
+        setReadingState("result");
+        if (score >= 60) saveReadingScore(score, recognized);
+      };
+      rec.onerror = () => { setReadingState("result"); setReadingScore(0); };
+      rec.onend = () => { if (readingState === "listening") { setReadingState("result"); setReadingScore(0); } };
+      rec.start();
+    } catch {
+      setReadingState("result");
+      setReadingScore(0);
+    }
+  }
+
+  function calcReadingScore(original, recognized) {
+    if (!recognized) return 0;
+    const norm = s => s.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().split(/\s+/);
+    const origWords = norm(original);
+    const recWords = norm(recognized);
+    if (!origWords.length) return 0;
+    let matched = 0;
+    const recSet = new Set(recWords);
+    origWords.forEach(w => { if (recSet.has(w)) matched++; });
+    return Math.round((matched / origWords.length) * 100);
+  }
+
+  async function saveReadingScore(score, recognized) {
+    const token = getToken();
+    if (!token || !readingModal) return;
+    try {
+      await fetch(remote("/api/reading_score_save"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+          clip_id: clipId,
+          seg_index: readingModal.idx,
+          score,
+          recognized,
+        }),
+      });
+      // 更新星星数
+      if (score >= 60) setTotalStars(prev => prev !== null ? prev + 1 : 1);
+    } catch {}
+  }
+
+  function closeReadingModal() {
+    if (recognitionRef.current) { try { recognitionRef.current.stop(); } catch {} }
+    setReadingModal(null);
+    setReadingState("idle");
+  }
 
   async function toggleBookmark() {
     if (!me?.logged_in) { setShowBookmarkLoginModal(true); return; }
@@ -1329,6 +1585,16 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
             opacity: bookmarkLoading ? 0.6 : 1, transition: "all 150ms ease", whiteSpace: "nowrap",
           }}
         >{bookmarked ? "❤️ 已收藏" : "🤍 收藏"}</button>
+        {totalStars !== null && (
+          <div style={{
+            display: "flex", alignItems: "center", gap: 4,
+            background: "#fffbeb", border: "1px solid #fde68a",
+            borderRadius: 999, padding: "6px 12px", flexShrink: 0,
+          }}>
+            <span style={{ fontSize: 14 }}>⭐</span>
+            <span style={{ fontSize: 13, fontWeight: 800, color: "#d97706" }}>{totalStars}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1521,7 +1787,8 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
             onPlaySegment={() => playSegmentOnly(seg)}
             onClickTerm={handleClickTerm}
             clozeMode={clozeMode}
-            clozeRevealed={clozeRevealed} />
+            clozeRevealed={clozeRevealed}
+            onReading={(idx) => { setReadingModal({ seg, idx }); setReadingState("idle"); setReadingScore(null); setReadingRecognized(""); }} />
         ))}
       </div>
     );
@@ -1597,6 +1864,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
         <style>{`@keyframes skPulse { 0%,100%{opacity:1} 50%{opacity:0.45} } @keyframes bIn { 0%{opacity:0;transform:translateY(6px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }`}</style>
         {navBar}
         {showBookmarkLoginModal && <BookmarkLoginModal onClose={() => setShowBookmarkLoginModal(false)} />}
+      {readingModal && <ReadingModal modal={readingModal} state={readingState} score={readingScore} recognized={readingRecognized} onClose={closeReadingModal} onStart={startReadingPlay} onListen={startReadingListen} onSave={closeReadingModal} />}
         <TermPopup popup={termPopup} onClose={() => setTermPopup(null)} />
         {/* 视频区：去掉Card和padding，完全填满宽度 */}
         <div ref={stickyRef} style={{ position: "sticky", top: 52, zIndex: 10, background: "#1a1a2e" }}>
@@ -1714,6 +1982,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     <div style={{ background: THEME.colors.bg, height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
       <style>{`@keyframes skPulse { 0%,100%{opacity:1} 50%{opacity:0.45} } @keyframes bIn { 0%{opacity:0;transform:translateY(6px) scale(0.96)} 100%{opacity:1;transform:translateY(0) scale(1)} }`}</style>
       {showBookmarkLoginModal && <BookmarkLoginModal onClose={() => setShowBookmarkLoginModal(false)} />}
+      {readingModal && <ReadingModal modal={readingModal} state={readingState} score={readingScore} recognized={readingRecognized} onClose={closeReadingModal} onStart={startReadingPlay} onListen={startReadingListen} onSave={closeReadingModal} />}
       <TermPopup popup={termPopup} onClose={() => setTermPopup(null)} />
       <div style={{ flex: 1, overflow: "hidden", padding: "16px 24px 16px" }}>
         <div style={{ display: "grid", gridTemplateColumns: vocabOpen ? "1fr 1fr" : "1.1fr 1fr", gap: 16, height: "100%", alignItems: "start" }}>
