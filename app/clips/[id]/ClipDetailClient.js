@@ -2056,6 +2056,16 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
                   opacity: bookmarkLoading ? 0.6 : 1, transition: "all 150ms ease", whiteSpace: "nowrap", flexShrink: 0,
                 }}
               >{bookmarked ? "❤️ 已收藏" : "🤍 收藏"}</button>
+              {totalStars !== null && (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 4,
+                  background: "#fffbeb", border: "1px solid #fde68a",
+                  borderRadius: 999, padding: "5px 10px", flexShrink: 0,
+                }}>
+                  <span style={{ fontSize: 13 }}>⭐</span>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: "#d97706" }}>{totalStars}</span>
+                </div>
+              )}
             </div>
             {/* 分隔线 */}
             <div style={{ height: 1, background: THEME.colors.border, marginBottom: 10 }} />
