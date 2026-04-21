@@ -1222,65 +1222,59 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
     hasResultRef.current = false;
     setReadingScore(null);
     setReadingRecognized("");
-    try {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        setReadingState("result");
-        readingStateRef.current = "result";
-        setReadingScore(0);
-        return;
-      }
-      const rec = new SpeechRecognition();
-      rec.lang = "en-US";
-      rec.interimResults = false;
-      rec.maxAlternatives = 3;
-      rec.continuous = false;
-      recognitionRef.current = rec;
 
-      rec.onresult = (e) => {
-        hasResultRef.current = true;
-        // 取所有候选结果里最长的那个
-        let best = "";
-        for (let i = 0; i < e.results.length; i++) {
-          for (let j = 0; j < e.results[i].length; j++) {
-            const t = e.results[i][j].transcript || "";
-            if (t.length > best.length) best = t;
-          }
-        }
-        const recognized = best.trim();
-        setReadingRecognized(recognized);
-        const score = calcReadingScore(readingModal.seg.en, recognized);
-        setReadingScore(score);
-        setReadingState("result");
-        readingStateRef.current = "result";
-        if (score >= 60) saveReadingScore(score, recognized);
-      };
+    // 用 MediaRecorder 录音，发给后端讯飞接口识别
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      const chunks = [];
+      const mr = new MediaRecorder(stream);
+      recognitionRef.current = { stream, mr };
 
-      rec.onerror = (e) => {
-        // no-speech 不算错误，等 onend 处理
-        if (e.error === "no-speech") return;
-        if (!hasResultRef.current) {
+      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+
+      mr.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop());
+        if (readingStateRef.current !== "listening") return;
+        try {
+          // 转成 ArrayBuffer → base64
+          const blob = new Blob(chunks, { type: "audio/webm" });
+          const arrayBuffer = await blob.arrayBuffer();
+          const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+          const token = getToken();
+          const headers = { "Content-Type": "application/json" };
+          if (token) headers["Authorization"] = `Bearer ${token}`;
+          const resp = await fetch(remote("/api/asr"), {
+            method: "POST", headers,
+            body: JSON.stringify({ audio: base64 }),
+          });
+          const data = await resp.json();
+          const recognized = data.text || "";
+          hasResultRef.current = true;
+          setReadingRecognized(recognized);
+          const score = calcReadingScore(readingModal.seg.en, recognized);
+          setReadingScore(score);
+          setReadingState("result");
+          readingStateRef.current = "result";
+          if (score >= 60) saveReadingScore(score, recognized);
+        } catch {
           setReadingState("result");
           readingStateRef.current = "result";
           setReadingScore(0);
         }
       };
 
-      rec.onend = () => {
-        // 只有没拿到结果时才显示0分
-        if (!hasResultRef.current) {
-          setReadingState("result");
-          readingStateRef.current = "result";
-          setReadingScore(0);
-        }
-      };
+      mr.start();
+      // 录音3秒后自动停止（可以根据字幕长度动态调整）
+      const seg = readingModal?.seg;
+      const segDuration = seg ? Math.max(3000, (parseTime(seg.end) - parseTime(seg.start)) * 1000 + 1500) : 4000;
+      setTimeout(() => {
+        if (mr.state === "recording") mr.stop();
+      }, Math.min(segDuration, 8000));
 
-      rec.start();
-    } catch {
+    }).catch(() => {
       setReadingState("result");
       readingStateRef.current = "result";
       setReadingScore(0);
-    }
+    });
   }
 
   function calcReadingScore(original, recognized) {
@@ -1315,7 +1309,10 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
   }
 
   function closeReadingModal() {
-    if (recognitionRef.current) { try { recognitionRef.current.stop(); } catch {} }
+    if (recognitionRef.current) {
+      try { recognitionRef.current.mr?.stop(); } catch {}
+      try { recognitionRef.current.stream?.getTracks().forEach(t => t.stop()); } catch {}
+    }
     setReadingModal(null);
     setReadingState("idle");
   }
