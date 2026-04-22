@@ -196,7 +196,7 @@ export default function Page({ accessToken }) {
               flexShrink: 0, padding: "4px 6px 4px 0",
             }}
           >‹</a>
-          <span style={{ fontSize: 15, fontWeight: 1000, color: THEME.colors.ink, whiteSpace: "nowrap" }}>⭐ 我的学习成就</span>
+          <span style={{ fontSize: 15, fontWeight: 1000, color: THEME.colors.ink, whiteSpace: "nowrap" }}>⭐ 我的成就</span>
           <span style={{ fontSize: 11, color: THEME.colors.faint, fontWeight: 800, whiteSpace: "nowrap", marginLeft: 8 }}>📅 {formatDate()}</span>
         </div>
       </div>
