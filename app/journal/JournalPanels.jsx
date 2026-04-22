@@ -21,7 +21,7 @@ function OverviewPanel({ streakDays, totalViews, activeDays, vocabCount, isMobil
         <MiniStat
           label="累计视频"
           value={totalViews || 0}
-          hint="个影视片段"
+          hint="个动画视频"
           accent={{
             bg: "linear-gradient(135deg, rgba(99,102,241,0.16), rgba(99,102,241,0.05))",
             border: "rgba(99,102,241,0.22)",
@@ -153,16 +153,16 @@ function TaskRow({ title, desc, done, buttonText, href, neutral, isMobile }) {
 function TodayPlan({ d, isMobile }) {
   const autoTasks = [
     {
-      title: "今天看 1 个影视片段",
+      title: "今天看 3 个动画视频",
       done: (d.today_views || 0) >= 1,
-      desc: (d.today_views || 0) >= 1 ? `今天已看 ${d.today_views || 0} 个视频` : "先看一个剧集片段，让英语进入状态",
+      desc: (d.today_views || 0) >= 3 ? `🎉 今天已看 ${d.today_views || 0} 个视频，任务完成！` : `已看 ${d.today_views || 0}/3 个，继续加油！`,
       href: "/",
       buttonText: "去看视频",
     },
     {
       title: "今天收藏 3 个词/表达",
       done: (d.today_vocab || 0) >= 3,
-      desc: (d.today_vocab || 0) >= 3 ? `今天已收藏 ${d.today_vocab || 0} 个词汇` : `当前进度 ${d.today_vocab || 0} / 3`,
+      desc: (d.today_vocab || 0) >= 2 ? `🎉 今天已收藏 ${d.today_vocab || 0} 个单词，任务完成！` : `已收藏 ${d.today_vocab || 0}/2 个，继续加油！`,
       href: "/bookmarks",
       buttonText: "去词汇本",
     },
@@ -722,7 +722,7 @@ function LearningAnalysis({ d, vocabCount, topicStats, gameSummary, isMobile }) 
         `累计收藏词汇：${vocabCount} 个`,
         `今日新增收藏：${d.today_vocab || 0} 个`,
         vocabCount > 0
-          ? "你已经不是单纯在看视频，而是在沉淀自己的表达库。"
+          ? "棒棒哒！你已经看了很多动画视频，词汇量在慢慢增加！"
           : "去看视频的时候多点几下❤️，这里就会越来越丰富",
       ],
     },
@@ -737,7 +737,7 @@ function LearningAnalysis({ d, vocabCount, topicStats, gameSummary, isMobile }) 
         `玩过的游戏类型：${playedGameCount} 个`,
         `游戏累计总分：${totalGameScore} 分`,
         playedGameCount > 0
-          ? "很好，输入和练习都没落下！"
+          ? "非常棒！看视频和收藏单词都做得很好！"
           : "还没有游戏记录，去练习大厅玩一轮试试~",
       ],
     },
@@ -763,7 +763,7 @@ function LearningAnalysis({ d, vocabCount, topicStats, gameSummary, isMobile }) 
       },
       lines: [
         summaryText,
-        "保持节奏，慢慢来，表达库会越来越丰富的",
+        "加油加油，每天进步一点点，英语会越来越好的！",
       ],
     }
   ];
@@ -849,9 +849,9 @@ function ContinueLearning({ isMobile }) {
     <Card style={{ padding: 18 }}>
       <SectionTitle emoji="🚀" title="继续学习" sub="翻完记录，继续出发" />
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 12 }}>
-        <ActionCard emoji="🎬" title="去看新视频" desc="继续从英美剧片段里输入真实表达，让学习进入状态。" href="/" dark />
-        <ActionCard emoji="📚" title="去复习词汇本" desc="看看最近收藏了什么，顺手再整理一下自己的表达库。" href="/bookmarks" />
-        <ActionCard emoji="🎮" title="去游戏大厅" desc="把输入转成输出练习，让今天的内容更容易留下来。" href="/practice" />
+        <ActionCard emoji="🎬" title="去看动画视频" desc="看动画片段学英语，每看一个得1颗⭐！" href="/" dark />
+        <ActionCard emoji="📚" title="复习我的单词本" desc="练习收藏的单词，用闪卡挑战一下自己！" href="/bookmarks" />
+        <ActionCard emoji="🎮" title="去游戏大厅" desc="玩游戏练英语，超好玩的！快来试试吧！" href="/practice" />
       </div>
     </Card>
   );
