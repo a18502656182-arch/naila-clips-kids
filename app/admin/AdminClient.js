@@ -343,7 +343,7 @@ const SLUG_LABELS = {
   long: "长片",
 };
 
-function SingleTagSelector({ label, value, onChange, options = [], type, onRefreshOptions, onAddLocalOption, onRenameCallback }) {
+function SingleTagSelector({ label, value, onChange, options = [], type, onRefreshOptions, onAddLocalOption }) {
   const [adding, setAdding] = useState(false);
   const [newVal, setNewVal] = useState("");
   // 确保 localOptions 始终是字符串数组
@@ -362,7 +362,6 @@ function SingleTagSelector({ label, value, onChange, options = [], type, onRefre
     if (r?.ok) {
       setLocalOptions(prev => prev.map(s => s === oldSlug ? newSlug : s));
       if (value === oldSlug) onChange(newSlug);
-      onRenameCallback?.(oldSlug, newSlug); // 通知父组件同步 form state
       onRefreshOptions?.();
     }
     return r;
@@ -459,16 +458,6 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
   function setDuration(slug) {
     const without = form.topic_slugs.filter(s => !durations.includes(s));
     setF("topic_slugs", slug ? [...without, slug] : without);
-  }
-  // rename 后同步更新 form 里的 slug 引用
-  function onRenameTopicSlug(oldSlug, newSlug) {
-    setF("topic_slugs", (form.topic_slugs || []).map(s => s === oldSlug ? newSlug : s));
-  }
-  function onRenameChannelSlug(oldSlug, newSlug) {
-    setF("channel_slugs", (form.channel_slugs || []).map(s => s === oldSlug ? newSlug : s));
-  }
-  function onRenameDifficultySlug(oldSlug, newSlug) {
-    if (form.difficulty_slug === oldSlug) setF("difficulty_slug", newSlug);
   }
 
   function handleSave() {
@@ -652,7 +641,6 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         type="difficulty"
         onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
-        onRenameCallback={onRenameDifficultySlug}
       />
       {/* ✅ 修复：直接传字符串数组，不再 map 成 { slug } 对象 */}
       <SingleTagSelector
@@ -663,7 +651,6 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         type="genre"
         onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
-        onRenameCallback={onRenameTopicSlug}
       />
       <SingleTagSelector
         label="视频时长（单选）"
@@ -673,7 +660,6 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         type="duration"
         onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
-        onRenameCallback={onRenameTopicSlug}
       />
       <TagSelector
         label="剧名（多选，可新增）"
