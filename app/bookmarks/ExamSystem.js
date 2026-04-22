@@ -79,20 +79,17 @@ async function playWord(term) {
 
 function NotEnoughView({ onBack }) {
   return (
-    <div style={{ minHeight: "100vh", background: THEME.colors.bg, padding: 14 }}>
-      <div
-        style={{
-          maxWidth: 720,
-          margin: "0 auto",
-          background: THEME.colors.surface,
-          border: `1px solid ${THEME.colors.border}`,
-          borderRadius: THEME.radii.lg,
-          padding: 18,
-        }}
-      >
-        <div style={{ fontSize: 18, fontWeight: 1000 }}>词汇不足</div>
-        <div style={{ opacity: 0.75, marginTop: 8, fontWeight: 900 }}>
-          至少需要收藏 4 个词汇，才能开始游戏。
+    <div style={{ minHeight: "100vh", background: "#f0f9ff", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div style={{
+        maxWidth: 400, width: "100%",
+        background: "#fff", border: "3px solid #bfdbfe",
+        borderRadius: 24, padding: 32, textAlign: "center",
+        boxShadow: "0 8px 32px rgba(99,102,241,0.12)",
+      }}>
+        <div style={{ fontSize: 56, marginBottom: 16 }}>🎮</div>
+        <div style={{ fontSize: 20, fontWeight: 900, color: "#1e1b4b", marginBottom: 10 }}>还差一点点！</div>
+        <div style={{ fontSize: 15, color: "#6b7280", lineHeight: 1.7, marginBottom: 20 }}>
+          先去看动画视频，收藏至少 4 个单词，<br />就能解锁游戏啦！
         </div>
         <button
           onClick={onBack}
@@ -1743,7 +1740,7 @@ export default function PracticeClient({ accessToken }) {
   // Lobby view
   const page = {
     minHeight: "100vh",
-    background: THEME.colors.bg,
+    background: "linear-gradient(135deg, #eff6ff 0%, #faf5ff 50%, #fff7ed 100%)",
     color: THEME.colors.ink,
     padding: 14,
     boxSizing: "border-box",
@@ -1769,11 +1766,12 @@ export default function PracticeClient({ accessToken }) {
   };
 
   const statCard = {
-    background: THEME.colors.surface,
-    border: `1px solid ${THEME.colors.border}`,
-    borderRadius: THEME.radii.lg,
-    padding: 14,
-    boxShadow: "0 10px 26px rgba(15,23,42,0.06)",
+    background: "#fff",
+    border: "2px solid #e0e7ff",
+    borderRadius: 20,
+    padding: 16,
+    boxShadow: "0 4px 16px rgba(99,102,241,0.08)",
+    textAlign: "center",
   };
 
   const gamesGrid = {
@@ -1791,22 +1789,23 @@ export default function PracticeClient({ accessToken }) {
         <Link
           href="/"
           style={{
-            border: `1px solid ${THEME.colors.border}`,
-            background: THEME.colors.surface,
-            borderRadius: THEME.radii.pill,
-            padding: "8px 12px",
+            border: "2px solid #c7d2fe",
+            background: "#eef2ff",
+            borderRadius: 999,
+            padding: "8px 16px",
             textDecoration: "none",
-            color: THEME.colors.ink,
+            color: "#4f46e5",
             fontWeight: 900,
             display: "inline-flex",
             alignItems: "center",
-            gap: 8,
+            gap: 6,
+            fontSize: 14,
           }}
         >
-          ← 返回首页
+          ← 回首页
         </Link>
 
-        <div style={{ fontSize: 18, fontWeight: 1000 }}>🎮 游戏大厅</div>
+        <div style={{ fontSize: 20, fontWeight: 1000, color: "#1e1b4b" }}>🎮 游戏大厅</div>
 
         <div style={{ opacity: 0.7, fontWeight: 900 }}>
           {me ? (me.username || (me.email || "").split("@")[0] || "未登录") : "未登录"}
@@ -1815,19 +1814,19 @@ export default function PracticeClient({ accessToken }) {
 
       <div style={statGrid}>
         <div style={statCard}>
-          <div style={{ fontSize: 12, opacity: 0.65, fontWeight: 900 }}>📚 词汇总数</div>
+          <div style={{ fontSize: 14, fontWeight: 900, color: "#6366f1", marginBottom: 4 }}>📚 我的单词</div>
           <div style={{ fontSize: 26, fontWeight: 1000, marginTop: 8 }}>
             {loading ? "…" : stats.total}
           </div>
         </div>
         <div style={statCard}>
-          <div style={{ fontSize: 12, opacity: 0.65, fontWeight: 900 }}>🔄 学习中</div>
+          <div style={{ fontSize: 14, fontWeight: 900, color: "#f59e0b", marginBottom: 4 }}>🟡 学习中</div>
           <div style={{ fontSize: 26, fontWeight: 1000, marginTop: 8 }}>
             {loading ? "…" : stats.learning}
           </div>
         </div>
         <div style={statCard}>
-          <div style={{ fontSize: 12, opacity: 0.65, fontWeight: 900 }}>✅ 已掌握</div>
+          <div style={{ fontSize: 14, fontWeight: 900, color: "#10b981", marginBottom: 4 }}>🟢 已掌握</div>
           <div style={{ fontSize: 26, fontWeight: 1000, marginTop: 8 }}>
             {loading ? "…" : stats.mastered}
           </div>
@@ -1838,7 +1837,7 @@ export default function PracticeClient({ accessToken }) {
         <GameCard
           emoji="🫧"
           title="气泡拼写"
-          subtitle="拼出你看到的单词，点击字母气泡按顺序完成拼写"
+          subtitle="点击字母气泡，按顺序拼出单词！"
           tag="拼写训练"
           color="#7c3aed"
           disabled={loading ? true : notEnough()}
@@ -1849,7 +1848,7 @@ export default function PracticeClient({ accessToken }) {
         <GameCard
           emoji="🔗"
           title="极速连连看"
-          subtitle="30秒内快速配对英文与中文，连击越多分越高"
+          subtitle="快速配对英文和中文，连击越多分越高！"
           tag="速记模式"
           color="#d97706"
           disabled={loading ? true : notEnough()}
@@ -1863,8 +1862,8 @@ export default function PracticeClient({ accessToken }) {
         {loading
           ? "正在加载你的词汇本…"
           : notEnough()
-          ? "提示：去「我的收藏 → 词汇本」多收藏一些词汇，解锁全部游戏。"
-          : "选一个游戏开始练习吧！"}
+          ? "💡 去看动画视频，收藏更多单词，就能解锁全部游戏！"
+          : "选一个游戏开始挑战吧！💪"}
       </div>
     </div>
   );
