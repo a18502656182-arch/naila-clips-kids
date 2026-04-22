@@ -48,6 +48,8 @@ export default function Page({ accessToken }) {
     loadJournalData();
   }, [me]);
 
+  const [starData, setStarData] = useState({ total_stars: 0, title: null, today: null });
+
   useEffect(() => {
     const token = localStorage.getItem("sb_access_token");
     if (!token) return;
@@ -61,6 +63,17 @@ export default function Page({ accessToken }) {
           playedGameCount: data.playedGameCount || 0,
         });
       })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("sb_access_token");
+    if (!token) return;
+    fetch(`${process.env.NEXT_PUBLIC_API_BASE || ""}/api/star_total`, {
+      headers: { "Authorization": `Bearer ${token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => { if (data.ok) setStarData(data); })
       .catch(() => {});
   }, []);
 
@@ -144,9 +157,11 @@ export default function Page({ accessToken }) {
     .sort((a, b) => b.count - a.count)
     .slice(0, 6);
 
+  const todayWatchCount = starData.today?.counts?.watch_clip || 0;
+  const todayVocabCount = starData.today?.counts?.vocab_collect || 0;
   const tasks = [
-    { label: "今天看 1 个影视片段", done: (d.today_views || 0) >= 1 },
-    { label: "今天收藏 3 个词/表达", done: (d.today_vocab || 0) >= 3 },
+    { label: `看动画视频 3 个（已看 ${todayWatchCount}/3）`, done: todayWatchCount >= 3 },
+    { label: `收藏单词或短语 2 个（已收藏 ${todayVocabCount}/2）`, done: todayVocabCount >= 2 },
   ];
 
   const desktopHeroGrid = isMobile ? "1fr" : "1.08fr 0.92fr";
@@ -181,64 +196,69 @@ export default function Page({ accessToken }) {
               flexShrink: 0, padding: "4px 6px 4px 0",
             }}
           >‹</a>
-          <span style={{ fontSize: 15, fontWeight: 1000, color: THEME.colors.ink, whiteSpace: "nowrap" }}>我的英语手帐</span>
+          <span style={{ fontSize: 15, fontWeight: 1000, color: THEME.colors.ink, whiteSpace: "nowrap" }}>⭐ 我的学习成就</span>
           <span style={{ fontSize: 11, color: THEME.colors.faint, fontWeight: 800, whiteSpace: "nowrap", marginLeft: 8 }}>📅 {formatDate()}</span>
         </div>
       </div>
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "18px 16px 60px" }}>
-        <div
-          style={{
-            borderRadius: 28,
-            padding: isMobile ? "18px 16px" : "22px 22px",
-            color: "#fff",
-            background:
-              "radial-gradient(circle at 10% 10%, rgba(236,72,153,0.55), transparent 45%), radial-gradient(circle at 90% 20%, rgba(99,102,241,0.65), transparent 40%), radial-gradient(circle at 40% 120%, rgba(14,165,233,0.55), transparent 50%), linear-gradient(135deg, rgba(15,23,42,1) 0%, rgba(79,70,229,0.95) 40%, rgba(236,72,153,0.85) 100%)",
-            boxShadow: "0 24px 70px rgba(2,6,23,0.18)",
-            position: "relative",
-            overflow: "hidden",
-            animation: "floatIn 420ms ease",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: isMobile ? "flex-start" : "center",
-              flexDirection: "column", alignItems: "center",
-              flexDirection: isMobile ? "column" : "row",
-              gap: 10,
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: isMobile ? 18 : 20, fontWeight: 1000 }}>
-                👋 {me?.email?.split("@")[0] || "同学"}，今天也来打个卡
+        {/* Hero 区 - 儿童风格星星成就 */}
+        <div style={{
+          borderRadius: 28,
+          padding: isMobile ? "20px 16px" : "24px 28px",
+          color: "#fff",
+          background: "linear-gradient(135deg, #7c3aed 0%, #6366f1 40%, #3b82f6 100%)",
+          boxShadow: "0 24px 70px rgba(99,102,241,0.35)",
+          position: "relative", overflow: "hidden",
+          animation: "floatIn 420ms ease",
+        }}>
+          {/* 装饰圆圈 */}
+          <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.08)" }} />
+          <div style={{ position: "absolute", bottom: -20, left: -20, width: 80, height: 80, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
+
+          <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", position: "relative" }}>
+            {/* 左侧：问候 + 称号 */}
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <div style={{ fontSize: isMobile ? 16 : 18, fontWeight: 900, opacity: 0.9, marginBottom: 6 }}>
+                👋 {me?.email?.split("@")[0] || "小朋友"}，今天继续加油！
               </div>
-              <div style={{ fontSize: 13, opacity: 0.92, lineHeight: 1.8, marginTop: 8 }}>
-                记录你每天看了什么、收藏了什么，慢慢来，积累才是最重要的事。
+              {starData.title && (
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.18)", borderRadius: 999, padding: "4px 14px", fontSize: 13, fontWeight: 800, marginBottom: 8 }}>
+                  {starData.title}
+                </div>
+              )}
+              <div style={{ fontSize: 13, opacity: 0.85, lineHeight: 1.7 }}>
+                看动画、收藏单词都能得到⭐，快来积攒星星吧！
               </div>
             </div>
-            {isMobile ? (
-              <div style={{ textAlign: "center", marginTop: 8 }}>
-                <div style={{ fontSize: 11, opacity: 0.86, fontWeight: 900 }}>当前状态</div>
-                <div style={{ fontSize: 28, fontWeight: 1000, marginTop: 4 }}>{d.streak_days || 0} 天</div>
-                <div style={{ fontSize: 12, opacity: 0.88, marginTop: 4 }}>连续学习中</div>
+
+            {/* 右侧：星星大数字 */}
+            <div style={{
+              background: "rgba(255,255,255,0.15)",
+              border: "2px solid rgba(255,255,255,0.25)",
+              borderRadius: 20, padding: "16px 24px",
+              textAlign: "center", minWidth: 140, flexShrink: 0,
+            }}>
+              <div style={{ fontSize: 11, opacity: 0.85, fontWeight: 800, letterSpacing: 1 }}>我的星星</div>
+              <div style={{ fontSize: 42, fontWeight: 900, lineHeight: 1.1, marginTop: 4 }}>
+                {starData.total_stars || 0}
               </div>
-            ) : (
-              <div
-                style={{
-                  minWidth: 180,
-                  padding: "14px 14px",
-                  borderRadius: 20,
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                  textAlign: "center",
-                }}
-              >
-                <div style={{ fontSize: 11, opacity: 0.86, fontWeight: 900 }}>当前状态</div>
-                <div style={{ fontSize: 28, fontWeight: 1000, marginTop: 4 }}>{d.streak_days || 0} 天</div>
-                <div style={{ fontSize: 12, opacity: 0.88, marginTop: 4 }}>连续学习中</div>
-              </div>
-            )}
+              <div style={{ fontSize: 18, marginTop: 2 }}>⭐</div>
+              {/* 下一个里程碑提示 */}
+              {(() => {
+                const s = starData.total_stars || 0;
+                const next = s < 10 ? { target: 10, label: "英语新星" } : s < 50 ? { target: 50, label: "动画迷" } : s < 100 ? { target: 100, label: "英语小达人" } : null;
+                if (!next) return <div style={{ fontSize: 11, opacity: 0.8, marginTop: 4 }}>已解锁最高称号！🏆</div>;
+                return (
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{ height: 4, background: "rgba(255,255,255,0.2)", borderRadius: 999, overflow: "hidden" }}>
+                      <div style={{ height: "100%", background: "#fde68a", borderRadius: 999, width: `${Math.min(100, (s / next.target) * 100)}%`, transition: "width 0.5s ease" }} />
+                    </div>
+                    <div style={{ fontSize: 10, opacity: 0.75, marginTop: 4 }}>再得 {next.target - s} 颗解锁「{next.label}」</div>
+                  </div>
+                );
+              })()}
+            </div>
           </div>
         </div>
 
