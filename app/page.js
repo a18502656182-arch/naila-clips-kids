@@ -176,8 +176,8 @@ export default async function Page() {
                   lineHeight: 1.2,
                 }}
               >
-                <span className="title-desktop">影视英语场景库</span>
-                <span className="title-mobile">影视英语<br />场景库</span>
+                <span className="title-desktop">儿童英语启蒙库</span>
+                <span className="title-mobile">儿童英语<br />启蒙库</span>
                 <style>{`
                   .title-desktop { display: inline; }
                   .title-mobile { display: none; }
