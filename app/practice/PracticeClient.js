@@ -660,7 +660,7 @@ function ProgressBar({ current, total, onExit }) {
   );
 }
 
-function BubbleSpellingGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, sourceLabel = "我的收藏" }) {
+function BubbleSpellingGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, sourceLabel = "我的复习本" }) {
   const [questionCount, setQuestionCount] = useState(maxQuestions);
   const allFiltered = useMemo(() => {
     return (vocabItems || []).filter((x) => {
@@ -924,7 +924,7 @@ function BubbleSpellingGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, 
 const MATCH_TIME = 60;
 const BATCH_SIZE = 5;
 
-function MatchMadnessGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, sourceLabel = "我的收藏" }) {
+function MatchMadnessGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, sourceLabel = "我的复习本" }) {
   const cards = useMemo(() => shuffle(vocabItems || []).slice(0, maxQuestions), [vocabItems, maxQuestions]);
   const border2 = THEME.colors.border2 || THEME.colors.border;
 
@@ -1131,7 +1131,7 @@ function MatchMadnessGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, so
 }
 
 
-function SwipeGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的收藏" }) {
+function SwipeGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的复习本" }) {
   const pool = useMemo(() => shuffle(vocabItems || []), [vocabItems]);
   const TIMER_SECONDS = 45;
   const [started, setStarted] = useState(false);
@@ -1307,7 +1307,7 @@ function SwipeGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的收藏"
 }
 
 
-function RebuildGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, sourceLabel = "我的收藏" }) {
+function RebuildGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, sourceLabel = "我的复习本" }) {
   const [questionCount, setQuestionCount] = useState(maxQuestions);
   const [started, setStarted] = useState(false);
 
@@ -1523,7 +1523,7 @@ function RebuildGame({ vocabItems, onExit, onGameEnd, maxQuestions = 10, sourceL
 }
 
 
-function BalloonGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的收藏" }) {
+function BalloonGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的复习本" }) {
   const pool = useMemo(() => shuffle((vocabItems || []).filter(x => { const k = x?.kind; return !k || k === "words"; })), [vocabItems]);
   const TIMER_SECONDS = 60;
   const [started, setStarted] = useState(false);
@@ -1659,7 +1659,7 @@ function BalloonGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的收�
 }
 
 
-function SpeedGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的收藏" }) {
+function SpeedGame({ vocabItems, onExit, onGameEnd, sourceLabel = "我的复习本" }) {
   const items = useMemo(() => shuffle(vocabItems || []), [vocabItems]);
   const TIMER_SECONDS = 45;
   const [started, setStarted] = useState(false);
@@ -1932,7 +1932,7 @@ export default function PracticeClient({ accessToken: ssrToken }) {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const isMember = !!(me?.is_member);
   const activeVocab = vocabSource === "builtin" ? BUILTIN_VOCAB : vocabItems;
-  const sourceLabel = vocabSource === "builtin" ? "内置词库" : "我的收藏";
+  const sourceLabel = vocabSource === "builtin" ? "内置词库" : "我的复习本";
   const myWordCount = useMemo(() => (vocabItems || []).filter(x => !x?.kind || x?.kind === "words").length, [vocabItems]);
 
   function builtinLocked() { return !loading && vocabSource === "builtin" && !isMember; }
@@ -2091,7 +2091,7 @@ export default function PracticeClient({ accessToken: ssrToken }) {
 
       <div style={{ maxWidth: 980, margin: "0 auto 10px", padding: "0 6px" }}>
         <div style={{ display: "inline-flex", border: `1px solid ${THEME.colors.border}`, borderRadius: THEME.radii.pill, overflow: "hidden", background: THEME.colors.surface }}>
-          {[{ key: "my", label: `我的收藏 (${myWordCount}词)` }, { key: "builtin", label: "内置词库" }].map(opt => (
+          {[{ key: "my", label: `我的复习本 (${myWordCount}词)` }, { key: "builtin", label: "内置词库" }].map(opt => (
             <button key={opt.key} onClick={() => setVocabSource(opt.key)} disabled={opt.key === "builtin" && !loading && !isMember}
               style={{ padding: "8px 16px", border: "none", cursor: opt.key === "builtin" && !loading && !isMember ? "not-allowed" : "pointer", fontWeight: 1000, fontSize: 13, background: vocabSource === opt.key ? THEME.colors.accent : "transparent", color: vocabSource === opt.key ? "#fff" : opt.key === "builtin" && !loading && !isMember ? THEME.colors.muted : THEME.colors.ink, transition: "all 0.15s" }}>
               {opt.label}{opt.key === "builtin" && !isMember ? " 🔒" : ""}
@@ -2170,7 +2170,7 @@ export default function PracticeClient({ accessToken: ssrToken }) {
       </div>
 
       <div style={{ maxWidth: 980, margin: "0 auto", padding: "0 6px", opacity: 0.65, fontWeight: 900 }}>
-        {builtinLocked() ? "内置词库需要会员才能使用，开通会员后即可解锁。" : notEnough() ? "提示：去「我的收藏 → 词汇本」多收藏一些词汇，解锁全部游戏。" : "选一个游戏开始练习吧！"}
+        {builtinLocked() ? "内置词库需要会员才能使用，开通会员后即可解锁。" : notEnough() ? "💡 去「我的复习本 → 词汇本」收藏更多单词，就能解锁全部游戏！" : "选一个游戏开始练习吧！"}
       </div>
     </div>
   );
