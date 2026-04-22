@@ -295,7 +295,7 @@ export default function Page({ accessToken }) {
             <SectionTitle
               emoji="📸"
               title="海报生成器"
-              sub="把学习数据合成一张高颜值打卡海报，适合朋友圈 / 小红书分享"
+              sub="把今天的学习变成一张可爱的成就海报！"
             />
             <PosterGenerator
               me={me}
