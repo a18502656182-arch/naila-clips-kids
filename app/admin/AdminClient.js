@@ -414,6 +414,19 @@ function SingleTagSelector({ label, value, onChange, options = [], type, onRefre
 
 // ── 视频表单（新增/编辑共用）──────────────────────────
 function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies }) {
+  const handleRefreshTaxonomies = async () => {
+    await onRefreshTaxonomies?.();
+    try {
+      const r = await fetch("/admin-api?type=taxonomies", { headers: { Authorization: `Bearer ${await getToken()}` } });
+      const d = await r.json();
+      if (d?.ok && d.taxonomies) {
+        setDifficulties(d.taxonomies.filter((t) => t.type === "difficulty").map((t) => t.slug));
+        setGenres(d.taxonomies.filter((t) => t.type === "genre").map((t) => t.slug));
+        setDurations(d.taxonomies.filter((t) => t.type === "duration").map((t) => t.slug));
+        setShows(d.taxonomies.filter((t) => t.type === "show" || t.type === "channel").map((t) => t.slug));
+      }
+    } catch (e) {}
+  };
   const [form, setForm] = useState({
     access_tier: "",
     difficulty_slug: "",
@@ -493,7 +506,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onChange={(v) => setF("difficulty_slug", v)}
         options={difficulties}
         type="difficulty"
-        onRefreshOptions={onRefreshTaxonomies}
+        onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
       />
       {/* ✅ 修复：直接传字符串数组，不再 map 成 { slug } 对象 */}
@@ -503,7 +516,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onChange={setGenre}
         options={genres}
         type="genre"
-        onRefreshOptions={onRefreshTaxonomies}
+        onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
       />
       <SingleTagSelector
@@ -512,7 +525,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onChange={setDuration}
         options={durations}
         type="duration"
-        onRefreshOptions={onRefreshTaxonomies}
+        onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
       />
       <TagSelector
@@ -521,7 +534,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onChange={(v) => setF("channel_slugs", v)}
         options={shows}
         type="show"
-        onRefreshOptions={onRefreshTaxonomies}
+        onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
       />
 
@@ -559,7 +572,20 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
   const [durations, setDurations] = useState(() => taxonomies.filter((t) => t.type === "duration").map((t) => t.slug));
   const [shows, setShows] = useState(() => taxonomies.filter((t) => t.type === "show").map((t) => t.slug));
 
-  const handleRefreshTaxonomies = async () => { await onRefreshTaxonomies?.(); };
+  const handleRefreshTaxonomies = async () => {
+    await onRefreshTaxonomies?.();
+    // 刷新后重新从父组件拉取最新 taxonomies，更新本地 state
+    try {
+      const r = await fetch("/admin-api?type=taxonomies", { headers: { Authorization: `Bearer ${await getToken()}` } });
+      const d = await r.json();
+      if (d?.ok && d.taxonomies) {
+        setDifficulties(d.taxonomies.filter((t) => t.type === "difficulty").map((t) => t.slug));
+        setGenres(d.taxonomies.filter((t) => t.type === "genre").map((t) => t.slug));
+        setDurations(d.taxonomies.filter((t) => t.type === "duration").map((t) => t.slug));
+        setShows(d.taxonomies.filter((t) => t.type === "show" || t.type === "channel").map((t) => t.slug));
+      }
+    } catch (e) {}
+  };
   const addLocalOption = (type, slug) => {
     if (type === "difficulty") setDifficulties(prev => prev.includes(slug) ? prev : [...prev, slug]);
     else if (type === "genre") setGenres(prev => prev.includes(slug) ? prev : [...prev, slug]);
