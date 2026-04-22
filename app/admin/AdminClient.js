@@ -1110,9 +1110,9 @@ function ClipsPanel({ initialClips, taxonomies: initialTaxonomiesFromProps, onTo
                 <Chip color={clip.access_tier === "vip" ? T.vip : T.good}>
                   {clip.access_tier === "vip" ? "✨ 会员" : "🆓 免费"}
                 </Chip>
-                {clip.difficulty_slug && <Chip color={T.warn}>{clip.difficulty_slug}</Chip>}
-                {(clip.topic_slugs || []).map((s) => <Chip key={s} color={T.accent}>{s}</Chip>)}
-                {(clip.channel_slugs || []).map((s) => <Chip key={s} color={T.muted}>{s}</Chip>)}
+                {clip.difficulty_slug && <Chip color={T.warn}>{SLUG_LABELS[clip.difficulty_slug] || clip.difficulty_slug}</Chip>}
+                {(clip.topic_slugs || []).map((s) => <Chip key={s} color={T.accent}>{SLUG_LABELS[s] || s}</Chip>)}
+                {(clip.channel_slugs || []).map((s) => <Chip key={s} color={T.muted}>{SLUG_LABELS[s] || s}</Chip>)}
                 <span style={{ fontSize: 11, color: T.faint }}>{fmt(clip.upload_time || clip.created_at)}</span>
               </div>
             </div>
