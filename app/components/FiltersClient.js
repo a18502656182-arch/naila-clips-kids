@@ -349,7 +349,7 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onSelectShow, o
 
 // 标签映射
 const GENRE_LABELS = {
-  sitcom: "情景喜剧", drama: "剧情", thriller: "悬疑犯罪", reality: "真人秀", movie: "电影",
+  toddler: "小小班(2-4岁)", preschool: "幼儿园(4-6岁)", lower: "小学低年级(6-9岁)", upper: "小学高年级(9-12岁)",
 };
 const DURATION_LABELS = { short: "短片", medium: "中等", long: "长片" };
 
@@ -419,10 +419,10 @@ export default function FiltersClient({ filters, onFiltersChange, initialTaxonom
               <option value="oldest">最早优先</option>
             </select>
           </div>
-          <SingleSelectDropdown label="视频难度" options={tax.difficulties} selected={filters.difficulty?.[0] || ""} onSelect={(slug) => update({ difficulty: slug ? [slug] : [] })} />
+          <SingleSelectDropdown label="难度等级" options={tax.difficulties} selected={filters.difficulty?.[0] || ""} onSelect={(slug) => update({ difficulty: slug ? [slug] : [] })} />
           <SingleSelectDropdown label="访问权限" options={accessOptions} selected={filters.access?.[0] || ""} onSelect={(slug) => update({ access: slug ? [slug] : [] })} renderLabel={(slug) => slug === "free" ? "免费" : slug === "vip" ? "会员" : slug} />
-          <SingleSelectDropdown label="内容类型" options={tax.genres} selected={filters.genre || ""} onSelect={(slug) => update({ genre: slug })} renderLabel={(slug) => GENRE_LABELS[slug] || slug} />
-          <SingleSelectDropdown label="来源" options={tax.durations} selected={filters.duration || ""} onSelect={(slug) => update({ duration: slug })} />
+          <SingleSelectDropdown label="适龄阶段" options={tax.genres} selected={filters.genre || ""} onSelect={(slug) => update({ genre: slug })} renderLabel={(slug) => GENRE_LABELS[slug] || slug} />
+          <SingleSelectDropdown label="动画系列" options={tax.durations} selected={filters.duration || ""} onSelect={(slug) => update({ duration: slug })} />
           {hasAnyFilter && (
             <div style={{ display: "flex", alignItems: "flex-end" }}>
               <button onClick={clearAll} className="clearBtn">清空筛选</button>
