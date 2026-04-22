@@ -76,16 +76,9 @@ function VideoCard({ item, onRemove }) {
 }
 
 // ─── 词汇卡片 ─────────────────────────────────────────────
-function VocabFavCard({ item, onRemove, showZh, onMastery }) {
-  const { term, kind, data, clip_id, mastery_level } = item;
+function VocabFavCard({ item, onRemove, showZh }) {
+  const { term, kind, data, clip_id } = item;
   const [collapsed, setCollapsed] = useState(false);
-  const [mastery, setMastery] = useState(mastery_level ?? 0);
-  const MASTERY_OPTS = [
-    { level: 0, emoji: "🔴", label: "还不会", bg: "#fff1f2", border: "#fecdd3", color: "#dc2626" },
-    { level: 1, emoji: "🟡", label: "学一半", bg: "#fffbeb", border: "#fde68a", color: "#d97706" },
-    { level: 2, emoji: "🟢", label: "学会了", bg: "#f0fdf4", border: "#86efac", color: "#16a34a" },
-  ];
-  function handleMastery(level) { setMastery(level); onMastery?.(item.id, level); }
 
   const kindLabel = kind === "phrases" ? "短语" : kind === "expressions" ? "地道表达" : "单词";
   const kindColor = kind === "phrases" ? "#0b5aa6" : kind === "expressions" ? "#3c3ccf" : "#b86b00";
@@ -147,19 +140,6 @@ function VocabFavCard({ item, onRemove, showZh, onMastery }) {
               <div style={{ marginTop: 4, fontSize: 13, lineHeight: 1.65, whiteSpace: "pre-wrap" }}>{data.use_case_zh}</div>
             </div>
           )}
-          {/* 掌握度 */}
-          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-            <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 600 }}>我的掌握：</span>
-            {MASTERY_OPTS.map(m => (
-              <button key={m.level} onClick={() => handleMastery(m.level)} style={{
-                border: `2px solid ${mastery === m.level ? m.border : "#f3f4f6"}`,
-                background: mastery === m.level ? m.bg : "#fafafa",
-                color: mastery === m.level ? m.color : "#9ca3af",
-                borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 800,
-                cursor: "pointer", transition: "all 120ms ease",
-              }}>{m.emoji} {m.label}</button>
-            ))}
-          </div>
         </>
       )}
     </div>
@@ -271,23 +251,6 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
     } catch {}
   }
 
-  async function updateMastery(id, level) {
-    setVocabItems(prev => prev.map(x => x.id === id ? { ...x, mastery_level: level } : x));
-    try {
-      await doFetch(remote("/api/vocab_update_mastery"), {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ updates: [{ id, mastery_level: level }] }),
-      });
-    } catch {}
-  }
-
-  const [flashMode, setFlashMode] = useState(false);
-  const [flashIdx, setFlashIdx] = useState(0);
-  const [flashFlipped, setFlashFlipped] = useState(false);
-  const [flashResults, setFlashResults] = useState({});
-  const [flashDone, setFlashDone] = useState(false);
-  const [masteryFilter, setMasteryFilter] = useState(null);
-
   const filteredVideos = videoItems.filter(item =>
     !videoSearch || (item.clip?.title || "").toLowerCase().includes(videoSearch.toLowerCase())
   );
@@ -295,29 +258,9 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
   const filteredVocab = vocabItems.filter(item => {
     const matchSearch = !vocabSearch || item.term.toLowerCase().includes(vocabSearch.toLowerCase()) ||
       (item.data?.meaning_zh || "").includes(vocabSearch);
-    const matchMastery = masteryFilter === null || (item.mastery_level ?? 0) === masteryFilter;
-    if (!matchMastery) return false;
     const matchKind = vocabKind === "all" || item.kind === vocabKind;
     return matchSearch && matchKind;
   });
-
-  const flashDeck = filteredVocab.filter(x => (x.mastery_level ?? 0) < 2);
-
-  function startFlash() {
-    if (flashDeck.length === 0) return;
-    setFlashMode(true); setFlashIdx(0);
-    setFlashFlipped(false); setFlashResults({}); setFlashDone(false);
-  }
-
-  function flashAnswer(knew, item) {
-    // 从 vocabItems 取最新的 mastery_level，避免快照旧值
-    const cur = vocabItems.find(x => x.id === item.id)?.mastery_level ?? 0;
-    const newLevel = knew ? Math.min(2, cur + 1) : Math.max(0, cur - 1);
-    updateMastery(item.id, newLevel);
-    setFlashResults(r => ({ ...r, [item.id]: knew }));
-    if (flashIdx + 1 >= flashDeck.length) { setFlashDone(true); }
-    else { setFlashIdx(i => i + 1); setFlashFlipped(false); }
-  }
 
   const navBar = (
     <div style={{
@@ -332,7 +275,7 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
           textDecoration: "none", color: THEME.colors.ink,
           fontWeight: 300, fontSize: 28, lineHeight: 1, padding: "4px 6px",
         }}>‹</a>
-        <div style={{ fontWeight: 900, fontSize: 17, color: THEME.colors.ink }}>我的收藏</div>
+        <div style={{ fontWeight: 900, fontSize: 17, color: THEME.colors.ink }}>📖 我的复习本</div>
       </div>
     </div>
   );
@@ -407,105 +350,45 @@ export default function BookmarksClient({ accessToken: ssrToken = null }) {
           {/* ── 词汇本 tab ── */}
           {tab === "vocab" && (
             <>
-              {/* 闪卡弹窗 */}
-              {flashMode && (
-                <div style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
-                  <div style={{ background: "#fff", borderRadius: 24, padding: 28, width: "100%", maxWidth: 420, boxShadow: "0 24px 60px rgba(0,0,0,0.2)" }}>
-                    {flashDone ? (
-                      <>
-                        <div style={{ textAlign: "center", fontSize: 40, marginBottom: 12 }}>🎉</div>
-                        <div style={{ textAlign: "center", fontSize: 18, fontWeight: 900, marginBottom: 8 }}>本轮复习完成！</div>
-                        <div style={{ textAlign: "center", fontSize: 14, color: "#6b7280", marginBottom: 20 }}>
-                          会了 {Object.values(flashResults).filter(Boolean).length} 个 · 还需练习 {Object.values(flashResults).filter(x => !x).length} 个
-                        </div>
-                        <button onClick={() => setFlashMode(false)} style={{ width: "100%", background: "#6366f1", color: "#fff", border: "none", borderRadius: 999, padding: "14px 0", fontSize: 15, fontWeight: 800, cursor: "pointer" }}>返回词汇本</button>
-                      </>
-                    ) : flashDeck[flashIdx] ? (() => {
-                      const card = flashDeck[flashIdx];
-                      return (
-                        <>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                            <span style={{ fontSize: 13, color: "#9ca3af" }}>{flashIdx + 1} / {flashDeck.length}</span>
-                            <button onClick={() => setFlashMode(false)} style={{ background: "none", border: "none", fontSize: 20, cursor: "pointer", color: "#9ca3af" }}>✕</button>
-                          </div>
-                          <div style={{ background: "#f8fafc", borderRadius: 16, padding: "28px 20px", textAlign: "center", marginBottom: 20, minHeight: 140, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                            <div style={{ fontSize: 28, fontWeight: 900, color: "#0b1220", marginBottom: 8 }}>{card.term}</div>
-                            {card.data?.ipa && <div style={{ fontSize: 14, color: "#9ca3af", marginBottom: 8 }}>/{card.data.ipa}/</div>}
-                            {flashFlipped ? (
-                              <>
-                                <div style={{ fontSize: 16, color: "#374151", fontWeight: 700, marginBottom: 6 }}>{card.data?.meaning_zh}</div>
-                                {card.data?.example_en && <div style={{ fontSize: 13, color: "#6b7280", fontStyle: "italic" }}>{card.data.example_en}</div>}
-                              </>
-                            ) : (
-                              <button onClick={() => setFlashFlipped(true)} style={{ marginTop: 8, background: "#e0e7ff", color: "#4f46e5", border: "none", borderRadius: 999, padding: "10px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>翻转看答案 👆</button>
-                            )}
-                          </div>
-                          {flashFlipped && (
-                            <div style={{ display: "flex", gap: 12 }}>
-                              <button onClick={() => flashAnswer(false, card)} style={{ flex: 1, background: "#fff1f2", color: "#dc2626", border: "2px solid #fecdd3", borderRadius: 999, padding: "12px 0", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>❌ 还不会</button>
-                              <button onClick={() => flashAnswer(true, card)} style={{ flex: 1, background: "#f0fdf4", color: "#16a34a", border: "2px solid #86efac", borderRadius: 999, padding: "12px 0", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>✅ 会了！</button>
-                            </div>
-                          )}
-                        </>
-                      );
-                    })() : null}
-                  </div>
-                </div>
-              )}
-
-              {/* 工具栏 */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
                 <input value={vocabSearch} onChange={e => setVocabSearch(e.target.value)}
-                  placeholder="搜索单词或中文..."
-                  style={{ flex: 1, minWidth: 160, padding: "10px 14px", border: "2px solid #e5e7eb", borderRadius: 12, fontSize: 13, outline: "none" }} />
-                <button onClick={startFlash} disabled={flashDeck.length === 0} style={{
-                  background: flashDeck.length > 0 ? "linear-gradient(135deg,#6366f1,#7c3aed)" : "#e5e7eb",
-                  color: flashDeck.length > 0 ? "#fff" : "#9ca3af",
-                  border: "none", borderRadius: 999, padding: "10px 16px", fontSize: 12, fontWeight: 800,
-                  cursor: flashDeck.length > 0 ? "pointer" : "default", whiteSpace: "nowrap",
-                }}>🃏 闪卡 ({flashDeck.length})</button>
-
-                <button onClick={() => setShowZh(x => !x)} style={{
-                  border: `2px solid ${showZh ? "#a5b4fc" : "#e5e7eb"}`,
-                  background: showZh ? "#eef2ff" : "#f9fafb", color: showZh ? "#4f46e5" : "#6b7280",
-                  borderRadius: 999, padding: "10px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer",
-                }}>{showZh ? "中文 ON" : "OFF"}</button>
-                <button onClick={loadVocab} style={{ border: "2px solid #e5e7eb", background: "#f9fafb", borderRadius: 12, padding: "10px 12px", fontSize: 13, cursor: "pointer", color: "#6b7280" }}>↺</button>
+                  placeholder="搜索单词或中文含义..."
+                  style={{ flex: 1, minWidth: 200, padding: "10px 14px", border: `1px solid ${THEME.colors.border2}`, borderRadius: THEME.radii.md, fontSize: 13, background: THEME.colors.surface, outline: "none" }} />
+                <div style={{ display: "flex", gap: 6 }}>
+                  {[["all", "全部"], ["words", "单词"], ["phrases", "短语"], ["expressions", "地道表达"]].map(([k, label]) => (
+                    <button key={k} type="button" onClick={() => setVocabKind(k)} style={{
+                      padding: "8px 12px", borderRadius: THEME.radii.pill, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                      border: `1px solid ${vocabKind === k ? THEME.colors.ink : THEME.colors.border2}`,
+                      background: vocabKind === k ? THEME.colors.ink : THEME.colors.surface,
+                      color: vocabKind === k ? "#fff" : THEME.colors.ink,
+                    }}>{label}</button>
+                  ))}
+                </div>
+                <span style={{ fontSize: 13, color: THEME.colors.faint, whiteSpace: "nowrap" }}>共 {filteredVocab.length} 条</span>
+                <button type="button" onClick={() => setShowZh(x => !x)} style={{
+                  border: `1px solid ${showZh ? THEME.colors.accent : THEME.colors.border2}`,
+                  background: showZh ? THEME.colors.accent : THEME.colors.surface,
+                  color: showZh ? "#fff" : THEME.colors.ink,
+                  borderRadius: THEME.radii.pill, padding: "8px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer",
+                }}>{showZh ? "中文 ON" : "中文 OFF"}</button>
+                <button type="button" onClick={loadVocab} style={{ border: `1px solid ${THEME.colors.border2}`, background: THEME.colors.surface, borderRadius: THEME.radii.md, padding: "8px 14px", fontSize: 13, cursor: "pointer" }}>刷新</button>
               </div>
-
-              {/* 掌握度筛选 */}
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
-                {[
-                  { val: null, emoji: "📚", label: `全部(${vocabItems.length})` },
-                  { val: 0, emoji: "🔴", label: `还不会(${vocabItems.filter(x=>(x.mastery_level??0)===0).length})` },
-                  { val: 1, emoji: "🟡", label: `学一半(${vocabItems.filter(x=>(x.mastery_level??0)===1).length})` },
-                  { val: 2, emoji: "🟢", label: `学会了(${vocabItems.filter(x=>(x.mastery_level??0)===2).length})` },
-                ].map(f => (
-                  <button key={String(f.val)} onClick={() => setMasteryFilter(f.val)} style={{
-                    border: `2px solid ${masteryFilter===f.val ? "#6366f1" : "#e5e7eb"}`,
-                    background: masteryFilter===f.val ? "#eef2ff" : "#f9fafb",
-                    color: masteryFilter===f.val ? "#4f46e5" : "#6b7280",
-                    borderRadius: 999, padding: "7px 14px", fontSize: 12, fontWeight: 800, cursor: "pointer",
-                  }}>{f.emoji} {f.label}</button>
-                ))}
-              </div>
-
               {vocabLoading ? (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} style={{ borderRadius: 16, background: "#fff", border: "1px solid #e5e7eb", padding: 16 }}>
-                      <div style={{ height: 16, width: "30%", borderRadius: 6, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", marginBottom: 10 }} />
-                      <div style={{ height: 12, width: "80%", borderRadius: 6, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite" }} />
+                    <div key={i} style={{ borderRadius: THEME.radii.lg, background: THEME.colors.surface, border: `1px solid ${THEME.colors.border}`, padding: 16 }}>
+                      <div style={{ height: 16, width: "30%", borderRadius: 6, background: "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite", marginBottom: 10 }} />
+                      <div style={{ height: 12, width: "80%", borderRadius: 6, background: "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.4s infinite" }} />
                     </div>
                   ))}
                 </div>
               ) : filteredVocab.length === 0 ? (
-                <div style={{ border: "2px solid #e5e7eb", borderRadius: 16, background: "#fff", padding: 40, textAlign: "center", color: "#9ca3af", fontSize: 14 }}>
-                  {vocabItems.length === 0 ? "还没有收藏词汇，看视频时点词汇卡的 🤍 收藏吧" : "没有符合筛选条件的词汇"}
+                <div style={{ border: `1px solid ${THEME.colors.border}`, borderRadius: THEME.radii.lg, background: THEME.colors.surface, padding: 40, textAlign: "center", color: THEME.colors.muted, fontSize: 14 }}>
+                  还没有收藏任何词汇，去看视频时点击词汇卡的 🤍 按钮收藏吧 ~
                 </div>
               ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {filteredVocab.map(item => <VocabFavCard key={item.id} item={item} onRemove={removeVocab} showZh={showZh} onMastery={updateMastery} />)}
+                  {filteredVocab.map(item => <VocabFavCard key={item.id} item={item} onRemove={removeVocab} showZh={showZh} />)}
                 </div>
               )}
             </>
