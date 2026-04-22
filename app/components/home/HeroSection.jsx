@@ -280,31 +280,31 @@ export default function HeroSection({ featured }) {
         <div className="heroGrid">
           <div className="heroLeft">
             <div className="heroEyebrow">
-              ✦ DRAMA SCENE LIBRARY
+              ✦ KIDS ENGLISH LIBRARY
             </div>
 
             <h1 className="heroTitle">
-              沉浸英美剧原声，
+              看动画学英语，
               <br />
-              重塑你的英语本能
+              快乐启蒙每一天
             </h1>
 
             <div className="heroDesc">
-              摒弃死记硬背。从精选英美剧、电影、动画片段中提取高频语料，配合交互式双语字幕与动态词汇卡，让每一次观看都转化为真正的语言直觉。
+              精选儿童动画真实片段，配合双语字幕和词汇卡片，让孩子在快乐的语境中自然学英语，建立英语语感。
             </div>
 
             <div className="heroFeatures">
-              <FeatureItem>影视原声片段</FeatureItem>
-              <FeatureItem>动态双语字幕</FeatureItem>
-              <FeatureItem>高频词汇卡片</FeatureItem>
+              <FeatureItem>动画原声片段</FeatureItem>
+              <FeatureItem>双语字幕对照</FeatureItem>
+              <FeatureItem>趣味词汇卡片</FeatureItem>
             </div>
 
             <div className="heroActions">
               <a href="#all" className="heroBtnPrimary">
-                立即探索内容库
+                开始看动画学英语 🎬
               </a>
               <a href="/journal" className="heroBtnJournal">
-                📒 专属数据手帐
+                ⭐ 我的学习成就
               </a>
               {/* 改为游戏闯关 */}
               <a href="/practice" className="heroBtnGame">
@@ -312,7 +312,7 @@ export default function HeroSection({ featured }) {
               </a>
             </div>
 
-            <div className="heroNote">用真实影视语料，练出地道英语直觉。</div>
+            <div className="heroNote">每天看动画，英语越来越好！</div>
           </div>
 
           <div className="heroRight">
