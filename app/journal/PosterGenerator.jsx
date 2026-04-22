@@ -333,6 +333,14 @@ function PosterGenerator({ me, streakDays, totalVideos, vocabCount, heatmapData,
     ctx.fillText("看动画 · 学单词 · 每天进步 ⭐", W / 2, H - 55);
     ctx.textAlign = "left";
 
+    // 生成 blob
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      setPosterBlobUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return URL.createObjectURL(blob);
+      });
+      setGenerating(false);
       setShowModal(true);
     }, "image/png", 1.0);
   }
