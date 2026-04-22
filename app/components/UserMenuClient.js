@@ -351,7 +351,7 @@ export default function UserMenuClient() {
                 fontWeight: 700,
               }}
             >
-              ❤️ 我的收藏
+              📖 我的复习本
             </a>
 
             <a
@@ -369,7 +369,7 @@ export default function UserMenuClient() {
                 fontWeight: 700,
               }}
             >
-              📒 我的手帐
+              ⭐ 我的成就
             </a>
 
             <a
