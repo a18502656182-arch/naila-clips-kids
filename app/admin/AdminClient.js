@@ -190,7 +190,7 @@ async function taxDelete(type, slug) {
 }
 
 // ── 单个标签 pill（含编辑 / 删除）─────────────────────
-function TagPill({ slug, selected, accent, onSelect, onRename, onDelete }) {
+function TagPill({ slug, selected, accent, onSelect, onRename, onDelete, displayLabel }) {
   const [editing, setEditing] = useState(false);
   const [editVal, setEditVal] = useState(slug);
   const [busy, setBusy] = useState(false);
@@ -237,7 +237,7 @@ function TagPill({ slug, selected, accent, onSelect, onRename, onDelete }) {
         padding: "4px 10px", fontSize: 12, fontWeight: 700,
         cursor: "pointer", border: "none", background: "transparent",
         color: selected ? accent : T.muted,
-      }}>{slug}</button>
+      }}>{displayLabel || slug}</button>
       <button onClick={() => { setEditing(true); setEditVal(slug); }} title="重命名" style={{
         padding: "4px 5px", fontSize: 11, cursor: "pointer",
         border: "none", borderLeft: `1px solid ${selected ? accent : T.border2}`,
@@ -325,6 +325,24 @@ function TagSelector({ label, value = [], onChange, options = [], type, onRefres
 
 // ── 单选标签（难度）────────────────────────────────────
 // options 必须是字符串数组 string[]
+// slug → 中文显示名映射
+const SLUG_LABELS = {
+  // 适龄阶段
+  toddler: "小小班(2-4岁)",
+  preschool: "幼儿园(4-6岁)",
+  lower: "小学低年级(6-9岁)",
+  upper: "小学高年级(9-12岁)",
+  // 难度
+  beginner: "入门",
+  elementary: "初级",
+  intermediate: "中级",
+  advanced: "高级",
+  // 来源/时长
+  short: "短片",
+  medium: "中等",
+  long: "长片",
+};
+
 function SingleTagSelector({ label, value, onChange, options = [], type, onRefreshOptions, onAddLocalOption }) {
   const [adding, setAdding] = useState(false);
   const [newVal, setNewVal] = useState("");
@@ -367,6 +385,7 @@ function SingleTagSelector({ label, value, onChange, options = [], type, onRefre
             onSelect={() => onChange(value === slug ? "" : slug)}
             onRename={(o, n) => handleRename(o, n)}
             onDelete={(s) => handleDelete(s)}
+            displayLabel={SLUG_LABELS[slug] || slug}
           />
         ))}
         {adding ? (
@@ -488,7 +507,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onAddLocalOption={addLocalOption}
       />
       <SingleTagSelector
-        label="片段时长（单选）"
+        label="视频时长（单选）"
         value={selectedDuration}
         onChange={setDuration}
         options={durations}
@@ -608,7 +627,7 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         onAddLocalOption={addLocalOption}
       />
       <SingleTagSelector
-        label="片段时长（单选）"
+        label="视频时长（单选）"
         value={selectedDuration}
         onChange={setDuration}
         options={durations}
