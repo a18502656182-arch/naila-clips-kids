@@ -5,12 +5,12 @@ import { THEME } from "../components/home/theme";
 
 const POSTER_THEMES = [
   {
-    name: "暗夜极光流",
-    bg: ["#0B101E", "#111827", "#09090b"],
-    orb1: "rgba(99, 102, 241, 0.35)",
-    orb2: "rgba(236, 72, 153, 0.25)",
-    orb3: "rgba(6, 182, 212, 0.20)",
-    textHero: ["#818cf8", "#c084fc", "#f472b6"],
+    name: "星空探险家",
+    bg: ["#1e1b4b", "#312e81", "#1e1b4b"],
+    orb1: "rgba(167, 139, 250, 0.5)",
+    orb2: "rgba(251, 191, 36, 0.4)",
+    orb3: "rgba(52, 211, 153, 0.3)",
+    textHero: ["#fde68a", "#a78bfa", "#6ee7b7"],
     textMain: "#ffffff",
     textSub: "rgba(255, 255, 255, 0.8)",
     textFaint: "rgba(255, 255, 255, 0.4)",
@@ -23,12 +23,12 @@ const POSTER_THEMES = [
     calendarEmpty: "rgba(255,255,255,0.25)",
   },
   {
-    name: "晨雾玻璃光",
-    bg: ["#ffffff", "#f8fafc", "#f1f5f9"],
-    orb1: "rgba(99, 102, 241, 0.15)",
-    orb2: "rgba(236, 72, 153, 0.12)",
-    orb3: "rgba(6, 182, 212, 0.10)",
-    textHero: ["#4f46e5", "#9333ea", "#db2777"],
+    name: "彩虹阳光天",
+    bg: ["#fefce8", "#fef9c3", "#fefce8"],
+    orb1: "rgba(251, 146, 60, 0.3)",
+    orb2: "rgba(52, 211, 153, 0.25)",
+    orb3: "rgba(99, 102, 241, 0.2)",
+    textHero: ["#f59e0b", "#10b981", "#6366f1"],
     textMain: "#0f172a",
     textSub: "rgba(15, 23, 42, 0.7)",
     textFaint: "rgba(15, 23, 42, 0.35)",
@@ -136,12 +136,12 @@ function PosterGenerator({ me, streakDays, totalVideos, vocabCount, heatmapData,
     currentY += 60;
     ctx.font = `600 32px ${FONT_FAMILY}`;
     ctx.fillStyle = T.textSub;
-    ctx.fillText("把零散的输入，变成长在脑子里的语境", PAD, currentY);
+    ctx.fillText("每天看动画，英语越来越棒！", PAD, currentY);
 
     // 视觉锤
     currentY += 90;
-    let badgeText = "影视英语场景库探索者";
-    if (streakDays >= 21) badgeText = "影视英语沉浸大师";
+    let badgeText = "英语启蒙小达人";
+    if (streakDays >= 21) badgeText = "动画英语超级达人 🏆";
     else if (streakDays >= 7) badgeText = "深度沉浸学习者";
     else if (vocabCount >= 30) badgeText = "语料收集达人";
 
@@ -182,8 +182,8 @@ function PosterGenerator({ me, streakDays, totalVideos, vocabCount, heatmapData,
     const cardH = 220;
     drawGlassCard(ctx, PAD, currentY, W - PAD * 2, cardH, 40, T.glassBg, T.glassBorder, T.glassShadow);
     const statCols = [
-      { label: "影视片段学习", val: totalVideos || 0 },
-      { label: "累计沉淀语料", val: vocabCount || 0 },
+      { label: "动画视频学习", val: totalVideos || 0 },
+      { label: "收藏单词数量", val: vocabCount || 0 },
       { label: "总计活跃天数", val: activeDays || 0 },
     ];
     const colW = (W - PAD * 2) / 3;
@@ -219,7 +219,7 @@ function PosterGenerator({ me, streakDays, totalVideos, vocabCount, heatmapData,
     ctx.font = `600 24px ${FONT_FAMILY}`;
     ctx.fillStyle = T.textSub;
     ctx.textAlign = "right";
-    ctx.fillText("本月打卡足迹", W - PAD, currentY);
+    ctx.fillText("本月学习足迹", W - PAD, currentY);
     ctx.textAlign = "left";
     currentY += 70;
 
@@ -283,10 +283,10 @@ function PosterGenerator({ me, streakDays, totalVideos, vocabCount, heatmapData,
     ctx.textAlign = "center";
     ctx.font = `900 32px ${FONT_FAMILY}`;
     ctx.fillStyle = T.textMain;
-    ctx.fillText("影视英语场景库 · Drama English", W / 2, H - 110);
+    ctx.fillText("儿童英语启蒙库 · Kids English", W / 2, H - 110);
     ctx.font = `600 22px ${FONT_FAMILY}`;
     ctx.fillStyle = T.textFaint;
-    ctx.fillText("语境输入 · 词汇沉淀 · 习惯养成", W / 2, H - 65);
+    ctx.fillText("看动画 · 学单词 · 每天进步", W / 2, H - 65);
     ctx.textAlign = "left";
 
     // 生成 blob，再转成 blob: URL（比 data: URL 更兼容国内浏览器长按保存）
@@ -435,7 +435,7 @@ function PosterGenerator({ me, streakDays, totalVideos, vocabCount, heatmapData,
           >
             <img
               src={posterBlobUrl}
-              alt="打卡海报"
+              alt="学习成就海报"
               style={{
                 width: "100%",
                 maxWidth: 480,
@@ -463,7 +463,7 @@ function PosterGenerator({ me, streakDays, totalVideos, vocabCount, heatmapData,
             {!isMobile && (
               <a
                 href={posterBlobUrl}
-                download={`影视英语场景库打卡_${new Date().toISOString().slice(0, 10)}.png`}
+                download={`儿童英语启蒙库_${new Date().toISOString().slice(0, 10)}.png`}
                 style={{
                   display: "block",
                   width: "100%",
