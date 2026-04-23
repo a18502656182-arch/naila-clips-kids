@@ -150,7 +150,7 @@ function LoginForm() {
         <div style={logoStyle()}>JC</div>
         <div style={{ lineHeight: 1.2 }}>
           <div style={{ fontSize: 17, fontWeight: 950, color: THEME.colors.ink }}>
-            影视英语场景库
+            儿童英语启蒙库
           </div>
           <div style={{ fontSize: 12, color: THEME.colors.faint }}>
             Real dramas · bilingual subtitles · vocabulary cards
