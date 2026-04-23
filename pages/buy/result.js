@@ -75,7 +75,7 @@ export default function BuyResultPage() {
   return (
     <>
       <Head>
-        <title>支付结果 — 影视英语片段库</title>
+        <title>支付结果 — 儿童英语启蒙库</title>
       </Head>
       <div style={{
         minHeight: "100vh", background: C.bg,
