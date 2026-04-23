@@ -66,7 +66,7 @@ export default function BuyPage() {
 
   return (
     <>
-      <Head><title>开通会员 — 影视英语片段库</title></Head>
+      <Head><title>开通会员 — 儿童英语启蒙库</title></Head>
       <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif" }}>
         <div style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "14px 20px", display: "flex", alignItems: "center", gap: 12 }}>
           <a href="/" style={{ textDecoration: "none", color: C.muted, fontSize: 22, lineHeight: 1 }}>‹</a>
@@ -75,7 +75,7 @@ export default function BuyPage() {
         <div style={{ maxWidth: 560, margin: "0 auto", padding: "32px 16px 60px" }}>
           <div style={{ textAlign: "center", marginBottom: 32 }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>🎬</div>
-            <h1 style={{ fontSize: 22, fontWeight: 900, color: C.ink, margin: "0 0 8px" }}>解锁全部影视片段</h1>
+            <h1 style={{ fontSize: 22, fontWeight: 900, color: C.ink, margin: "0 0 8px" }}>解锁全部动画视频</h1>
             <p style={{ fontSize: 14, color: C.muted, margin: 0, lineHeight: 1.6 }}>支付后自动生成兑换码，前往注册页填入即可开通</p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
