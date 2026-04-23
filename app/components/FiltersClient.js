@@ -85,7 +85,7 @@ function SingleSelectDropdown({ label, options, selected, onSelect, renderLabel 
   );
 }
 
-// ── 剧集目录抽屉（点击筛选）────────────────────────────────
+// ── 动画系列目录抽屉（点击筛选）────────────────────────────────
 const PINNED_SOURCES = ["美剧", "电影", "动画", "英剧"];
 
 function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
@@ -113,7 +113,7 @@ function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
   }, [onClose]);
 
   function handleSelectShow(slug) {
-    // 点已选中的再点一次取消筛选，否则切换到新剧集
+    // 点已选中的再点一次取消筛选，否则切换到新系列
     if (selectedShows?.includes(slug)) {
       onSelectShow("");
     } else {
@@ -152,7 +152,7 @@ function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
           flexShrink: 0,
         }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-            <div style={{ fontSize: 17, fontWeight: 900, color: "#0b1220" }}>🎬 全部剧集目录</div>
+            <div style={{ fontSize: 17, fontWeight: 900, color: "#0b1220" }}>🎬 全部动画系列</div>
             <button onClick={onClose} style={{
               width: 32, height: 32, borderRadius: "50%", border: "1px solid rgba(15,23,42,0.08)",
               background: "#f4f6fb", cursor: "pointer", fontSize: 16,
@@ -176,13 +176,13 @@ function ShowDrawer({ shows, sources, selectedShows, onSelectShow, onClose }) {
               );
             })}
           </div>
-          <div style={{ marginTop: 10, fontSize: 12, color: "rgba(11,18,32,0.38)" }}>点击剧名筛选该剧集片段，再次点击取消</div>
+          <div style={{ marginTop: 10, fontSize: 12, color: "rgba(11,18,32,0.38)" }}>点击系列名筛选动画片段，再次点击取消</div>
         </div>
 
         <div className="drawerBody" style={{ flex: 1, overflowY: "auto", padding: "4px 0 24px" }}>
           {displayShows.length === 0 ? (
             <div style={{ textAlign: "center", padding: 40, color: "rgba(11,18,32,0.38)", fontSize: 13 }}>
-              暂无剧集
+              暂无动画系列
             </div>
           ) : (
             <div>
@@ -271,7 +271,7 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onSelectShow, o
         @media (max-width: 960px) { .showTagMobileHide { display: none !important; } }
       `}</style>
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-        <span style={{ fontSize: 12, color: THEME.colors.faint }}>剧集筛选</span>
+        <span style={{ fontSize: 12, color: THEME.colors.faint }}>动画系列</span>
         {selectedShows.length > 0 && (
           <span onClick={onClearShows} style={{ fontSize: 11, color: THEME.colors.accent, cursor: "pointer" }}>
             清空已选
@@ -330,7 +330,7 @@ function ShowFilter({ shows, sources, selectedShows, showSearch, onSelectShow, o
             }}
             onMouseEnter={(e) => e.currentTarget.style.opacity = "0.85"}
             onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
-          >🎬 全部剧集目录</button>
+          >🎬 全部动画系列</button>
         )}
       </div>
 
