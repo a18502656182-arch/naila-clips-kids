@@ -61,7 +61,7 @@ export default function BuyLifetimePage() {
   return (
     <>
       <Head>
-        <title>永久会员 — 影视英语片段库</title>
+        <title>永久会员 — 儿童英语启蒙库</title>
       </Head>
       <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif" }}>
 
