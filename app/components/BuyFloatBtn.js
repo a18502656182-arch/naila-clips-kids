@@ -106,7 +106,7 @@ export default function BuyFloatBtn() {
         }
       `}</style>
       <div className="buy-float-title">加入会员</div>
-      <div className="buy-float-sub">解锁全部影视片段</div>
+      <div className="buy-float-sub">解锁全部动画视频</div>
       <div className="buy-float-badge">支持支付宝</div>
     </a>
   );
