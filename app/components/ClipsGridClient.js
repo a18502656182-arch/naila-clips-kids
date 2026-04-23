@@ -766,7 +766,7 @@ export default function ClipsGridClient({ allItems, filters }) {
                   <div className="body">
                     <h3 className="title">{r.title || `Clip #${r.id}`}</h3>
                     <p className="desc">
-                      {r.description || "打开视频，跟读字幕，沉浸式练听力和表达。"}
+                      {r.description || "打开动画视频，跟着字幕一起学英语！"}
                     </p>
                     <div className="meta">
                       {dateStr ? <span style={{ whiteSpace: "nowrap", flexShrink: 0 }}>{dateStr}</span> : null}
