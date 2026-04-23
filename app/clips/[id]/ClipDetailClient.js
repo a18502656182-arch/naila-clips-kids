@@ -890,7 +890,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
           const gotItem = d?.item || null;
           setItem(gotItem); setMe(d?.me || null);
           if (!gotItem) { setNotFound(true); return; }
-          if (gotItem?.title) document.title = `${gotItem.title} - 影视英语场景库`;
+          if (gotItem?.title) document.title = `${gotItem.title} - 儿童英语启蒙库`;
           let dj = d?.details_json ?? null;
           if (typeof dj === "string") { try { dj = JSON.parse(dj); } catch { dj = null; } }
           if (mounted) setDetails(dj ?? null);
@@ -922,7 +922,7 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
       }
     }
     run();
-    return () => { mounted = false; document.title = "影视英语场景库"; };
+    return () => { mounted = false; document.title = "儿童英语启蒙库"; };
   }, [clipId]);
 
   // 加载云端已保存的录音
@@ -1451,8 +1451,8 @@ export default function ClipDetailClient({ clipId, initialItem, initialMe, initi
       )}
       {/* tab行：紧凑模式时中文按钮在最右侧同一行 */}
       <div style={{ display: "flex", gap: 4, flexWrap: "nowrap", marginBottom: compact ? 8 : 12, flexShrink: 0, alignItems: "center", overflow: "hidden", minWidth: 0 }}>
-        {[["words", "单词", vocab.words], ["phrases", "短语", vocab.phrases], ["expressions", "地道表达", vocab.expressions]].map(([k, label, arr]) => (
-          <Btn key={k} active={vocabTab === k} onClick={() => setVocabTab(k)}>{compact && label === "地道表达" ? "表达" : label} ({arr.length})</Btn>
+        {[["words", "单词", vocab.words], ["phrases", "短语", vocab.phrases], ["expressions", "句型语法", vocab.expressions]].map(([k, label, arr]) => (
+          <Btn key={k} active={vocabTab === k} onClick={() => setVocabTab(k)}>{compact && label === "句型语法" ? "句型" : label} ({arr.length})</Btn>
         ))}
         {compact && (
           <Btn active={showZhExplain} onClick={() => setShowZhExplain(x => !x)} style={{ marginLeft: "auto", flexShrink: 0 }}>
