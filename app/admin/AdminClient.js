@@ -520,7 +520,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onAddLocalOption={addLocalOption}
       />
       <SingleTagSelector
-        label="视频时长（单选）"
+        label="内容主题（单选）"
         value={selectedDuration}
         onChange={setDuration}
         options={durations}
@@ -529,7 +529,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onAddLocalOption={addLocalOption}
       />
       <TagSelector
-        label="剧名（多选）"
+        label="频道来源（多选）"
         value={form.channel_slugs}
         onChange={(v) => setF("channel_slugs", v)}
         options={shows}
@@ -653,7 +653,7 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         onAddLocalOption={addLocalOption}
       />
       <SingleTagSelector
-        label="视频时长（单选）"
+        label="内容主题（单选）"
         value={selectedDuration}
         onChange={setDuration}
         options={durations}
@@ -662,7 +662,7 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         onAddLocalOption={addLocalOption}
       />
       <TagSelector
-        label="剧名（多选，可新增）"
+        label="频道来源（多选，可新增）"
         value={form.channel_slugs}
         onChange={(v) => setF("channel_slugs", v)}
         options={shows}
