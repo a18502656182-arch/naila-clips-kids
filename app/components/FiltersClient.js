@@ -155,14 +155,13 @@ export default function FiltersClient({ filters, onFiltersChange, initialTaxonom
           <SingleSelectDropdown label="适龄阶段" options={tax.difficulties} selected={filters.difficulty?.[0] || ""} onSelect={(slug) => update({ difficulty: slug ? [slug] : [] })} />
           <SingleSelectDropdown label="访问权限" options={accessOptions} selected={filters.access?.[0] || ""} onSelect={(slug) => update({ access: slug ? [slug] : [] })} renderLabel={(slug) => slug === "free" ? "免费" : slug === "vip" ? "会员" : slug} />
           <SingleSelectDropdown label="内容主题" options={tax.durations} selected={filters.duration || ""} onSelect={(slug) => update({ duration: slug })} />
+          <SingleSelectDropdown label="频道来源" options={tax.shows || []} selected={filters.show?.[0] || ""} onSelect={(slug) => update({ show: slug ? [slug] : [] })} />
           {hasAnyFilter && (
             <div style={{ display: "flex", alignItems: "flex-end" }}>
               <button onClick={clearAll} className="clearBtn">清空筛选</button>
             </div>
           )}
         </div>
-
-        <SingleSelectDropdown label="频道来源" options={tax.shows || []} selected={filters.show?.[0] || ""} onSelect={(slug) => update({ show: slug ? [slug] : [] })} />
       </div>
     </div>
   );
