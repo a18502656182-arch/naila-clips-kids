@@ -501,7 +501,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
       />
 
       <SingleTagSelector
-        label="难度"
+        label="适龄阶段"
         value={form.difficulty_slug}
         onChange={(v) => setF("difficulty_slug", v)}
         options={difficulties}
@@ -509,16 +509,7 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
       />
-      {/* ✅ 修复：直接传字符串数组，不再 map 成 { slug } 对象 */}
-      <SingleTagSelector
-        label="内容类型（单选）"
-        value={selectedGenre}
-        onChange={setGenre}
-        options={genres}
-        type="genre"
-        onRefreshOptions={handleRefreshTaxonomies}
-        onAddLocalOption={addLocalOption}
-      />
+
       <SingleTagSelector
         label="内容主题（单选）"
         value={selectedDuration}
@@ -634,7 +625,7 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
       </div>
 
       <SingleTagSelector
-        label="难度"
+        label="适龄阶段"
         value={form.difficulty_slug}
         onChange={(v) => setF("difficulty_slug", v)}
         options={difficulties}
@@ -642,16 +633,7 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         onRefreshOptions={handleRefreshTaxonomies}
         onAddLocalOption={addLocalOption}
       />
-      {/* ✅ 修复：直接传字符串数组，不再 map 成 { slug } 对象 */}
-      <SingleTagSelector
-        label="内容类型（单选）"
-        value={selectedGenre}
-        onChange={setGenre}
-        options={genres}
-        type="genre"
-        onRefreshOptions={handleRefreshTaxonomies}
-        onAddLocalOption={addLocalOption}
-      />
+
       <SingleTagSelector
         label="内容主题（单选）"
         value={selectedDuration}
