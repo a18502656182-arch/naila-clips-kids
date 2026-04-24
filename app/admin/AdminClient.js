@@ -354,7 +354,7 @@ function SingleTagSelector({ label, value, onChange, options = [], type, onRefre
     if (!s) return;
     setLocalOptions(prev => prev.includes(s) ? prev : [...prev, s]);
     onAddLocalOption?.(type, s);
-    onChange(s);
+    // 不自动选中，让用户手动点选，避免覆盖已选值
     setNewVal(""); setAdding(false);
   };
   const handleRename = async (oldSlug, newSlug) => {
