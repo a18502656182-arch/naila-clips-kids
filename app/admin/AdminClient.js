@@ -354,7 +354,7 @@ function SingleTagSelector({ label, value, onChange, options = [], type, onRefre
     if (!s) return;
     setLocalOptions(prev => prev.includes(s) ? prev : [...prev, s]);
     onAddLocalOption?.(type, s);
-    // 不自动选中，让用户手动点选，避免覆盖已选值
+    onChange(s);
     setNewVal(""); setAdding(false);
   };
   const handleRename = async (oldSlug, newSlug) => {
@@ -510,10 +510,13 @@ function BatchForm({ taxonomies, onSave, onCancel, loading, onRefreshTaxonomies 
         onAddLocalOption={addLocalOption}
       />
 
-      <SingleTagSelector
-        label="内容主题（单选）"
-        value={selectedDuration}
-        onChange={setDuration}
+      <TagSelector
+        label="内容主题（多选）"
+        value={form.topic_slugs.filter(s => durations.includes(s))}
+        onChange={(v) => {
+          const without = form.topic_slugs.filter(s => !durations.includes(s));
+          setF("topic_slugs", [...without, ...v]);
+        }}
         options={durations}
         type="duration"
         onRefreshOptions={handleRefreshTaxonomies}
@@ -634,10 +637,13 @@ function ClipForm({ initial = {}, taxonomies, onSave, onCancel, loading, onRefre
         onAddLocalOption={addLocalOption}
       />
 
-      <SingleTagSelector
-        label="内容主题（单选）"
-        value={selectedDuration}
-        onChange={setDuration}
+      <TagSelector
+        label="内容主题（多选）"
+        value={form.topic_slugs.filter(s => durations.includes(s))}
+        onChange={(v) => {
+          const without = form.topic_slugs.filter(s => !durations.includes(s));
+          setF("topic_slugs", [...without, ...v]);
+        }}
         options={durations}
         type="duration"
         onRefreshOptions={handleRefreshTaxonomies}
